@@ -1,0 +1,84 @@
+Hola Laura.
+
+Propuesta trabajo fin de Master DataScience.
+
+Tengo como un algunas ideas que  tienen que ver con la estructura del Universo, podrían llevarse a cabo las 3:
+
+	- A gran escala: Quisiera hacer un estudio de la distribución de galaxias y quasares en el universo.  ==> Detección de picos de densidad.
+	- Posiblemente sea a una escala menor (aunque no lo tengo claro aún) ==> Detección de agruapaciones o cúmulos de galaxias.
+	- Intentar aplicar métodos de Machine Learning para predecir la clase de objetos de los orígenes de datos.
+	
+Para ello, me planteo usar los datos de los catálogos:
+	- SDSS. Más probable el data release (DR9, creo que se llama BOSS).
+	- 2dFRGS.
+	- The 2QZ/6QZ catalogue.
+	
+OBJETIVOS (no digo que vaya a cumplirlos todos):
+			- Visualización/Representación en un mapa del cielo los objetos del catálogo y la/s muestra/s que vaya a usar. ==> Publicarlo en WEB. Esto es sencillo
+			- Calcular las ditancias propias con diversos modelos de universo (al menos para el modelo LCDM). (emplear métodos numéricos). 
+				Esto puede hacerse o no ====> m - M = 5 log d - 5 => Módulo distancia => Calcular magnitudes absolutas (distancia de luz) 
+			- Analizar la densidad de galaxias y como ésta decrece con la distancia => usar estimadores de la función de correlación a dos puntos Y algorítmos basados en densidad
+			- Verificar si hay picos en ese decrecimiento (debería haberlos por las oscilaciones acústicas).
+			- Aplicar Algoritmo DBSCAN y sobre todo DBOPTICS a la muestra.
+			- Como las distintas cosmologías (distintos valores para las densidades) afectan al pico observado? ¿Se pueden descartar algunos?
+			- ¿Aplicar métodos de ML para predecir si se trata de STAR, QSO o GALAXY?
+			
+CATALOGOS:
+			The 2QZ/6QZ catalogue contains 47768 lines +  1657 lines:
+				https://www.kandrsmith.org/RJS/QSO_Survey/Spec_Cat/catalogue.html
+				
+			2dFGRS Glaxy survey 245591
+				The total number of unique objects with spectra is 245591, of which...
+				12311 are stars (z < 0.002),
+				125 are QSOs (z > 0.5), and
+				232155 are galaxies, of which...
+				3720 have Q=1,
+				8021 have Q=2,
+				25082 have Q=3,
+				140391 have Q=4,
+				55941 have Q=5,
+				so there are a total of 221414 unique galaxies with good-quality (Q>=3) spectra.
+			-SDSS BOSS que es el DR9. => Mucho más extenso
+				https://www.sdss3.org/dr9/ donde tenemos:
+				Sky coverage	14,555 square degrees
+				Catalog objects	932,891,133
+				Galaxy spectra	1,457,002
+				Quasar spectra	228,468
+				Star spectra	668,054
+				
+FUNCIÓN DE CORRELACIÓN a DOS PUNTOS. Estudio de la densidad:	
+	Hay otros estudios sobre esto, en particular es interesante el de comparaciones de estimadores de la función de correlacion a dos puntos:
+		- https://arxiv.org/abs/astro-ph/9912088
+		- https://helda.helsinki.fi/server/api/core/bitstreams/2da17a6f-4179-4b99-8119-e6fb84a109dc/content (interesante la página 31).
+	Información e implementación de la correlación a dos puntos:
+		- https://gitlab.com/shadaba/lss-handson 
+		- https://gitlab.com/shadaba/CorrelationFunction.git
+	¿Emplear otras opciones? ¿Correlación a 3 puntos? 
+		Emplear algún algoritmo clustering basado en densidad de los vistos en clase como DBOPTICS, DBSCAN ==> ¿Detectar agrupaciones de galaxias?.
+		
+TECNICAS A EMPLEAR:
+		- Integración numérica para obtener las distancias propias de los redshifts.
+		- Probar las densidades con DBOPTICS, DBSCAN, Función de correlación.
+		- Métodos de ML para prededicir los tipos de objetos del catálogo.
+		
+PARTE DIFICIL:
+		- Seleccionar muestras representativas de cada catálogo. ¿No sé aún cómo hacer esto?
+		- Para evitar el sesgo de Malmquist hay que limitar la muestra por distancia, no por magnitud.
+		
+Questiones de Laura:
+1.  has mirado qué datos hay disponibles? (fuentes, cantidad, campos, etc)
+	Sí, al menos los catálogos SDSS y 2dFGRS Galaxy survey 245591 objetos principalmente galaxias.
+2. has mirado artículos relacionados con esta propuesta? qué analizan y cómo?
+	Sí, he leído algunos artículos en los que hablan de la detección de picos acústicos. en particular
+	https://arxiv.org/abs/astro-ph/0501171v1 => Picos acústicos bariónicos.
+	https://arxiv.org/abs/astro-ph/9912088 => Función de correlación a dos puntos
+3. qué tipo de modelos o técnicas, así sin entrar en detalle, planteas o crees que de podrían aplicar? en qué se distinguiría de lo que ya hay en la literatura?
+	- Integración numérica.
+	- Métodos basados en densidad de los que hemos visto en el máster: en particular DBSCAN y sobre todo DBOPTICS pueden ser interesantes.
+	- ¿Otros métodos de clustering?
+	- Métodos supervisados para intentar predecir los tipos de objetos: QSO, GALAXY, STAR.
+	- Otros métodos estadísticos que vayan surguiendo.
+	
+Cuál sería la aportación principal buscada con el proyecto?	
+	-> Detección de los picos de densidades a gran escala. Con lo que eso conlleva: confirmación de la existencia de CDM.
+	-> A menor escala, detección de cúmulos.
