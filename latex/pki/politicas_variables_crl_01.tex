@@ -1,0 +1,228 @@
+	\ifthenelse{\equal{\jobname}{\detokenize{va}}}{
+		La opción Políticas de certificación permite editar las políticas internas correspondientes a la VA. Al seleccionar la opción se accederá a una pantalla que mostrará el listado de las políticas internas registradas en el sistema y un listado de las variables disponibles para utilizar en las políticas (Fig. \ref{caroot_fig19}). 
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=.5]{./img/va_1.png}
+			\caption{Políticas de certificación de la VA.}
+			\label{caroot_fig19}
+		\end{figure}
+
+		A la derecha del nombre de cada política aparecerán dos botones que permitirán editar la política \includegraphics[scale=1]{./img/icono_editar.png} o exportarla como archivo XML \includegraphics[scale=1]{./img/icono_anadir.png}. Al pulsar el botón \includegraphics[scale=1]{./img/icono_editar.png} se accederá a la pantalla de configuración de políticas (Fig. \ref{caroot_fig21}). En esta pantalla se muestra la configuración actual de la política y permite modificar dicha configuración. Además, ofrece la opción de validar la configuración de la política pulsando en el botón Validar política en la esquina superior derecha.
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=1]{./img/caroot_fig21.png}
+			\caption{Pantalla para editar políticas internas.}
+			\label{caroot_fig21}
+		\end{figure}
+
+		Para añadir un nuevo campo al certificado se pulsará el botón (\includegraphics[scale=1]{./img/icono_anadir_atributo.png}). Aparecerá un menú desplegable con los tipos de campos disponibles (Fig. \ref{caroot_fig26}). Una vez seleccionado el tipo de campo que se desea añadir se accederá a una pantalla que permitirá añadir datos al nuevo campo (Fig. \ref{caroot_fig27}).
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=1]{./img/caroot_fig26.png}
+			\caption{Selección de tipo de campo.}
+			\label{caroot_fig26}
+		\end{figure}
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=1]{./img/caroot_fig27.png}
+			\caption{Pantalla de edición de campo.}
+			\label{caroot_fig27}
+		\end{figure}
+
+	}{
+		\ifthenelse{\equal{\jobname}{\detokenize{tsa}}}{
+			\begin{itemize}
+				\item \textbf{Políticas de certificación (políticas internas)}
+			\end{itemize}
+
+			La opción Políticas de certificación permite editar las políticas internas correspondientes a la TSA. Al seleccionar la opción se accederá a una pantalla que mostrará el listado de las políticas (Fig. \ref{caroot_fig19}).
+
+			\begin{figure}[H]
+				\centering
+				\includegraphics[scale=.5]{./img/va_1.png}
+				\caption{Pantalla de políticas de certificación y variables.}
+				\label{caroot_fig19}
+			\end{figure}
+
+			Mediante la opción `Crear Política desde archivo XML', podemos importar políticas internas desde un archivo XML como muestra la (Fig. \ref{caroot_fig20}).
+
+			\begin{figure}[H]
+				\centering
+				\includegraphics[scale=.5]{./img/caroot_fig20.png}
+				\caption{Pantalla para importar políticas internas desde XML.}
+				\label{caroot_fig20}
+			\end{figure}
+
+			Podemos también editar una política interna pulsando en el icono \includegraphics[scale=1]{./img/icono_editar.png} a la derecha de cada política mostrada en (Fig. \ref{caroot_fig19}), una vez pulsado, aparece una pantalla como se muestra en la (Fig. \ref{ra_3}).
+
+			\begin{figure}[H]
+				\centering
+				\includegraphics[scale=.5]{./img/ra_3.png}
+				\caption{Pantalla con la información de la política.}
+				\label{ra_3}
+			\end{figure}
+
+			Además, podemos ver si una autopolítica es válida o no, para ello seleccionamos editar una política \includegraphics[scale=1]{./img/icono_editar.png}, y nos muestra toda la información de la misma (Fig. 20), presionando sobre validar política podemos ver si es válida o no (Fig. \ref{ra_4} y Fig. \ref{ra_5} respectivamente). También se pueden exportar las autopolíticas como archivo XML, para ello pinchamos sobre el botón \includegraphics[scale=1]{./img/icono_anadir.png}.
+
+			\begin{figure}[H]
+				\centering
+				\includegraphics[scale=.5]{./img/ra_4.png}
+				\caption{Pantalla con política válida.}
+				\label{ra_4}
+			\end{figure}
+
+			\begin{figure}[H]
+				\centering
+				\includegraphics[scale=.5]{./img/ra_5.png}
+				\caption{Pantalla con política no válida.}
+				\label{ra_5}
+			\end{figure} 
+
+			Para añadir un nuevo campo al certificado se pulsará el botón (\includegraphics[scale=1]{./img/icono_anadir_atributo.png}). Aparecerá un menú desplegable con los tipos de campos disponibles (Fig. \ref{caroot_fig26}). Una vez seleccionado el tipo de campo que se desea añadir se accederá a una pantalla que permitirá añadir datos al nuevo campo (Fig. \ref{caroot_fig27}).
+
+			\begin{figure}[H]
+				\centering
+				\includegraphics[scale=1]{./img/caroot_fig26.png}
+				\caption{Selección de tipo de campo.}
+				\label{caroot_fig26}
+			\end{figure}
+
+			\begin{figure}[H]
+				\centering
+				\includegraphics[scale=1]{./img/caroot_fig27.png}
+				\caption{Pantalla de edición de campo.}
+				\label{caroot_fig27}
+			\end{figure}
+
+		}{
+			\begin{itemize}
+				\item \textbf{Políticas}
+			\end{itemize}
+
+			En esta sección, el administrador de seguridad podrá crear nuevas autopolíticas y políticas importándolas desde un fichero .XML, para ello deberá presionar el botón `Crear política desde archivo XML' (Fig. \ref{caroot_fig20}). Las nuevas políticas aparecen en el listado de Políticas Internas o Políticas que podemos apreciar en la figura anterior (Fig. \ref{caroot_fig19}).
+
+			\begin{figure}[H]
+				\centering
+				\includegraphics[scale=.5]{./img/caroot_fig20.png}
+				\caption{Pantalla para importar políticas internas desde XML.}
+				\label{caroot_fig20}
+			\end{figure}
+
+			A la derecha del nombre de cada política aparecerán dos botones que permitirán editar la política (\includegraphics[scale=1]{./img/icono_editar.png}) o exportarla como archivo XML (\includegraphics[scale=1]{./img/icono_anadir.png}).
+
+			También permite editar las políticas ya creadas (Fig. \ref{caroot_fig21}), para ello deberá presionar (\includegraphics[scale=1]{./img/icono_editar.png}) y nos muestra los campos y extensiones de la política interna seleccionada, así como las propiedades de la misma, estos pueden ser modificados, salvo el nombre y la descripción en las políticas internas.
+
+			Para agregar una nueva política mediante la cumplimentación del formulario, necesitamos completarlo (Fig. \ref{caroot_fig22}), en caso de no añadirle un Subject y no ponerle nombre, dejará crear la política aunque ésta no será válida. Para validar una política, tenemos que presionar \textit{Validar política} y esto nos dice si ésta es válida o no (Fig. \ref{caroot_fig23}) y (Fig. \ref{caroot_fig24}) respectivamente.
+
+			\begin{figure}[H]
+				\centering
+				\includegraphics[scale=1]{./img/caroot_fig21.png}
+				\caption{Pantalla para editar políticas internas.}
+				\label{caroot_fig21}
+			\end{figure}
+
+			\begin{figure}[H]
+				\centering
+				\includegraphics[scale=.5]{./img/caroot_fig22.png}
+				\caption{Pantalla para crear política.}
+				\label{caroot_fig22}
+			\end{figure}
+
+			\begin{figure}[H]
+				\centering
+				\includegraphics[scale=.5]{./img/caroot_fig23.png}
+				\caption{Pantalla con política válida.}
+				\label{caroot_fig23}
+			\end{figure}
+
+			\begin{figure}[H]
+				\centering
+				\includegraphics[scale=.5]{./img/caroot_fig24.png}
+				\caption{Pantalla con política no válida.}
+				\label{caroot_fig24}
+			\end{figure}
+
+			Las políticas pueden eliminarse, para ello pinchamos sobre el botón (\includegraphics[scale=1]{./img/icono_eliminar.png}) y aceptamos la advertencia mostrada (Fig. \ref{caroot_fig25}); las políticas internas por el contrario no pueden ser eliminadas.
+
+			\begin{figure}[H]
+				\centering
+				\includegraphics[scale=1]{./img/caroot_fig25.png}
+				\caption{Advertencia para eliminar política.}
+				\label{caroot_fig25}
+			\end{figure}
+
+			Para añadir un nuevo campo al certificado se pulsará el botón (\includegraphics[scale=1]{./img/icono_anadir_atributo.png}). Aparecerá un menú desplegable con los tipos de campos disponibles (Fig. \ref{caroot_fig26}). Una vez seleccionado el tipo de campo que se desea añadir se accederá a una pantalla que permitirá añadir datos al nuevo campo (Fig. \ref{caroot_fig27}).
+
+			\begin{figure}[H]
+				\centering
+				\includegraphics[scale=1]{./img/caroot_fig26.png}
+				\caption{Selección de tipo de campo.}
+				\label{caroot_fig26}
+			\end{figure}
+
+			\begin{figure}[H]
+				\centering
+				\includegraphics[scale=1]{./img/caroot_fig27.png}
+				\caption{Pantalla de edición de campo.}
+				\label{caroot_fig27}
+			\end{figure}
+
+		}
+
+	}
+
+	\begin{itemize}
+		\item \textbf{Variables}
+	\end{itemize}
+
+	Mediante esta operación, se podrán crear nuevas variables, para ello debemos rellenar un formulario como el que se muestra en la siguiente figura (Fig. \ref{caroot_fig28}). Una vez completado, presionamos el botón Salvar variable y posteriormente el botón Salvar cambios.
+
+	La nueva variable aparecerá en el listado de variables que podemos apreciar en (Fig. \ref{caroot_fig19}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig28.png}
+		\caption{Pantalla para configurar nuevas variables.}
+		\label{caroot_fig28}
+	\end{figure}
+
+	También podemos editar variables, para ello presionamos el botón (\includegraphics[scale=1]{./img/icono_editar.png}), y nos aparece la siguiente pantalla, en la que además del formulario, nos muestra las políticas en las cuales se usa dicha variable. Una vez editado, se presiona el botón Salvar variable y nos muestra una pantalla con las políticas en las que se utiliza dicha variable en caso de que se use en alguna. En caso de que se use en algunas políticas, tenemos que seleccionarlas para que se actualice con la variable modificada. (Fig. \ref{caroot_fig29}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig29.png}
+		\caption{Pantalla para editar las variables.}
+		\label{caroot_fig29}
+	\end{figure}
+
+	Además, podemos eliminar variables, para ello tenemos que presionar el botón \includegraphics[scale=1]{./img/icono_eliminar.png} y aceptar la advertencia mostrada (Fig. \ref{caroot_fig30}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=1]{./img/caroot_fig30.png}
+		\caption{Pantalla de advertencia para eliminar variables.}
+		\label{caroot_fig30}
+	\end{figure}
+
+	\ifthenelse{\equal{\jobname}{\detokenize{ca_root}} \OR \equal{\jobname}{\detokenize{ca_sub}}}{
+		\subparagraph{Configuración de CRL}
+
+		En esta sección, el administrador de seguridad puede configurar una CRL, para ello debemos seleccionar el algoritmo de hash, así como completar el formulario y posteriormente presionamos sobre el botón configurar	(Fig. \ref{caroot_fig31}).
+
+		También podemos configurar la CRL para que se genere de manera periódica, tenemos que poner cada cuánto tiempo (número de horas) queremos que se generen, para ello, incluimos el número en el último recuadro (Fig. \ref{caroot_fig31}) y presionamos el botón Configurar.
+
+		Cuando hay más de una autoridad raíz definida se muestra un select en el que podemos seleccinar para cual de las autoridades se realiza la configuración de la CRL actual.
+		
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=.5]{./img/caroot_fig31.png}
+			\caption{Pantalla de configuración de CRL.}
+			\label{caroot_fig31}
+		\end{figure}
+	}{}
+
+	

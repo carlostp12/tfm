@@ -1,0 +1,222 @@
+%document identification for conditional
+\providecommand\jobname{ca_root}
+
+\newcommand{\carootadministracion}[0]{
+	\section{Administración}
+	Antes de poner en marcha el sistema es necesario inicializar el servicio, para ello habría que crear los certificados internos, también hay que editar las políticas ya que vienen configuradas unas políticas por defecto.
+	Finalizada la instalación el sistema está preparado para dar el servicio de generación de certificados correspondiente, administrando los servicios de CA Raíz a través de la interfaz de administración Web entre otras funcionalidades que se detallarán más adelante.
+
+	\subsection{Asistente de instalación}
+
+	\input{asistente_instalacion.tex}
+
+	\subsection{Administración web}
+
+	\input{administracion_web_01.tex}
+
+	Así podremos acceder con diferentes permisos según los certificados que tengamos instalados. Los roles disponibles que encapsulan las operaciones habilitadas son:
+	\begin{itemize}
+		\item Auditor: Autorizado para ver los datos generados por la CA Raíz (certificados emitidos, CRLs emitidos, operadores) y las trazas de las operaciones realizadas (logs).
+		\item Operador de certificados: Responsable de emisión, revocación o suspensión de certificados de entidad final en la CA Raíz.
+		\item Administrador de Sistema: Están autorizados para instalar, mantener y configurar el Software de los equipos de la CA Raíz siempre y cuando no afecte a la seguridad del mismo.
+		\item Administrador de Seguridad: Tiene la responsabilidad general para la administración del Software de los equipos de la CA Raíz siempre que afecten a la seguridad.
+		\item Operador de sistema: Tiene la responsabilidad de monitorizar los equipos de la CA Raíz y realizar operaciones de mantenimientos.
+	\end{itemize}
+
+	Entre las operaciones principales que podemos encontrar en la interfaz de administración se enumeran las siguientes, que se detallarán más adelante en el punto que corresponda:
+	\begin{enumerate}
+		\item Emisión y descarga de certificados de CA Subordinada.
+		\item Revocación, suspensión y rehabilitación de los certificados de CA Subordinada.
+		\item Emisión y descarga de ARL.
+	\end{enumerate}
+
+	Una vez seleccionado el rol con el que queremos acceder, el sistema nos muestra una ventana con la información referente a la última conexión, la integridad de la base de datos y la información de fecha y hora de actualización (Fig. \ref{caroot_fig17}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig17.png}
+		\caption{Pantalla de información de la última conexión.}
+		\label{caroot_fig17}
+	\end{figure}
+
+	\subsubsection{Administración web para el rol Administrador de Seguridad}
+
+	Mediante el rol administrador de seguridad, se pueden configurar los parámetros que condicionan el funcionamiento de los elementos software específicos de la CA Raíz, generación e instalación de los certificados de miniCA, de servidor web, de operadores y de firma de certificados y CRL de la CA Raíz, configuración de las políticas de certificación, de los atributos de políticas de certificación y de las autopolíticas de certificación.
+
+	La pantalla de administración web para el rol administrador de seguridad (Security Admin) es la que se muestra en la siguiente figura (Fig. \ref{caroot_fig18}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig18.png}
+		\caption{Pantalla de inicio de administración web para el rol administrador de seguridad.}
+		\label{caroot_fig18}
+	\end{figure}
+
+	\paragraph{Administración}
+
+	Este menú proporciona distintas opciones relacionadas con la configuración de seguridad del componente CA Root.  Las operaciones permitidas en el menú administración son:
+	\begin{itemize}
+		\item Políticas de certificación.
+		\item Configuración de CRL.
+		\item Certificado CA Raíz.
+		\item Acceso S.O.
+		\item Copia de seguridad de claves.
+		\item Restauración.
+	\end{itemize}
+
+	Estas operaciones serán detalladas a continuación.
+
+	\subparagraph{Políticas de certificación}
+
+	La opción \textit{Políticas de certificación} permite crear y editar las políticas y las autopolíticas correspondientes a la CA Root, así como las variables necesarias para las mismas. Al seleccionar la opción, se accederá a una pantalla que mostrará el listado de las políticas y políticas internas registradas en el sistema y un listado de las variables disponibles para utilizar en las políticas (Fig. \ref{caroot_fig19}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig19.png}
+		\caption{Pantalla de políticas de certificación.}
+		\label{caroot_fig19}
+	\end{figure}
+
+	\input{politicas_variables_crl_01.tex}
+
+	\subparagraph{Certificado CA Raíz}
+
+	Dentro de esta entrada del menú aparecerán las operaciones relativas a la configuración del certificado de la CA Root. En ella podrá modificar la autopolítica Authority Policy, así como generar el certificado de CA Raíz, el cual será utilizado para generar CRLs y firmar certificados de CA Subordinada.
+
+	\begin{itemize}
+		\item \textbf{Autopolítica de certificación}
+	\end{itemize}
+
+	El administrador de seguridad, podrá añadir, editar y eliminar los campos y extensiones de los certificados CA Raíz, así como editar las propiedades de la política, salvo los campos nombre y descripción los cuales no son editables, para ello  debe completar los campos del cuestionario, una vez cumplimentado, presionamos sobre Enviar propiedades y posteriormente Salvar cambios (Fig. \ref{caroot_fig32}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig32.png}
+		\caption{Pantalla de autopolíticas de certificación para certificados CA Raíz.}
+		\label{caroot_fig32}
+	\end{figure}
+
+	Si presionamos el botón de añadir campos y extensiones de los certificados CA Raíz (\includegraphics[scale=1]{./img/icono_anadir_atributo.png}), el sistema nos muestra los distintos campos y extensiones que podemos añadir (Fig. \ref{caroot_fig33}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=1]{./img/caroot_fig33.png}
+		\caption{Listado de campos y extensiones que podemos añadir al certificado.}
+		\label{caroot_fig33}
+	\end{figure}
+
+	Si presionamos el botón de editar campos y extensiones de los certificados CA Raíz (\includegraphics[scale=1]{./img/icono_editar.png}), el sistema nos muestra los campos del certificado seleccionado, pudiendo añadir, editar y eliminar propiedades del mismo modo, una vez que lo editemos presionamos sobre Salvar cambios (Fig. \ref{caroot_fig34}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig34.png}
+		\caption{Listado de propiedades de perfil.}
+		\label{caroot_fig34}
+	\end{figure}
+
+	Si presionamos el botón de eliminar campos y extensiones de los certificados CA Raíz (\includegraphics[scale=1]{./img/icono_eliminar.png}), el sistema nos muestra una advertencia, la cual debemos aceptar para que sea eliminado y posteriormente presionar Salvar cambios (Fig. \ref{caroot_fig35}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=1]{./img/caroot_fig35.png}
+		\caption{Advertencia para eliminar campos y extensiones.}
+		\label{caroot_fig35}
+	\end{figure}
+
+	Si presionamos el botón Importar desde archivo XML, el sistema nos muestra una nueva ventana, a través de la cual podemos importar la política mediante un fichero XML, una vez importado presionamos sobre Enviar archivo y posteriormente en Salvar cambios (Fig. \ref{caroot_fig36}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig36.png}
+		\caption{Pantalla para importar política mediante fichero XML.}
+		\label{caroot_fig36}
+	\end{figure}
+
+	\begin{itemize}
+		\item \textbf{Generación de certificado}
+	\end{itemize}
+
+	En esta sección, podemos  generar certificados de CA Raíz, para ello, es necesario presionar el botón Crear (Fig. \ref{caroot_fig37}), posteriormente el sistema nos muestra una pantalla con la información previa del certificado y presionamos sobre el botón Generar (Fig. \ref{caroot_fig38}), el sistema muestra una pantalla en la cual podemos ver y descargar el certificado (Fig. \ref{caroot_fig39}), finalmente presionamos el botón continuar y volvemos a Inicio.
+
+	Será necesario haber realizado dicha generación para poder emitir certificados, generar CRL`s, etc.
+	
+		\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig37.png}
+		\caption{Pantalla para generar certificado raíz.}
+		\label{caroot_fig37}
+	\end{figure}
+
+	cuando hay varias autoridades definidas, se mostrará un desplegable donde se debe seleccionar para cual autoridad queremos generar el certificado raíz.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig37_5.png}
+		\caption{Pantalla para generar certificado raíz para MultiCA}
+		\label{caroot_fig37_5}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig38.png}
+		\caption{Pantalla con la información previa del certificado.}
+		\label{caroot_fig38}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig39.png}
+		\caption{Pantalla con el certificado creado, podemos verlo y descargarlo.}
+		\label{caroot_fig39}
+	\end{figure}
+
+	\input{backup_certificados_operadores_01.tex}
+
+	\input{admin_config_01.tex}
+
+	\subparagraph{Mantenimiento base de datos}\label{mantenimiento_bbdd}
+
+	Mediante esta operación, podemos consultar el nivel de fragmentación de la base de datos, así como realizar una compactación ligera (la cual no bloquea la base de datos) y una compactación completa (la cual bloquea la base de datos) (Fig. \ref{caroot_fig79}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig79.png}
+		\caption{Pantalla para fragmentar la base de datos.}
+		\label{caroot_fig79}
+	\end{figure}
+
+	\subsubsection{Administración web para el rol Operador de Certificado}
+
+	Mediante el rol operador de certificado, se pueden emitir certificados de CA Subordinada, incluyendo su descarga en un fichero en formato PEM; revocación, suspensión y rehabilitación de los certificados de CA Subordinada y consulta de los certificados emitidos, incluyendo su descarga en un fichero en formato PEM.
+
+	La pantalla de administración web para el rol operador de certificado es (Fig. \ref{caroot_fig80}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig80.png}
+		\caption{Pantalla de inicio de administración web para el rol operador.}
+		\label{caroot_fig80}
+	\end{figure}
+
+	\paragraph{Operaciones}
+
+	\input{emision_certificados_01.tex}
+
+	\input{revocacion_certificados_01.tex}
+
+	\input{suspension_certificados_01.tex}
+
+	\input{rehabilitacion_certificados_01.tex}
+
+	\input{consultaCert_01.tex}
+
+	\input{auditor_01.tex}
+
+	\input{operador_sistemas_01.tex}
+}
+
+\newcommand{\carootfaq}[0]{
+	\input{preguntas_frecuentes_01.tex}
+}
+
+\input{pki.tex}

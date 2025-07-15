@@ -1,0 +1,219 @@
+%document identification for conditional
+\providecommand\jobname{ws}
+
+\newcommand{\wsadministracion}[0] {
+
+	\section{Introducción}
+	
+	Con el fin de integrar la operación de certificados con sistemas externos, se proporciona en la autoridad de registro (en adelante RA) un web Services seguro (en adelante WSS). El WSDL debe ser accesible en la siguiente URL
+		
+	https://[IP\_SERVER]/CryptosecOpenKey/wservices/WService?wsdl 
+	
+	Este WSS proporciona una serie de médos que harán posible la operación de certificados del mismo modo que un operador de certificados lo hace mediante la interfaz WEB. Únicamente no son compatibles con el WSS las políticas con aprobación web.
+			
+	\section{Configuración}
+	
+	El WSS de la RA es accesible mediante protocolo HTTP con autenticación de cliente. Por este motivo, se deben configurar los siguientes certificados para operar el WSS:
+	
+	\begin{itemize}
+		\item Certificado CA de confianza: Para la consión segura SSL.
+		\item Ooperador de certificado: para la autenticación de cliente incluyendo la clave privada correspondiente a certificado de operación de la RA.
+	\end{itemize}
+	
+	Dependiendo de la tecnología usada en el lado cliente del WSS el modo en que se realiza esta configuración puede variar, en el caso de java, un modo de tratar el primer punto es añadir el certificado de CA al almacén de certificados de la JVM, por ejemplo con el comando keytool, como se muestra en (Fig. \ref{ws0}).
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.80]{./img/ws_image0.png}
+		\caption{Añadir un certificado de CA al almacén de certificados de la JVM.}
+		\label{ws0}
+	\end{figure}
+
+	El segundo punto se puede lograr añadiendo la clave privada del operador como en la fig. \ref{ws1}.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.90]{./img/ws_image1.png}
+		\caption{Añadiendo un certificado de operador a la JVM para configurar la autenticación de cliente.}
+		\label{ws1}
+	\end{figure}
+	
+	El operador usado para la autenticación debe haber sido configurado por el adminsitrador de seguridad del mismo modo que cualquier operador de certificados de la RA: añadiendo roles dinámicos, tipos de usuarios, etc. De hecho, cualquier operador de certificados de la RA puede ser usado para autenticase con el WSS.
+	
+	
+	\section{Métodos remotos}
+	
+	Los métodos que constituyen el WSS son
+	
+	\begin{itemize}
+		\item \textbf{authorityList}: obtiene una lista de autoridades disponibles.
+		\item \textbf{policyList}: obtiene una lista de políticas disponibles.
+		\item \textbf{policy}: obtiene una lista detallada de las variables de una política seleccionada.
+		\item \textbf{genCert}: generación de certificados.
+		\item \textbf{statusCert}: obtiene un código de estado del certificado seleccionado.
+		\item \textbf{revokeCert}: ejecuta una operación de revocación del certificado seleccionado.
+		\item \textbf{suspendCert}: ejecuta una operación de suspensión del certificado seleccionado.
+		\item \textbf{unsuspendCert}: ejecuta una operación de reabilitación de un certificado previamente suspendido.
+		\item \textbf{signature}: calcula la firma de un hash (RSA).
+		
+	\end{itemize}
+
+	Vamos a ver, en el resto de este documento cada uno de estos métodos en detalle.
+
+	\subsection{authorityList}
+	
+	Este método no tiene ningún parámetro, puede usarse para obtener un array de string que representan las autoridades disponibles en la firma de un certificado.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.75]{./img/ws_image2.png}
+		\caption{Ejemplo de petición authorityList}
+		\label{ws2}
+	\end{figure}
+	 
+	El valor retornado es un array de string con la representación de cada autoridad: id, índice, certificado y otras propiedades del objeto authoridad.
+	 
+	\subsection{policyList}
+	
+	Este método no tiene parámetros, se usa para obtener un array de string representando los perfiles de certificado disponibles para el operador.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.75]{./img/ws_image3.png}
+		\caption{Ejemplo de petición policytyList}
+		\label{ws3}
+	\end{figure}
+	
+	El valor retornado consiste en un array de nombre para cada política disponible.
+	
+	\subsection{policy}
+	
+	Obtiene una lista detallada de las variables de una política seleccionada. El único parámetro que admite este método es un string con el nombre de la política consultada.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.75]{./img/ws_image4.png}
+		\caption{Ejemplo de petición policy}
+		\label{ws4}
+	\end{figure}
+	
+	El valor retornado consiste en un array de string, cada uno representando un parámetro de la política.
+	
+	\subsection{genCert}
+	
+	Este método se usa para la generación de certificados. Los parámetros que admite son:
+	
+	\begin{itemize}
+		\item \textbf{pkcs10}: string codificado en Base64 con CSR en PKCS10 .Puede ser null si la política de generación de clave no es PKCS10.
+		\item \textbf{policyName}: string con el nombre de la política seleccionada.
+		\item \textbf{params}: string representandp la lista de parámetros, codificados en la siguiente manera
+		
+			key1=value1||key2=value2||key3=value3||...
+		
+		\item \textbf{authorityIndex}: String con el nombre de la CA firmante.  
+	\end{itemize}
+	
+	Hay tres parámetros con nombres predefinidos que pueden usarse dependiendo de la request:
+	
+	\begin{itemize}
+		\item \textbf{USER\_TYPE}: El tipo de usuario definido en la RA.
+		\item \textbf{USER\_EMAIL}: El email del usuario para recibir notificaciones.
+		\item \textbf{PKCS12}: El password del pkcs12 cunado la política tiene configurado PKCS12 como método de generación de clave. 
+	\end{itemize}
+
+	El valor retornado por este método es un string en todos los casos, puede variar dependiendo de si el método de generación de clave es PKCS10 o PKCS12 como se muestra, respectivamente en Fig. \ref{ws5} y Fig. \ref{ws6}.
+
+	en el caso de un PKCS10, el valor de retorno es como hemos dicho un string conteniendo el certificado codificado como DER.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.6]{./img/ws_image5.png}
+		\caption{genCert petición PKCS10}
+		\label{ws5}
+	\end{figure}
+		
+	en el caso de un PKCS12, el valor retornado es un string conteniendo la representación binaria del array de bytes que constituye el archivo PKCS12.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.75]{./img/ws_image6.png}
+		\caption{genCert petición PKCS12}
+		\label{ws6}
+	\end{figure}
+	
+	\subsection{statusCert}
+	
+	Obtiene  un código de estado del estado de un certificado. El único parámetro es el serial number del certificado a consultar, en Base 16.
+	
+	El valor retornado es un string cuyos posibles valores son: 
+	
+		1: Estado emitido.
+		
+		2: Estado revocado.
+		
+		3: Estado suspendido.
+		
+		Error: certificado no encontrado.
+		
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.75]{./img/ws_image7.png}
+		\caption{Ejemplo de petición statusCert}
+		\label{ws7}
+	\end{figure}
+		
+	\subsection{revokeCert}
+	
+	Ejecuta una operación de revocación de un certificado seleccionado. La lista de parámetros consiste en dos strings:
+	
+	\begin{itemize}
+		\item \textbf{serialNumber}: Número de serie del certificado.
+		\item \textbf{revokeReason}: String con el motivo de revocación.
+	\end{itemize}
+	
+	Solo un valor de retorno "OK" nor dirá que la operación se ha realizado correctemente.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.75]{./img/ws_image8.png}
+		\caption{Ejemplo de petición revokeCert }
+		\label{ws8}
+	\end{figure}
+	
+	\subsection{suspendCert, unsuspendCert}
+	
+	
+	La operación suspendCert cambia el estado de un certificado de 1 (issued) a 3 (suspended). recíprocamente, la operación unsuspendCert operation cambia el estdo de un certificado previamente suspendido de 3 (suspended) a 1 (issued).
+	Both operations has only one parameter: the serialNumber as base16 encoded string.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.75]{./img/ws_image9.png}
+		\caption{suspendCert, unsuspendCert ejemplos}
+		\label{ws9}
+	\end{figure}
+	
+	De nuevo, solo un valor de retorno "OK" nor dirá que la operación se ha realizado correctemente
+	
+	\subsection{signature}
+	
+	Este médodo puede ser usado para calcular una firma RSA de un hash mediante el certificado de CA.
+	
+	Los parámtros son dos strings:
+
+	\begin{itemize}
+		\item \textbf{dataToSign}: hash de los datos a firmar, codificados en base16.
+		\item \textbf{authorityIndex}: Un string con el índice index de la autoridad seleccionada.
+	\end{itemize}
+	
+	El valor de retorno esperado es un string codificado en base 16.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.75]{./img/ws_image10.png}
+		\caption{Ejemplo de una petición de firma.}
+		\label{ws10}
+	\end{figure}
+}
+
+\input{pki.tex}

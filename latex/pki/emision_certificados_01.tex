@@ -1,0 +1,182 @@
+	\subparagraph{Certificados - Emisión}\label{emision_certificados}
+	\ifthenelse{\equal{\jobname}{\detokenize{ra}}}{
+		El operador de certificados, en esta sección, puede emitir un certificado, para ello debe seleccionar el tipo de usuario para el que se realizará la emisión del certificado (Fig. \ref{ra_38}).
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=.5]{./img/ra_38_1.png}
+			\caption{Pantalla de selección del tipo de usuario.}
+			\label{ra_38}
+		\end{figure}
+
+		Una vez completado el formulario, nos muestra en la nueva ventana las políticas que tenemos disponibles para el usuario en cuestión (Fig. \ref{ra_39}). Estas políticas deben estar configuradas en los tipos de usuarios.
+
+		En caso de no tener configurada ninguna política, no podrá emitir certificados.
+
+		Seleccionará la política con la cual quiera emitir un certificado; si ya hubiese un certificado para dicha política, se revocará automáticamente quedando disponible únicamente el último emitido.
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=.5]{./img/ra_39.png}
+			\caption{Pantalla con las políticas disponibles para el usuario.}
+			\label{ra_39}
+		\end{figure}
+
+		Cuando seleccionamos la política se nos muestra un formulario, el cual debe ser cumplimentado con los valores deseados, dichos campos se corresponden con las variables configuradas en la política. Además de dichos campos se muestra siempre otro campo en el cual debemos incluir las direcciones de email en las que se quieren recibir las notificaciones (Fig. \ref{ra_40}). Si hay más de un email, se escriben todas separándolas con coma.
+
+		En caso de que en la política no se haga uso de ninguna variable, en dicho paso únicamente aparecerá el campo de las direcciones de recepción de notificaciones (Fig. \ref{ra_41}). Una vez completado el mismo, presionamos el botón `Crear'.
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=.5]{./img/ra_40.png}
+			\caption{Formulario con los parámetros requeridos para emitir un certificado.}
+			\label{ra_40}
+		\end{figure}
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=.5]{./img/ra_41.png}
+			\caption{Formulario con los parámetros requeridos para emitir un certificado.}
+			\label{ra_41}
+		\end{figure}
+
+		En el siguiente paso basta con presionar el botón Continuar (Fig. \ref{ra_42}) para comenzar con la generación del certificado.
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=.5]{./img/ra_42.png}
+			\caption{Pantalla para generar un certificado.}
+			\label{ra_42}
+		\end{figure}
+
+		Si en la política tenemos configurado el método de generación de claves como Browser, posteriormente, indistintamente del caso en el que nos encontremos, debemos seleccionar el proveedor de criptografía y presionar el botón Generar (Fig. \ref{ra_44}), en el listado de proveedores aparecen los que se han configurado previamente con el rol Administrador de Seguridad, mediante el procedimiento correspondiente.
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=.5]{./img/ra_44.png}
+			\caption{Pantalla para seleccionar un proveedor de criptografía.}
+			\label{ra_44}
+		\end{figure}
+
+		Realizado el paso anterior, nos muestra la información previa del certificado, también podemos descargárnoslo en formato PEM o bin, instalarlo y visualizarlo(Fig. \ref{ra_45}). Si presionamos continuar, el certificado queda generado apareciendo por tanto en el listado de certificados. Si por el contrario presionamos Generar Contrato, nos genera el contrato que hemos configurado para dicha política (Figura \ref{ra_46}).
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=.5]{./img/ra_45.png}
+			\caption{Pantalla con la información del certificado.}
+			\label{ra_45}
+		\end{figure}
+		Si tenemos varias autoridades disponibles se nos mostrará un listado para seleccionar con cual autoridad firmamos el certificado.
+		En caso de que en la política el método de generación de claves configurado sea PKCS \#12, una vez presionado el botón `Continuar' en Generación de Certificados (Fig. \ref{ra_42}), debemos cumplimentar el siguiente formulario, en el que se nos solicita una contraseña y la confirmación de la misma para el PKCS \#12 (Fig. \ref{ra_46}). Una vez cumplimentado, debemos presionar el botón `Continuar' y a continuación nos muestra la información correspondiente al certificado y la descarga del mismo (Fig. \ref{ra_47}).
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=.5]{./img/ra_46.png}
+			\caption{Pantalla de contraseña para el PKCS \#12.}
+			\label{ra_46}
+		\end{figure}
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=.5]{./img/ra_47.png}
+			\caption{Pantalla de visualización y descarga del certificado.}
+			\label{ra_47}
+		\end{figure}
+
+		En caso de que el método de generación de claves sea PKCS \#10, una vez presionado el botón `Continuar' en Generación de Certificados (Fig. \ref{ra_42}), debemos importar la petición con la que queremos emitir el certificado o copiar el cuerpo de la misma en el espacio correspondiente, debiendo tener ésta, la misma longitud de clave que la configurada en la política. Una vez completado dicho paso, debemos presionar el botón `Continuar' (Fig. \ref{ra_48}) y nos muestra una pantalla en la que podemos visualizar el certificado, así como descargárnoslo (Fig. \ref{ra_49})
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=.5]{./img/ra_48.png}
+			\caption{Pantalla para importar PKCS \#10.}
+			\label{ra_48}
+		\end{figure}
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=.5]{./img/ra_49.png}
+			\caption{Pantalla de visualización y descarga de certificado.}
+			\label{ra_49}
+		\end{figure}
+
+
+	}{
+		\ifthenelse{\equal{\jobname}{\detokenize{ca_root}}}{
+			Para poder llevar a cabo esta operación, es necesario que con el rol administrador de seguridad, se haya creado una política de CA Raíz, cuyo nombre debe ser CA root.
+		}{}
+		\ifthenelse{\equal{\jobname}{\detokenize{ca_sub}}}{
+			Para poder llevar a cabo esta operación, es necesario que con el rol administrador de seguridad, se haya creado una política de RA, cuyo nombre debe ser RA Initial MiniCA.
+		}{}
+		El operador de certificados, en esta sección, puede emitir un certificado, para ello debe importar una petición (Fig. \ref{caroot_fig81}), bien sea directamente el archivo de petición, debiendo para ello presionar el botón \textit{Examinar} y seleccionando el fichero deseado, o por el contrario en el cuadro de texto Petición de Certificado, se copia el contenido del fichero de petición, en ambos casos debemos presionar posteriormente el botón \textit{Crear}.
+
+		\ifthenelse{\equal{\jobname}{\detokenize{ca_root}}}{
+			\begin{figure}[H]
+				\centering
+				\includegraphics[scale=.5]{./img/caroot_fig81.png}
+				\caption{Pantalla para importar una request para poder emitir un certificado.}
+				\label{caroot_fig81}
+			\end{figure}
+		}{}
+		\ifthenelse{\equal{\jobname}{\detokenize{ca_sub}}}{
+			\begin{figure}[H]
+				\centering
+				\includegraphics[scale=.5]{./img/casub_8.png}
+				\caption{Pantalla para importar una request para poder emitir un certificado.}
+				\label{caroot_fig81}
+			\end{figure}
+		}{}
+
+		Una vez realizado el proceso anterior, en caso de que la política tenga parámetros, el sistema nos muestra un formulario con las variables configuradas (Fig. \ref{caroot_fig82}), el cual debemos cumplimentar para poder emitir un certificado (Fig. \ref{caroot_fig83}), una vez completado el mismo, debemos presionar sobre el botón \textit{Generar}.
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=.5]{./img/caroot_fig82.png}
+			\caption{Pantalla para cumplimentar los datos para emitir un certificado.}
+			\label{caroot_fig82}
+		\end{figure}
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=.5]{./img/caroot_fig83.png}
+			\caption{Pantalla con los datos cumplimentados para emitir un certificado.}
+			\label{caroot_fig83}
+		\end{figure}
+
+		Cuando hemos efectuado el paso anterior, bien sea con variables, o en caso contrario una vez importada la petición, el sistema nos muestra la pantalla con la información del certificado (Fig. \ref{caroot_fig84}), debiendo finalizar el proceso presionando el botón \textit{Generar}.
+
+		\ifthenelse{\equal{\jobname}{\detokenize{ca_root}}}{
+			\begin{figure}[H]
+				\centering
+				\includegraphics[scale=.5]{./img/caroot_fig84.png}
+				\caption{Pantalla con la información del certificado de emisión.}
+				\label{caroot_fig84}
+			\end{figure}
+		}{}
+		\ifthenelse{\equal{\jobname}{\detokenize{ca_sub}}}{
+			\begin{figure}[H]
+				\centering
+				\includegraphics[scale=.5]{./img/casub_9.png}
+				\caption{Pantalla con la información del certificado de emisión.}
+				\label{caroot_fig84}
+			\end{figure}
+		}{}
+
+		El sistema nos muestra la página de descarga del certificado (Fig. \ref{caroot_fig85}).
+
+		\ifthenelse{\equal{\jobname}{\detokenize{ca_root}}}{
+			\begin{figure}[H]
+				\centering
+				\includegraphics[scale=.5]{./img/caroot_fig85.png}
+				\caption{Pantalla de descarga del certificado.}
+				\label{caroot_fig85}
+			\end{figure}
+		}{}
+		\ifthenelse{\equal{\jobname}{\detokenize{ca_sub}}}{
+			\begin{figure}[H]
+				\centering
+				\includegraphics[scale=.5]{./img/casub_10.png}
+				\caption{Pantalla de descarga del certificado.}
+				\label{caroot_fig85}
+			\end{figure}
+		}{}
+	}

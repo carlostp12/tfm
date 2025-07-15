@@ -1,0 +1,37 @@
+	\section{Preguntas frecuentes}
+
+	\begin{enumerate}
+		\item \textbf{Si no nos permite ver el listado de certificados con los que podemos acceder a la interfaz y por lo cual tampoco acceder a ella:}
+
+		Si intenta acceder con Internet Explorer, compruebe que la URL se encuentra en sitios de confianza del navegador.
+		\item \textbf{La configuración de la seguridad de Java, depende de la versión del mismo.}
+		\ifthenelse{\equal{\jobname}{\detokenize{ra}}}
+		{
+			\item \textbf{Si se actualizan los certificados de miniCA o de servidor web, en la CA, hay que volver a configurarlo en la RA (Ver \ref{ra_config_ca}) para poder establecer la conexión con la CA.}
+
+			\item \textbf{Si al emitir certificados o sincronizar políticas da error de no haberse podido establecer conexión con la CA:}
+
+			Comprobar que está configurado el certificado de CA Raíz y que está configurada la CA, para llevar a cabo dichas funciones, debemos ver las secciones \ref{ra_importar_ca_cert} y \ref{ra_config_ca} respectivamente.
+		}{}
+		
+		\item \textbf{Si intentamos acceder desde Google Chrome y el CN del certificado no coincide con IP\_servidor, el navegador mostrará como que el certificado no es seguro, por lo que tendremos que presionar `acceder de todas formas'.}
+		
+		
+		\item \textbf{Al intentar generar o restaurar un backup de datos aparece un error 504, o Timeout:}
+
+		Puede ocurrir que al intentar generar un backup de datos, dependiendo del tamaño de la base de datos, la petición tarde tanto en ejecutarse que aparezca un error debido a la configuración servidor, de la red o del navegador cliente. Aunque aparezca este error, el servicio de backup seguirá ejecutándose hasta terminar de generar los archivos correspondientes. Esto no es ningún problema simplemente volvemos a acceder y pasado un tiempo suficiente para que finalice el proceso (tiempo a determinar dependiendo del tamaño de los datos) tendremos los archivos disponibles para descargar.
+
+		En el caso de la restauración, la solución del problema es similar, con la particularidad de que puede ocurrir también en la subida de los archivos de datos, simplemente, volvemos a acceder para comprobar ha terminado el proceso de subida de archivos o en su caso, del proceso de ejecución de la restauración del backup.
+		\ifthenelse{\equal{\jobname}{\detokenize{tsa}}}
+		{
+			\item \textbf{El servicio TSP no funciona. Al intentar firmar un documento, aparece un mensaje de error o la URL del TSP está inaccesible, a pesar de que la aplicación está accesible:}
+
+			Compruebe con el administrador de seguridad que 
+			\begin{enumerate}
+				\item El certificado raíz de TSA ha sido generado y está firmado por la CA correspondiente (ver \ref{config_tsa_certs} en este documento).
+				\item Compruebe que el certificado raíz tiene el uso extendido de clave `timestamping'.
+				\item Revise la configuración de TSA (ver \ref{config_tsa_stamp}).
+			\end{enumerate}
+		}{}
+		
+	\end{enumerate}

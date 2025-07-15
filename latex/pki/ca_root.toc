@@ -1,0 +1,52 @@
+\babel@toc {spanish}{}
+\contentsline {section}{\numberline {1}Introducción}{5}{section.1}%
+\contentsline {section}{\numberline {2}Administración}{5}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Asistente de instalación}{5}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Administración web}{12}{subsection.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.1}Administración web para el rol Administrador de Seguridad}{15}{subsubsection.2.2.1}%
+\contentsline {paragraph}{\numberline {2.2.1.1}Administración}{16}{paragraph.2.2.1.1}%
+\contentsline {subparagraph}{\numberline {2.2.1.1.1}Políticas de certificación}{16}{subparagraph.2.2.1.1.1}%
+\contentsline {subparagraph}{\numberline {2.2.1.1.2}Configuración de CRL}{23}{subparagraph.2.2.1.1.2}%
+\contentsline {subparagraph}{\numberline {2.2.1.1.3}Certificado CA Raíz}{24}{subparagraph.2.2.1.1.3}%
+\contentsline {subparagraph}{\numberline {2.2.1.1.4}Acceso S.O.}{28}{subparagraph.2.2.1.1.4}%
+\contentsline {subparagraph}{\numberline {2.2.1.1.5}Copia de seguridad de claves}{29}{subparagraph.2.2.1.1.5}%
+\contentsline {subparagraph}{\numberline {2.2.1.1.6}Restauración}{30}{subparagraph.2.2.1.1.6}%
+\contentsline {paragraph}{\numberline {2.2.1.2}Consultas}{32}{paragraph.2.2.1.2}%
+\contentsline {subparagraph}{\numberline {2.2.1.2.1}Certificados internos}{32}{subparagraph.2.2.1.2.1}%
+\contentsline {subparagraph}{\numberline {2.2.1.2.2}Autoridades}{34}{subparagraph.2.2.1.2.2}%
+\contentsline {paragraph}{\numberline {2.2.1.3}Gestión de acceso}{35}{paragraph.2.2.1.3}%
+\contentsline {subparagraph}{\numberline {2.2.1.3.1}Roles}{35}{subparagraph.2.2.1.3.1}%
+\contentsline {subparagraph}{\numberline {2.2.1.3.2}Certificados de miniCA}{36}{subparagraph.2.2.1.3.2}%
+\contentsline {subparagraph}{\numberline {2.2.1.3.3}Certificado de Servidor Web}{41}{subparagraph.2.2.1.3.3}%
+\contentsline {subparagraph}{\numberline {2.2.1.3.4}Operadores}{43}{subparagraph.2.2.1.3.4}%
+\contentsline {subparagraph}{\numberline {2.2.1.3.5}Usuarios}{48}{subparagraph.2.2.1.3.5}%
+\contentsline {subsubsection}{\numberline {2.2.2}Administración web para el rol Administrador de Sistemas}{48}{subsubsection.2.2.2}%
+\contentsline {paragraph}{\numberline {2.2.2.1}Configuración}{50}{paragraph.2.2.2.1}%
+\contentsline {subparagraph}{\numberline {2.2.2.1.1}Actualización de Software}{50}{subparagraph.2.2.2.1.1}%
+\contentsline {subparagraph}{\numberline {2.2.2.1.2}Archivar datos}{50}{subparagraph.2.2.2.1.2}%
+\contentsline {subparagraph}{\numberline {2.2.2.1.3}Mantenimiento base de datos}{51}{subparagraph.2.2.2.1.3}%
+\contentsline {subsubsection}{\numberline {2.2.3}Administración web para el rol Operador de Certificado}{52}{subsubsection.2.2.3}%
+\contentsline {paragraph}{\numberline {2.2.3.1}Operaciones}{53}{paragraph.2.2.3.1}%
+\contentsline {subparagraph}{\numberline {2.2.3.1.1}Certificados - Emisión}{53}{subparagraph.2.2.3.1.1}%
+\contentsline {subparagraph}{\numberline {2.2.3.1.2}Certificados - Revocación}{55}{subparagraph.2.2.3.1.2}%
+\contentsline {subparagraph}{\numberline {2.2.3.1.3}Certificados - Suspensión}{58}{subparagraph.2.2.3.1.3}%
+\contentsline {subparagraph}{\numberline {2.2.3.1.4}Certificados - Rehabilitación}{61}{subparagraph.2.2.3.1.4}%
+\contentsline {paragraph}{\numberline {2.2.3.2}Consultas - Certificados}{64}{paragraph.2.2.3.2}%
+\contentsline {subsubsection}{\numberline {2.2.4}Administración web para el rol Auditor}{66}{subsubsection.2.2.4}%
+\contentsline {paragraph}{\numberline {2.2.4.1}Consultas}{67}{paragraph.2.2.4.1}%
+\contentsline {subparagraph}{\numberline {2.2.4.1.1}Certificados}{67}{subparagraph.2.2.4.1.1}%
+\contentsline {subparagraph}{\numberline {2.2.4.1.2}CRL`S}{70}{subparagraph.2.2.4.1.2}%
+\contentsline {subparagraph}{\numberline {2.2.4.1.3}Políticas de certificación}{73}{subparagraph.2.2.4.1.3}%
+\contentsline {subparagraph}{\numberline {2.2.4.1.4}Logs}{75}{subparagraph.2.2.4.1.4}%
+\contentsline {subparagraph}{\numberline {2.2.4.1.5}Certificados internos}{77}{subparagraph.2.2.4.1.5}%
+\contentsline {subparagraph}{\numberline {2.2.4.1.6}Autoridades}{79}{subparagraph.2.2.4.1.6}%
+\contentsline {subsubsection}{\numberline {2.2.5}Administración web para el rol Operador de Sistemas}{79}{subsubsection.2.2.5}%
+\contentsline {paragraph}{\numberline {2.2.5.1}Operaciones}{80}{paragraph.2.2.5.1}%
+\contentsline {subparagraph}{\numberline {2.2.5.1.1}Generación de CRL}{80}{subparagraph.2.2.5.1.1}%
+\contentsline {subparagraph}{\numberline {2.2.5.1.2}Monitorización}{81}{subparagraph.2.2.5.1.2}%
+\contentsline {subparagraph}{\numberline {2.2.5.1.3}Administración de servicios}{83}{subparagraph.2.2.5.1.3}%
+\contentsline {subparagraph}{\numberline {2.2.5.1.4}Copia de seguridad de datos}{84}{subparagraph.2.2.5.1.4}%
+\contentsline {paragraph}{\numberline {2.2.5.2}Consultas}{85}{paragraph.2.2.5.2}%
+\contentsline {subparagraph}{\numberline {2.2.5.2.1}CRL`s}{85}{subparagraph.2.2.5.2.1}%
+\contentsline {subparagraph}{\numberline {2.2.5.2.2}Logs}{86}{subparagraph.2.2.5.2.2}%
+\contentsline {section}{\numberline {3}Preguntas frecuentes}{87}{section.3}%

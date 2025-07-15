@@ -1,0 +1,272 @@
+	\subsubsection{Administración web para el rol Auditor}
+
+	\ifthenelse{\equal{\jobname}{\detokenize{ca_root}} \OR \equal{\jobname}{\detokenize{ca_sub}}}{
+		Mediante el rol auditor, se autoriza al usuario a ver los datos generados por la CA Raíz (certificados emitidos, CRLs emitidos, operadores) y las trazas de las operaciones realizadas (logs).
+	}{}
+	\ifthenelse{\equal{\jobname}{\detokenize{va}}}{
+		Un usuario con el rol Auditor podrá consultar información relacionada con la configuración de seguridad de la VA (Políticas de certificación, certificados internos) y el funcionamiento del sistema (logs). 
+	}{}
+	\ifthenelse{\equal{\jobname}{\detokenize{ra}}}{
+		Mediante el rol auditor, se autoriza al usuario a ver los datos generados por la RA (certificados emitidos, CRLs emitidos, operadores) y las trazas de las operaciones realizadas (logs). Así como la visualización de las políticas y certificados internos.
+	}{}
+	\ifthenelse{\equal{\jobname}{\detokenize{tsa}}}{
+		Mediante el rol auditor, se autoriza al usuario a ver los datos generados por la TSA (sellos de tiempo emitidos) y las trazas de las operaciones realizadas (logs). Así como la visualización de las políticas de certificación y consulta de certificados internos.
+	}{}
+
+
+	La pantalla de administración web para el rol auditor es (Fig. \ref{caroot_fig105}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig105.png}
+		\caption{Pantalla de inicio de administración web para el rol auditor.}
+		\label{caroot_fig105}
+	\end{figure}
+
+	\paragraph{Consultas}
+	\ifthenelse{\equal{\jobname}{\detokenize{tsa}}}{
+		\subparagraph{Sellos de tiempo}
+
+		En esta funcionalidad, se realiza una búsqueda de los sellos de tiempo emitidos.
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=.5]{./img/tsa-query-stamps-1.png}
+			\caption{Pantalla de consultas de sellos de tiempo.}
+			\label{tsa_4}
+		\end{figure}
+
+		Para efectuar la búsqueda filtrando por los campos posibles debemos rellenar en el formulario los campos deseados, presionando el botón Buscar para llevar a cabo la búsqueda, según se puede observar en la (Fig. \ref{tsa_5}); si presionamos el botón Limpiar búsqueda, el formulario y la consulta se restablecen, de forma que queda tal y como estaba en la (Fig. \ref{tsa_4}). En caso de querer efectuar una búsqueda completa de los sellos de tiempo, no rellenaremos ningún campo, presionaremos sobre el botón Buscar y podremos observar el listado de todos los certificados como podemos observar en la (Fig. \ref{tsa_4}). Si presionamos en la última columna sobre el icono \includegraphics[scale=1]{./img/icono_descargar_sello.png}, podemos descargar el sello de tiempo codificado en base 64.
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=.5]{./img/tsa-query-stamps-3.png}
+			\caption{Pantalla de búsqueda de sellos de tiempo filtrando por campos, en este caso  el número de serie.}
+			\label{tsa_5}
+		\end{figure}
+
+		Si se desea iniciar la generación de un informe XLS con los datos obtenidos en la consulta puede pinchar en el enlace \textit{Generar Informe}. En cambio, si se desea abrir, descargar o borrar un informe ya generado hay que pinchar en el enlace \textit{Mostrar informes} (Fig. \ref{tsa_report_xls1}).
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=.5]{./img/tsa-query-stamps-2.png}
+			\caption{Pantalla de búsqueda de sellos de tiempo mostrando informes XLS generados.}
+			\label{tsa_report_xls1}
+		\end{figure}
+
+	}{}
+	\ifthenelse{\equal{\jobname}{\detokenize{va}} \OR \equal{\jobname}{\detokenize{tsa}}}{}
+	{
+		\subparagraph{Certificados}
+
+		Mediante esta operación, se realiza una búsqueda de certificados.
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=.5]{./img/caroot_fig106.png}
+			\caption{Pantalla de consultas de certificados.}
+			\label{caroot_fig106}
+		\end{figure}
+
+		Para efectuar la búsqueda filtrando por los campos posibles completaremos los atributos a rellenar de los campos deseados, presionando el botón \textit{Buscar} para llevar a cabo la búsqueda, según se puede observar en la (Fig. \ref{caroot_fig107}); si presionamos el botón \textit{Limpiar} búsqueda, el formulario y la consulta se restablecen, de forma que queda tal y como estaba en la (Fig. \ref{caroot_fig106}).En caso de querer efectuar una búsqueda completa de los certificados, no rellenaremos ningún campo, presionaremos sobre el botón \textit{Buscar} y podremos observar el listado de todos los certificados, como podemos observar en la (Fig. \ref{caroot_fig108}). Si presionamos sobre el icono (\includegraphics[scale=1]{./img/icono_ver_cuerpo.png}) podemos ver el cuerpo del certificado (Fig. \ref{caroot_fig109}) y si presionamos sobre el ID, podemos ver y descargar el certificado (Fig. \ref{caroot_fig110}).
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=.5]{./img/caroot_fig107.png}
+			\caption{Pantalla de búsqueda de certificados filtrando por campos.}
+			\label{caroot_fig107}
+		\end{figure}
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=.5]{./img/caroot_fig108.png}
+			\caption{Pantalla de búsqueda de certificados sin filtros.}
+			\label{caroot_fig108}
+		\end{figure}
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=.5]{./img/caroot_fig109.png}
+			\caption{Pantalla con el cuerpo de certificado.}
+			\label{caroot_fig109}
+		\end{figure}
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=1]{./img/caroot_fig110.png}
+			\caption{Pantalla para ver y descargar el certificado.}
+			\label{caroot_fig110}
+		\end{figure}
+
+		\subparagraph{CRL`S}
+
+		En esta sección, se realiza una búsqueda de CRL’S, cuya pantalla principal es la que se muestra en la Fig. \ref{caroot_fig111}.
+
+		Para efectuar la búsqueda filtrando por los campos posibles completaremos los atributos a rellenar de los campos deseados, presionando el botón \textit{Buscar} para llevar a cabo la búsqueda, según se puede observar en la (Fig. \ref{caroot_fig112}).En caso de querer efectuar una búsqueda completa de las CRL’s, no rellenaremos ningún campo, presionaremos sobre el botón \textit{Buscar} y podremos observar el listado de todas las CRL’s como podemos observar en la (Fig. \ref{caroot_fig111}). Si presionamos sobre \textit{Limpiar} búsqueda muestra la pantalla que podemos observar en (Fig. \ref{caroot_fig113}). Si presionamos sobre el icono  (\includegraphics[scale=1]{./img/icono_ver_cuerpo.png}) podemos ver el cuerpo de CRL (Fig. \ref{caroot_fig114}) y si presionamos sobre el ID, podemos ver y descargar el certificado (Fig. \ref{caroot_fig115}).
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=.5]{./img/caroot_fig111.png}
+			\caption{Pantalla principal de búsqueda de CRL`s.}
+			\label{caroot_fig111}
+		\end{figure}
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=.5]{./img/caroot_fig112.png}
+			\caption{Pantalla de búsqueda de CRL`s filtrando por campos.}
+			\label{caroot_fig112}
+		\end{figure}
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=.5]{./img/caroot_fig113.png}
+			\caption{Pantalla de búsqueda de CRL`s una vez presionado el botón Limpiar búsqueda.}
+			\label{caroot_fig113}
+		\end{figure}
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=.5]{./img/caroot_fig114.png}
+			\caption{Pantalla con el cuerpo de la CRL.}
+			\label{caroot_fig114}
+		\end{figure}
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=.5]{./img/caroot_fig115.png}
+			\caption{Pantalla para abrir o guardar la CRL.}
+			\label{caroot_fig115}
+		\end{figure}
+	}
+
+	\subparagraph{Políticas de certificación}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=1]{./img/caroot_fig116.png}
+		\caption{Pantalla de políticas de certificación.}
+		\label{caroot_fig116}
+	\end{figure}
+
+	\begin{itemize}
+		\item \textbf{Políticas}
+	\end{itemize}
+
+	Mediante esta operación, se podrán consultar las distintas autopolíticas y políticas, sin poder hacer cambios en ninguna de ellas ni crear nuevas (Fig. \ref{caroot_fig117}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig117.png}
+		\caption{Pantalla para editar políticas internas.}
+		\label{caroot_fig117}
+	\end{figure}
+
+	Si presionamos sobre Validar política comprobamos si la política es válida (Fig. \ref{caroot_fig118}) o no (Fig. \ref{caroot_fig119}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig118.png}
+		\caption{Pantalla para editar políticas internas.}
+		\label{caroot_fig118}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.6]{./img/caroot_fig119.png}
+		\caption{Pantalla de política no válida.}
+		\label{caroot_fig119}
+	\end{figure}
+
+	\begin{itemize}
+		\item \textbf{Variables}
+	\end{itemize}
+
+	En este apartado, se podrán consultar las variables, para ello presionamos el botón (\includegraphics[scale=1]{./img/icono_editar.png}), y nos aparece la siguiente pantalla (Fig. \ref{caroot_fig120}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=1]{./img/caroot_fig120.png}
+		\caption{Pantalla para consultar la información de la variable.}
+		\label{caroot_fig120}
+	\end{figure}
+
+	\subparagraph{Logs}
+
+	\begin{itemize}
+		\item \textbf{Logs}
+	\end{itemize}
+
+	En este punto, se puede ver un listado con los logs de operación, también podemos hacer una búsqueda por campos y descargarnos el listado de logs de operaciones (Fig. \ref{caroot_fig121}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig121.png}
+		\caption{Pantalla de logs de operación.}
+		\label{caroot_fig121}
+	\end{figure}
+
+	\begin{itemize}
+		\item \textbf{Logs de sistema}
+	\end{itemize}
+
+	Mediante esta sección, podemos descargarnos los logs del sistema para poder ver los errores que se han presentado en el mismo, presionando para ello sobre cada uno de los logs. También podemos eliminar los logs, para ello, debemos marcar el campo seleccionar y posteriormente pulsar el botón \textit{Eliminar}. (Fig. \ref{caroot_fig122}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig122.png}
+		\caption{Pantalla de logs de operación.}
+		\label{caroot_fig122}
+	\end{figure}
+
+	\ifthenelse{\equal{\jobname}{\detokenize{va}}}
+	{
+		\subparagraph{Logs de servicio}
+
+		Esta funcionalidad nos permite consultar las operaciones realizadas por el servicio de validación de estado de revocación de los certificados (Fig. \ref{va_6}). El interfaz de acceso permite restringir la consulta por la dirección IP del solicitante, por un tipo de respuesta, por el número de serie del certificado o a un intervalo de fechas.
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=.5]{./img/va_6.png}
+			\caption{Log de servicio.}
+			\label{va_6}
+		\end{figure}
+	}{}
+
+	\subparagraph{Certificados internos}
+
+	En esta sección, se nos muestra el listado de los certificados internos disponibles (Fig. \ref{caroot_fig123}), también podemos ver y descargarnos cada uno de ellos, ponemos como ejemplo uno (Fig. \ref{caroot_fig124}); para ello el sistema nos abre una nueva ventana con la información del certificado y la posibilidad de descargarnos el mismo, debiendo para ello presionar sobre el icono (\includegraphics[scale=1]{./img/icono_descargar_cert.png}).
+
+	Además, podemos visualizar el cuerpo de cada uno de estos certificados, debiendo hacer click sobre el icono (\includegraphics[scale=1]{./img/icono_ver_cuerpo.png}) Fig. \ref{caroot_fig125}.
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig123.png}
+		\caption{Pantalla de certificados internos.}
+		\label{caroot_fig123}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=1]{./img/caroot_fig124.png}
+		\caption{Pantalla de visualización y descarga de certificado miniCA.}
+		\label{caroot_fig124}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig125.png}
+		\caption{Pantalla con la visualización del cuerpo del certificado.}
+		\label{caroot_fig125}
+	\end{figure}
+	
+	\subparagraph{Autoridades}
+	
+	Se muestra en esta sección un listado con las autoridades disponibles para la emisión de certificados como mostrado en la (Fig. \ref{caroot_fig125_5}).
+		
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig125_5.png}
+		\caption{listado de autoridades disponibles.}
+		\label{caroot_fig125_5}
+	\end{figure}

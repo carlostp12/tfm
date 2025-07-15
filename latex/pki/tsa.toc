@@ -1,0 +1,44 @@
+\babel@toc {spanish}{}
+\contentsline {section}{\numberline {1}Introducción}{4}{section.1}%
+\contentsline {section}{\numberline {2}Administración}{4}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Asistente de instalación}{4}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Administración web}{11}{subsection.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.1}Administración web para el rol Administrador de Seguridad}{13}{subsubsection.2.2.1}%
+\contentsline {paragraph}{\numberline {2.2.1.1}Administración}{14}{paragraph.2.2.1.1}%
+\contentsline {subparagraph}{\numberline {2.2.1.1.1}Políticas de certificación}{14}{subparagraph.2.2.1.1.1}%
+\contentsline {subparagraph}{\numberline {2.2.1.1.2}Configuración de TSA}{20}{subparagraph.2.2.1.1.2}%
+\contentsline {subparagraph}{\numberline {2.2.1.1.3}Certificado TSA}{22}{subparagraph.2.2.1.1.3}%
+\contentsline {subparagraph}{\numberline {2.2.1.1.4}Acceso S.O.}{23}{subparagraph.2.2.1.1.4}%
+\contentsline {subparagraph}{\numberline {2.2.1.1.5}Copia de seguridad de claves}{24}{subparagraph.2.2.1.1.5}%
+\contentsline {subparagraph}{\numberline {2.2.1.1.6}Restauración}{25}{subparagraph.2.2.1.1.6}%
+\contentsline {paragraph}{\numberline {2.2.1.2}Consultas}{27}{paragraph.2.2.1.2}%
+\contentsline {subparagraph}{\numberline {2.2.1.2.1}Certificados internos}{27}{subparagraph.2.2.1.2.1}%
+\contentsline {subparagraph}{\numberline {2.2.1.2.2}Autoridades}{29}{subparagraph.2.2.1.2.2}%
+\contentsline {paragraph}{\numberline {2.2.1.3}Gestión de acceso}{30}{paragraph.2.2.1.3}%
+\contentsline {subparagraph}{\numberline {2.2.1.3.1}Roles}{30}{subparagraph.2.2.1.3.1}%
+\contentsline {subparagraph}{\numberline {2.2.1.3.2}Certificados de miniCA}{31}{subparagraph.2.2.1.3.2}%
+\contentsline {subparagraph}{\numberline {2.2.1.3.3}Certificado de Servidor Web}{36}{subparagraph.2.2.1.3.3}%
+\contentsline {subparagraph}{\numberline {2.2.1.3.4}Operadores}{38}{subparagraph.2.2.1.3.4}%
+\contentsline {subparagraph}{\numberline {2.2.1.3.5}Usuarios}{43}{subparagraph.2.2.1.3.5}%
+\contentsline {subsubsection}{\numberline {2.2.2}Administración web para el rol Administrador de Sistemas}{43}{subsubsection.2.2.2}%
+\contentsline {paragraph}{\numberline {2.2.2.1}Configuración}{44}{paragraph.2.2.2.1}%
+\contentsline {subparagraph}{\numberline {2.2.2.1.1}Configuración de red}{44}{subparagraph.2.2.2.1.1}%
+\contentsline {subparagraph}{\numberline {2.2.2.1.2}Actualización de Software}{45}{subparagraph.2.2.2.1.2}%
+\contentsline {subparagraph}{\numberline {2.2.2.1.3}Archivar datos}{45}{subparagraph.2.2.2.1.3}%
+\contentsline {subparagraph}{\numberline {2.2.2.1.4}Mantenimiento base de datos}{46}{subparagraph.2.2.2.1.4}%
+\contentsline {subsubsection}{\numberline {2.2.3}Administración web para el rol Auditor}{47}{subsubsection.2.2.3}%
+\contentsline {paragraph}{\numberline {2.2.3.1}Consultas}{48}{paragraph.2.2.3.1}%
+\contentsline {subparagraph}{\numberline {2.2.3.1.1}Sellos de tiempo}{48}{subparagraph.2.2.3.1.1}%
+\contentsline {subparagraph}{\numberline {2.2.3.1.2}Políticas de certificación}{50}{subparagraph.2.2.3.1.2}%
+\contentsline {subparagraph}{\numberline {2.2.3.1.3}Logs}{52}{subparagraph.2.2.3.1.3}%
+\contentsline {subparagraph}{\numberline {2.2.3.1.4}Certificados internos}{54}{subparagraph.2.2.3.1.4}%
+\contentsline {subparagraph}{\numberline {2.2.3.1.5}Autoridades}{56}{subparagraph.2.2.3.1.5}%
+\contentsline {subsubsection}{\numberline {2.2.4}Administración web para el rol Operador de Sistemas}{56}{subsubsection.2.2.4}%
+\contentsline {paragraph}{\numberline {2.2.4.1}Operaciones}{57}{paragraph.2.2.4.1}%
+\contentsline {subparagraph}{\numberline {2.2.4.1.1}Monitorización}{57}{subparagraph.2.2.4.1.1}%
+\contentsline {subparagraph}{\numberline {2.2.4.1.2}Administración de servicios}{59}{subparagraph.2.2.4.1.2}%
+\contentsline {subparagraph}{\numberline {2.2.4.1.3}Copia de seguridad de datos}{60}{subparagraph.2.2.4.1.3}%
+\contentsline {paragraph}{\numberline {2.2.4.2}Consultas}{61}{paragraph.2.2.4.2}%
+\contentsline {subparagraph}{\numberline {2.2.4.2.1}Logs}{61}{subparagraph.2.2.4.2.1}%
+\contentsline {section}{\numberline {3}Servicio TSP}{62}{section.3}%
+\contentsline {section}{\numberline {4}Preguntas frecuentes}{62}{section.4}%

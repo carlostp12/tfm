@@ -1,0 +1,112 @@
+	Para acceder a la administración web se utilizará un navegador en un puesto cliente que esté conectado punto a punto al servidor. El proceso de instalación dependerá en algunos pasos en función del navegador seleccionado.
+
+	Antes de comenzar el proceso de instalación será necesario registrar en Java la URL del servidor como sitio de confianza. En Windows basta con acceder al panel de control de Java y seleccionar la pestaña Seguridad. En esta pestaña se activará el contenido de Java en el explorador y se añadirá a la lista de sitios de confianza la URL del servidor Fig. \ref{tsa_1}.
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/tsa_1.png}
+		\caption{Pestaña de seguridad del panel de control de Java en Windows 7.}
+		\label{tsa_1}
+	\end{figure}
+
+	En el caso de que se utilice el navegador Internet Explorer será necesario añadir también a los sitios de confianza del navegador la URL del servidor. Para ello se accede a la ventana de Opciones de Internet y se selecciona la pestaña Seguridad. Pulsando en el botón Sitios se podrá modificar la lista de sitios de confianza del navegador (Fig. \ref{caroot_fig2}). Además será necesario configurar un nivel de seguridad para esta zona que permita la descarga de ActiveX no firmados.
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.7]{./img/caroot_fig2.png}
+		\caption{Configuración de sitios de confianza de Internet Explorer.}
+		\label{caroot_fig2}
+	\end{figure}
+
+	Una vez configurado el equipo cliente, se introduce en el navegador la URL \url{https://IP_servidor/CryptosecOpenKey/}, dónde IP\_servidor es la dirección ip por defecto del equipo indicada por REALSEC.
+
+	Al acceder a la interfaz por primera vez, podemos apreciar la pantalla de creación de certificado de Mini CA (Fig. \ref{caroot_fig3}), además, la aplicación viene con unas autopolíticas configuradas por defecto, normalmente será necesario sustituir estas políticas, para ello se presiona el botón Editar Políticas, donde aparecerá la ventana de políticas y se deberá importar el fichero XML de las autopolíticas válidas.
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig3.png}
+		\caption{Pantalla para generar el certificado de MiniCA.}
+		\label{caroot_fig3}
+	\end{figure}
+
+	Una vez configuradas las autopolíticas, creamos el certificado de MiniCA, para ello, debemos presionar el botón Crear, y el sistema nos muestra la siguiente pantalla (Fig. \ref{caroot_fig4}), en la cual nos muestra la información previa al certificado de Mini CA.
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig4.png}
+		\caption{Pantalla de información previa del certificado de MiniCA.}
+		\label{caroot_fig4}
+	\end{figure}
+
+	Presionamos el botón Generar y el sistema nos muestra la pantalla a través de la cual podemos descargarnos y ver el certificado, el cual tenemos que instalárnoslo en el equipo, para ello se presiona sobre Bin o PEM (Fig. \ref{caroot_fig5}) y le damos a instalar certificado. Una vez que el certificado ha sido instalado, presionamos el botón continuar.
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig5.png}
+		\caption{Pantalla de descarga y visualización del certificado.}
+		\label{caroot_fig5}
+	\end{figure}
+
+	A continuación, el sistema nos muestra la pantalla de creación de certificados de operador (Fig. \ref{caroot_fig6}), para ello hacemos click sobre el botón crear. Tras esto, el sistema nos muestra la pantalla con la información previa del certificado (Fig. \ref{caroot_fig7}) y presionamos sobre el botón Generar. En caso de tener configuradas variables en la política, antes de mostrarnos la información del certificado, se nos mostraría un formulario con los campos correspondientes a las variables configuradas, el cual deberemos completar asignándole a cada una de ellas el valor deseado.
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig6.png}
+		\caption{Pantalla para crear el certificado de Operador.}
+		\label{caroot_fig6}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig7.png}
+		\caption{Información previa del certificado de Operador.}
+		\label{caroot_fig7}
+	\end{figure}
+
+	Una vez creado el certificado de operador (en caso de estar usando el navegador Firefox, el siguiente paso se omite), tenemos que seleccionar el proveedor de criptografía que mejor se adecue a nuestras necesidades (Fig. \ref{caroot_fig8}), para que nos aparezcan los proveedores de criptografía, debemos tener la ruta en sitios web de confianza, y una vez seleccionado el mismo, presionamos el botón Generar, tras esto, el sistema nos muestra una pantalla a través de la cual podemos descargarnos y ver el certificado de operador (Fig. \ref{caroot_fig9}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig8.png}
+		\caption{Pantalla para seleccionar el proveedor de criptografía (en caso de usar Firefox, esta pantalla no aparece).}
+		\label{caroot_fig8}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig9.png}
+		\caption{Pantalla para ver y descargar el certificado de operador.}
+		\label{caroot_fig9}
+	\end{figure}
+
+	Una vez creado e instalado el certificado de operador (se instala de forma automática), el sistema nos muestra la pantalla de creación de certificado de servidor web (Fig. \ref{caroot_fig10}) y presionamos el botón Crear, posteriormente el sistema nos muestra la información del certificado (Fig. \ref{caroot_fig11}), hacemos click sobre el botón Generar, en la pantalla siguiente, podemos descargarnos y ver el certificado, el cual se instala automáticamente y seleccionamos Continuar (Fig. \ref{caroot_fig12}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig10.png}
+		\caption{Pantalla para crear el certificado de Servidor web.}
+		\label{caroot_fig10}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig11.png}
+		\caption{Información previa del certificado de Servidor Web.}
+		\label{caroot_fig11}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig12.png}
+		\caption{Pantalla para ver y descargar el certificado de servidor web.}
+		\label{caroot_fig12}
+	\end{figure}
+
+	Por último, será necesario reiniciar el servidor para completar el proceso de inicialización. Eston se consigue pulsando el botón continuar en la pantalla mostrada en la Fig. \ref{caroot_fig13}.
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=1]{./img/caroot_fig13.png}
+		\caption{Pantalla de finalización del proceso de inicialización.}
+		\label{caroot_fig13}
+	\end{figure}

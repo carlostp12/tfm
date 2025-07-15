@@ -1,0 +1,591 @@
+%document identification for conditional
+\providecommand\jobname{ra}
+
+\newcommand{\raadministracion}[0] {
+	\section{Administración}
+	Antes de poner en marcha el sistema es necesario inicializar el servicio, para ello habría que crear los certificados internos, también hay que editar las políticas ya que vienen configuradas unas políticas por defecto.
+	Finalizada la instalación el sistema está preparado para dar el servicio de generación de certificados correspondiente, administrando los servicios de RA a través de la interfaz de administración Web entre otras funcionalidades que se detallarán más adelante.
+
+	\subsection{Asistente de instalación}
+
+	\input{asistente_instalacion.tex}
+
+	\subsection{Administración web}
+
+	\input{administracion_web_01.tex}
+
+	Así podremos acceder con diferentes permisos según los certificados que tengamos instalados. Los roles disponibles que encapsulan las operaciones habilitadas son:
+	\begin{itemize}
+		\item Auditor: Autorizado para ver los datos generados por la RA (certificados emitidos, CRLs emitidas, operadores) y las trazas de las operaciones realizadas (logs).
+		\item Operador de certificados: Responsable de emisión, revocación, suspensión de certificados de entidad final en la RA.
+		\item Administrador de Sistema: Están autorizados para instalar, mantener y configurar el Software de los equipos de la RA siempre y cuando no afecte a la seguridad del mismo.
+		\item Administrador de Seguridad: Tiene la responsabilidad general para la administración del Software de los equipos de la RA siempre que afecten a la seguridad.
+		\item Operador de sistema: Tiene la responsabilidad de monitorizar los equipos de la RA y realizar operaciones de mantenimientos.
+	\end{itemize}
+
+	Entre las operaciones principales que podemos encontrar en la interfaz de administración se enumeran las siguientes, que se detallarán más adelante en el punto que corresponda:
+	\begin{enumerate}
+		\item Generación, renovación y reemisión de certificados.
+		\item Generación y descarga de contratos de generación/renovación y reemisión de certificado.
+		\item Descarga de certificados y PKCS \#12.
+		\item Revocación, suspensión y rehabilitación de certificados.
+		\item Publicación de certificados.
+		\item Envío de notificaciones.
+		\item Publicación de CRL.
+		\item Cambio de contraseña del usuario en el AD.
+	\end{enumerate}
+
+	\subsubsection{Administración web para el rol Administrador de Seguridad}
+
+	Mediante el rol administrador de seguridad, se pueden configurar los parámetros que condicionan el funcionamiento de los elementos software específicos de la RA, generación e instalación de los certificados de miniCA, de servidor web, de operadores y de firma de certificados y CRL de la RA, configuración de las políticas de certificación, de los atributos de políticas de certificación y de las autopolíticas de certificación. 
+
+	La pantalla de administración web para el rol administrador de seguridad es (Fig. \ref{caroot_fig18}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig18.png}
+		\caption{Pantalla de inicio de administración web para el rol administrador de seguridad.}
+		\label{caroot_fig18}
+	\end{figure}
+
+	\paragraph{Administración}
+
+	Este menú proporciona distintas opciones relacionadas con la configuración de seguridad del componente CA Root.  Las operaciones permitidas en el menú administración son:
+	\begin{itemize}
+		\item Políticas de certificación.
+		\item Modificar motivos de revocación.
+		\item Configuración de proveedores criptográficos.
+		\item Configuración de períodos de expiración.
+		\item Sincronizar políticas.
+		\item Certificado RA.
+		\item Configuración de las notificaciones.
+		\item Notificación de expiración de certificados.
+		\item Acceso S.O.
+		\item Copia de seguridad de claves.
+		\item Restauración.
+	\end{itemize}
+
+	Estas operaciones serán detalladas a continuación.
+
+	\subparagraph{Políticas de certificación}
+
+	La opción Políticas de certificación permite sincronizar las políticas y las autopolíticas configuradas en la CA Subordinada y editar las autopolíticas, así como las variables necesarias para las mismas. Al seleccionar la opción se accederá a una pantalla que mostrará el listado de las políticas y políticas internas registradas en el sistema y un listado de las variables disponibles para utilizar en las políticas una vez que se haya presionado el botón Sincronizar políticas, para que sea posible, debe estar configurada la CA Subordinada y la RA en la CA Subordinada \{Ver manual de integración de la RA con la CA\} (Fig. \ref{caroot_fig19}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig19.png}
+		\caption{Pantalla de políticas de certificación.}
+		\label{caroot_fig19}
+	\end{figure}
+
+	\begin{itemize}
+		\item \textbf{Políticas}
+	\end{itemize}
+
+	En esta sección, el administrador de seguridad podrá crear nuevas autopolíticas y  políticas importándolas desde un fichero .XML, para ello deberá presionar el botón `Crear política desde archivo XML' (Fig. \ref{caroot_fig20}). Las nuevas políticas aparecen en el listado de Políticas Internas o Políticas que podemos apreciar en la figura anterior (Fig. \ref{caroot_fig19}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig20.png}
+		\caption{Pantalla para importar políticas internas desde XML.}
+		\label{caroot_fig20}
+	\end{figure}
+
+	También permite sincronizar las políticas de la CA Subordinada,  para ello debemos presionar el botón `Sincronizar Políticas' (Fig. \ref{caroot_fig19}) y nos muestra una pantalla en la cual hay que presionar `Sincronizar' (Fig. \ref{ra_1}), para poder realizar dicho procedimiento, tenemos que tener configurada en la RA la CA Subordinada y viceversa. Una vez sincronizadas, nos muestra el número de políticas que se han sincronizado (Fig. \ref{ra_2}) y éstas podremos verlas en el listado de políticas (Fig. \ref{caroot_fig19}).
+
+	Además, podemos ver si una política es válida o no, para ello seleccionamos editar una política \includegraphics[scale=1]{./img/icono_editar.png}, y nos muestra toda la información de la misma (Fig. \ref{ra_3}), presionando sobre validar política podemos ver si es válida o no (Fig. \ref{ra_4} y Fig. \ref{ra_5} respectivamente). También se pueden exportar las políticas como archivo XML, para ello pinchamos sobre el botón \includegraphics[scale=1]{./img/icono_anadir.png}.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/ra_1.png}
+		\caption{Pantalla para sincronizar políticas.}
+		\label{ra_1}
+	\end{figure}
+	
+	Junto con las políticas, se sincronizan las autoridades que hayan sido configuradas desde la CA, como en la (Fig. \ref{ra_2}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/ra_2.png}
+		\caption{Pantalla con las políticas sincronizadas y autoridades.}
+		\label{ra_2}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/ra_3.png}
+		\caption{Pantalla con la información de la política.}
+		\label{ra_3}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/ra_4.png}
+		\caption{Pantalla con política válida.}
+		\label{ra_4}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/ra_5.png}
+		\caption{Pantalla con política no válida.}
+		\label{ra_5}
+	\end{figure}
+
+	\begin{itemize}
+		\item \textbf{Metodos de aprobación en políticas de certificacion}
+		\label{ra_157}
+	\end{itemize}
+	
+	Vale la pena destacar un elemento en esta última pantalla que tiene que ver como se emiten los certificados: Los métodos de aprobación de una política pueden ser:
+	
+		- DIRECT: Significa que cuando un usuario solicite un certificado, éste será emitido directamente y será disponibilizado para la descarga de forma inmediata.
+	
+		- WEB: Significa que cuando un usuario solicite un certificado, éste generará una petición que quedará pendiente y en espera de la aprobación por parte del operador de certificados. Si la petición se aprueba y si la interfaz de usuarios está disponible (ver sección \ref{ra_interfaz_usuario}) , se enviará al usuario un email con el certificado disponible para la descarga siempre que sté configurada en las notificaciones (ver sección \ref{ra_20}). Si la petición se rechaza, simplemente el certificado no será emitido. Una peticion rechazada no puede ser aprobada posteriormente.
+	
+	Se puede consultar la sección de \ref{ra_159} para ver como se aprueban o rechazan solicitudes de certificados.
+	
+	\begin{itemize}
+		\item \textbf{Variables}
+	\end{itemize}
+
+	Mediante esta tarea, se podrán crear nuevas variables, para ello debemos rellenar un formulario (Fig. \ref{ra_6}). Una vez completado, presionamos el botón Salvar variable y posteriormente el botón Salvar cambios.
+
+	La nueva variable aparecerá en el listado de variables que podemos apreciar en (Fig. \ref{caroot_fig20}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig28.png}
+		\caption{Pantalla para configurar nuevas variables.}
+		\label{ra_6}
+	\end{figure}
+
+	También podemos editar variables, para ello presionamos el botón \includegraphics[scale=1]{./img/icono_editar.png}, y nos aparece la siguiente pantalla, en la que además del formulario, nos muestra las políticas en las cuales se usa dicha variable (Fig. \ref{ra_7}). Una vez editado, se presiona el botón Salvar variable y nos muestra una pantalla con las políticas en las que se utiliza dicha variable, tenemos que seleccionarlas para que se actualice con la variable modificada, esto sólo se actualiza en las políticas internas, ya que las políticas no internas, no pueden ser modificadas en la RA, sólo pueden modificarse en la CA Subordinada (Fig. \ref{ra_8}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/ra_7.png}
+		\caption{Pantalla para editar las variables.}
+		\label{ra_7}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/ra_8.png}
+		\caption{Pantalla para actualizar la política con la variable editada.}
+		\label{ra_8}
+	\end{figure}
+
+	\begin{itemize}
+		\item \textbf{Configurar contratos}
+	\end{itemize}
+
+	En esta sección, el Administrador de Seguridad puede configurar contratos, para ello, debe importar un certificado de firma de usuario, para ello, en la opción Operadores ->\ Certificados de CA externos, debemos importar el certificado raíz del Sign Server, completar los campos del formulario y seleccionar Importar (Fig. \ref{ra_9}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/ra_9.png}
+		\caption{Pantalla para configurar contratos.}
+		\label{ra_9}
+	\end{figure}
+
+	Si presionamos sobre\includegraphics[scale=1]{./img/icono_editar.png}, nos aparece la pantalla para configurar contratos de emisión/renovación o reemisión para la política configurada, tenemos una opción para cada una de las políticas que tenemos accesibles en la RA, debiendo completar para ello el formulario. (Fig. \ref{ra_10})
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.4]{./img/ra_10.png}
+		\caption{Pantalla para configurar contratos de emisión/renovación o de reemisión.}
+		\label{ra_10}
+	\end{figure}
+
+	\subparagraph{Modificar motivos de revocación}
+
+	En este apartado, el administrador de seguridad puede editar los motivos de revocación, para ello, debemos presionar el nombre del motivo de revocación (Fig. \ref{ra_11}) y nos aparece el formulario para añadir valores en cada uno de los motivos de revocación (cada una de ellas, puede tener uno o más valores) (Fig. \ref{ra_12}), si éstos no se añaden, a la hora de revocar un certificado,  no nos aparecerán motivos de  revocación y no podrá ser revocado.
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/ra_11.png}
+		\caption{Pantalla con los motivos de revocación.}
+		\label{ra_11}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/ra_12.png}
+		\caption{Pantalla para modificar motivos de revocación.}
+		\label{ra_12}
+	\end{figure}
+
+	\subparagraph{Configuración de proveedores criptográficos}
+
+	En este punto, se configuran los proveedores criptográficos, una vez que los añadimos, se nos muestra en un listado con los disponibles en la RA, si no añadimos ninguno, no podrán emitirse certificados (Fig. \ref{ra_13}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/ra_13.png}
+		\caption{Pantalla de proveedores criptográficos.}
+		\label{ra_13}
+	\end{figure}
+
+	\subparagraph{Configuración de períodos de expiración}
+
+	Se configuran mediante la cumplimentación del formulario los períodos en los que el sistema mandará un aviso en caso de expiración de certificado (Fig. \ref{ra_14}), dichos períodos nos aparecen en un listado (Fig. \ref{ra_15}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/ra_14.png}
+		\caption{Pantalla para configurar los períodos de expiración.}
+		\label{ra_14}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/ra_15.png}
+		\caption{Pantalla con el listado de los períodos de expiración.}
+		\label{ra_15}
+	\end{figure}
+
+	\subparagraph{Sincronizar políticas}
+
+	En esta sección se sincronizan las políticas que tenemos configuradas en la CA Subordinada para que sean accesibles en la RA, para ello debemos presionar el botón Sincronizar (Fig. \ref{ra_16}) y nos muestra una nueva pantalla en la que nos dice el número de políticas sincronizadas (Fig. \ref{ra_17}), dichas políticas aparecerán en el listado de políticas.
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/ra_1.png}
+		\caption{Pantalla para sincronizar políticas.}
+		\label{ra_16}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/ra_2.png}
+		\caption{Pantalla con las políticas sincronizadas.}
+		\label{ra_17}
+	\end{figure}
+
+	\subparagraph{Certificado RA}
+
+	\begin{itemize}
+		\item \textbf{Generación PKCS10}
+	\end{itemize}
+
+	El administrador de seguridad, genera un PKCS10 mediante el cual, se emitirá en la CA Subordinada, el certificado inicial de RA. Para ello, debe seleccionar la longitud de clave privada que debe coincidir con el tamaño de la clave configurado en la política y se presiona el botón Generar. Tenemos el fichero para descargar el PKCS10 (Fig. \ref{ra_18}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/casub_3.png}
+		\caption{Pantalla para generar PKCS10.}
+		\label{ra_18}
+	\end{figure}
+
+	\begin{itemize}
+		\item \textbf{Importar certificado}\label{ra_importar_ca_cert}
+	\end{itemize}
+
+	En este apartado, debemos importar el certificado de RA inicial emitido a través de la CA Subordinada, para ello presionamos sobre Examinar, buscamos el certificado y una vez adjuntado presionamos el botón Importar. (Fig. \ref{ra_19})
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/ra_16.png}
+		\caption{Pantalla para importar el certificado de RA.}
+		\label{ra_19}
+	\end{figure}
+
+	
+	\subparagraph{Configuración de las notificaciones}
+
+	Cumplimentando el formulario, el Administrador de Seguridad configura el servicio de las notificaciones que se enviarán automáticamente a las direcciones de e-mail indicadas en la generación, la renovación o la reemisión de un certificado (Fig. \ref{ra_20}). Una vez completo y presionado el botón importar, el sistema nos muestra una pantalla con un formulario en el que hay que importar un certificado de servidor SMTP (o el emisor del certificado de servidor SMTP, la CA), y poner un sujeto y un texto de correo para cada una de las casuísticas, para el texto se introducen las variables que queremos que se nos muestre en dicho e-mail (Fig. \ref{ra_22}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/ra_20.png}
+		\caption{Pantalla de configuración de las notificaciones.}
+		\label{ra_20}
+	\end{figure}
+
+	Se puede ver, en la figura anterior que se pueden configurar los protocolos y subprotocolos, así como un certificado para establecer una conexión segura con el servidor SMTP.
+	
+	Una vez que realicemos la configuración SMTP, podremos configurar las diferentes notificaciones:
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/ra_22.png}
+		\caption{Pantalla de configuración de los e-mail de notificación.}
+		\label{ra_22}
+	\end{figure}
+
+	Todas las variables que podemos configurar en las notificaciones son \textit{certPolicyName, certPolicyDesc, issuingOperator, certSerialNumber, expirationInterval, revocationReason, suspensionReason, issueDate, expirationDate, revocationDate, suspensionDate, unsuspensionDate, certOtp, emailNotification, passwordPkcs12, certSubject}.
+
+	Por ejemplo, si configuramos una notificación con el texto
+
+	\begin{center} 
+		\texttt{El certificado \textbf{\$certSubject\$} expirará el día \textbf{\$expirationDate\$}.}
+	\end{center}
+
+	Cuando se envíe la notificación quedará de la forma:
+
+	\begin{center} 
+		\texttt{El certificado \textbf{Usuario-1} expirará el día \textbf{21/03/2018 00:57}.}
+	\end{center}
+
+	Es decir, \textbf{\$certSubject\$}  se ha sustituido por el valor del campo subject del certificado y \textbf{\$expirationDate\$} por la fecha de expiración del certificado.
+
+	También se puede incluir una notificación de aprobación de certificados, informando al usuario que su certificado ha sido aprobado y que está listo para descargarlo (si está activa la interfaz de usuarios, ver sección \ref{ra_interfaz_usuario}) o bien para recogerlo en el puesto del operador de certificados de la RA correspondiente.
+
+	\subparagraph{Notificación de expiración de certificados}
+
+	En esta sección, se configura la hora en la que el sistema comprobará todos los días si hay certificados que vayan a expirar en algunos de los periodos configurados en la sección de Configuración de períodos de expiración en el momento y las 24 horas siguientes (Fig. \ref{ra_23}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/ra_23.png}
+		\caption{Pantalla para configurar la tarea de notificación.}
+		\label{ra_23}
+	\end{figure}
+
+	\input{backup_certificados_operadores_01.tex}
+
+	\subparagraph{Roles dinámicos}
+
+	\begin{itemize}
+		\item \textbf{Configurar operadores}
+	\end{itemize}
+
+	En este punto, el administrador de seguridad busca el nombre del operador debiendo presionar sobre Buscar o escribiendo parte del nombre de operador y pulsando dicho botón posteriormente(Fig. \ref{ra_24}), selecciona el operador al que quiere asignarle un rol dinámico, presiona el botón `Seleccionar usuario' (Fig. \ref{ra_25}). 
+
+	El sistema nos muestra una nueva ventana (Fig. \ref{ra_26}) con los roles disponibles y los roles de operador, deberemos seleccionar el rol disponible que queremos asignarle y presionar\includegraphics[scale=1]{./img/icono_avanzar.png}, de forma que quedará asignado al operador, si por el contrario queremos quitarle al operador un rol dinámico, debemos presionar \includegraphics[scale=1]{./img/icono_retroceder.png}.
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/ra_24.png}
+		\caption{Pantalla para buscar operadores.}
+		\label{ra_24}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/ra_25.png}
+		\caption{Pantalla con la búsqueda de operadores.}
+		\label{ra_25}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/ra_26.png}
+		\caption{Pantalla para asignar roles al operador.}
+		\label{ra_26}
+	\end{figure}
+
+	\begin{itemize}
+		\item \textbf{Roles dinámicos}
+	\end{itemize}
+
+	En esta sección, el usuario puede insertar o modificar un rol dinámico. 
+	Para el primer caso, debe escribir el nombre del rol dinámico y presionar Crear nuevo (Fig. \ref{ra_27}. A un rol dinámico se configura mediante las operaciones siguientes:
+		 
+	- Añadir/Borrar Tipos de usuario, (Fig. \ref{ra_28}) para dicho rol.
+		 
+	- Añadir/Borrar Políticas, donde podrá editar las políticas disponibles (Fig. \ref{ra_29}) para dicho rol. 
+	
+	- Añadir/Borrar CAs, donde podrá editar las Autoridades disponibles (Fig. \ref{ra_29_5}) para dicho rol. 
+		 
+   Si se presiona \includegraphics[scale=1]{./img/icono_eliminar.png}, el rol dinámico se eliminará tras aceptar la advertencia mostrada.
+
+	
+	Para añadir al rol, debemos presionar\includegraphics[scale=1]{./img/icono_avanzar.png}, si por el contrario queremos quitarle una política o tipo de usuario al rol y dejarlo como disponibles, debemos presionar \includegraphics[scale=1]{./img/icono_retroceder.png}.
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/ra_27.png}
+		\caption{Pantalla para asignar roles al operador.}
+		\label{ra_27}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/ra_28.png}
+		\caption{Pantalla para añadir/quitar tipos de usuarios.}
+		\label{ra_28}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/ra_29.png}
+		\caption{Pantalla para añadir/quitar políticas.}
+		\label{ra_29}
+	\end{figure}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/ra_29_5.png}
+		\caption{Pantalla para añadir/quitar autoridades.}
+		\label{ra_29_5}
+	\end{figure}
+
+	\begin{itemize}
+		\item \textbf{Configurar tipos de usuarios}
+	\end{itemize}
+
+	El administrador de seguridad puede crear tipos de usuarios, debiendo escribir para ello un nombre y una descripción para mismo y presionar Crear nuevo (Fig. \ref{ra_30}), también puede editar los ya existentes, si pulsa sobre Añadir/Borrar Políticas, donde le aparecerán las políticas disponibles y las que ya tiene el usuario, de modo que sólo queden disponibles para el mismo las deseadas (Fig. \ref{ra_31}). Si presionamos \includegraphics[scale=1]{./img/icono_eliminar.png}, tras aceptar la advertencia, el rol dinámico se eliminará. Para añadir o eliminar políticas al tipo de usuario deberemos presionar \includegraphics[scale=1]{./img/icono_avanzar.png} o \includegraphics[scale=1]{./img/icono_retroceder.png} respectivamente.
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/ra_30.png}
+		\caption{Pantalla para añadir/quitar políticas.}
+		\label{ra_30}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/ra_31.png}
+		\caption{Pantalla para añadir/quitar políticas al tipo de usuario.}
+		\label{ra_31}
+	\end{figure}
+
+	\input{admin_config_01.tex}
+
+	\input{mantenimiento_bbdd_01.tex}
+
+	\subparagraph{Configuración de CA}
+
+	\begin{itemize}
+		\item \textbf{IP/host de CA}\label{ra_config_ca}
+	\end{itemize}
+
+	En este punto, el Administrador de Sistemas debe configurar la CA a la cual se conectará mediante la RA, para ello debe introducir la IP de la CA, así como importar los certificados de servidor web y de miniCA respectivamente en los espacios indicados para ello (Fig. \ref{ra_33}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/ra_33.png}
+		\caption{Pantalla para configurar la CA.}
+		\label{ra_33}
+	\end{figure}
+
+	\begin{itemize}
+		\item \textbf{Publicadores de CRL}
+	\end{itemize}
+
+	En esta sección, el usuario configura publicadores de CRL, para ello debe indicar el host, el path, el usuario y la contraseña (Fig. \ref{ra_34}) y posteriormente deberá seleccionar en el que quiera que la CRL sea publicada.
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/ra_34.png}
+		\caption{Pantalla para configurar los publicadores de CRL.}
+		\label{ra_34}
+	\end{figure}
+
+	\begin{itemize}
+		\item \textbf{Configuración acceso LDAP}
+	\end{itemize}
+
+	En este apartado, el usuario debe configurar los parámetros del LDAP al cual quiere conectarse, para ello deberá cumplimentar el formulario así como importar el certificado de servidor del directorio activo (Fig. \ref{ra_35}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/ra_35.png}
+		\caption{Pantalla de configuración de LDAP.}
+		\label{ra_35}
+	\end{figure}
+
+	\subsubsection{Administración web para el rol Operador de Certificado}
+
+	Cuando el usuario selecciona el rol operador de certificados, debe seleccionar también con el rol dinámico que quiera acceder (Fig. \ref{ra_36}), en caso de no tener ningún rol dinámico asignado no podrá acceder. Deberá configurarlo el usuario con rol administrador de seguridad, tal y cómo se indicó en dicho apartado.
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/ra_36.png}
+		\caption{Pantalla para seleccionar rol dinámico del operador de certificados.}
+		\label{ra_36}
+	\end{figure}
+
+	Mediante el rol operador de certificado, se pueden generar certificados de RA bajo cualquier política configurada en la CA Subordinada, solicitando a la CA la emisión de certificados, incluyendo su descarga en un fichero en formato PEM; revocación, suspensión y rehabilitación de los certificados de RA, solicitando dicha acción a la CA Subordinada y consulta de los certificados emitidos, incluyendo su descarga en un fichero en formato PEM.
+
+	La pantalla de administración web para el rol operador de certificado es (Fig. \ref{ra_37}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/ra_37.png}
+		\caption{Pantalla de inicio de administración web para el rol operador de certificados.}
+		\label{ra_37}
+	\end{figure}
+
+	\paragraph{Operaciones}
+
+	\input{revocacion_certificados_01.tex}
+
+	\input{suspension_certificados_01.tex}
+
+	\input{rehabilitacion_certificados_01.tex}
+
+	\input{emision_certificados_01.tex}
+
+	\input{consultaCert_01.tex}
+	
+	\input{consultaReq_01.tex}
+
+	\input{auditor_01.tex}
+
+	\input{operador_sistemas_01.tex}
+
+	\subsubsection{Interfaz de usuario}\label{ra_interfaz_usuario}
+
+	Para acceder a la interfaz de usuario, abrimos un navegador en un puesto cliente que esté conectado punto a punto al servidor e introducimos la siguiente URL: \url{https://IP_servidor/CryptosecOpenKey/LoginServlet }. IP\_servidor es la dirección ip por defecto del equipo indicada por el equipo de REALSEC.
+
+	\paragraph{Si la interfaz de usuario está desactivada}
+
+	Se mostrará una pantalla de error (Fig. \ref{ra_50}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/ra_38_2.png}
+		\caption{Pantalla de error de acceso a la interfaz de usuario.}
+		\label{ra_50}
+	\end{figure}
+
+	\paragraph{Si la interfaz de usuario está activada}
+
+	Dicha página tiene 2 apartados: \textbf{Login de usuario} y \textbf{Generar un nuevo certificado}.
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/ra_38_3.png}
+		\caption{Pantalla de login a la interfaz de usuario.}
+		\label{ra_51}
+	\end{figure}
+
+	\begin{itemize}
+		\item \textbf{Generar un nuevo certificado}
+	\end{itemize}
+
+	Mediante esta opcion, podemos acceder al apartado para generar un nuevo certificado (sección \ref{emision_certificados}). Si el método de aprobación de la política es 'DIRECT' el certificado podrá descargarse inmediatemente, en otro caso el certificado quedará pendiente de aprobación por parte del operador de certificados y se notificará la aprobacion por email.
+
+	\begin{itemize}
+		\item \textbf{Login de usuario}
+	\end{itemize}
+
+	A través de dicha interfaz, el usuario podrá ver o descargar el certificado generado por la RA siempre que se disponga del Token / OTP. El sistema mostrará la siguiente pantalla (Fig. \ref{ra_52}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/ra_ui_1.png}
+		\caption{Pantalla de visualización / descarga del certificado.}
+		\label{ra_52}
+	\end{figure}
+
+	Si se selecciona `Ver certificado' entonces se accederá a al resumen de la información del certificado tal y como se muestra a continuación (Fig. \ref{ra_53}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/ra_ui_2.png}
+		\caption{Pantalla con información del certificado.}
+		\label{ra_53}
+	\end{figure}
+
+	
+}
+
+\newcommand{\rafaq}[0]{
+	\input{preguntas_frecuentes_01.tex}
+}
+
+\input{pki.tex}

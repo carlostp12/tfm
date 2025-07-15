@@ -1,0 +1,397 @@
+	\subparagraph{Acceso S.O.}
+
+	La funcionalidad de esta operación es que el sistema nos permite proteger el sistema operativo mediante diversificación de contraseña del usuario administrador.
+
+	También se puede deshabilitar el SSH, para ello debemos presionar sobre \includegraphics[scale=1]{./img/icono_lock_desact.png}. Una vez que se encuentre deshabilitado, debemos presionar \includegraphics[scale=1]{./img/icono_lock_activ.png} para volver a habilitarlo. (Fig. \ref{caroot_fig40})
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=1]{./img/caroot_fig40.png}
+		\caption{Pantalla de acceso al sistema operativo.}
+		\label{caroot_fig40}
+	\end{figure}
+
+	\subparagraph{Copia de seguridad de claves}
+
+	En esta sección, el administrador de seguridad puede generar y descargarse el fichero de backup de claves, para ello debe presionar el botón Generar para obtener el último backup de claves (Fig. \ref{caroot_fig41}) y posteriormente sobre Descargar (Fig. \ref{caroot_fig42}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig41.png}
+		\caption{Pantalla para generar el backup de claves.}
+		\label{caroot_fig41}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig42.png}
+		\caption{Pantalla para descargar backup de claves.}
+		\label{caroot_fig42}
+	\end{figure}
+
+	Cuando se procede a realizar una copia de seguridad de claves, las siguientes operaciones dejan de estar disponibles en la interfaz hasta que nuestra operación termine:
+	\begin{enumerate}
+		\item Otra copia de seguridad de claves.
+		\item Restauración.
+		\item Generación manual de un backup de datos.
+		\item Parar, iniciar o reiniciar los servicios de base de datos.
+	\end{enumerate}
+	Hasta que nuestra operación de generación de backup haya terminado.
+
+	\subparagraph{Restauración}\label{restauracion_datos}
+
+	El administrador de seguridad, en esta sección puede restaurar las claves, los datos o ambos (Fig. \ref{restore_1}), para ello será necesario importar los backups que se desean restaurar. El backup de claves se puede descargar mediante la opción \textit{Administración - Copia de seguridad de claves} explicada anteriormente y el backup de datos puede ser descargado por el Operador de Sistemas (opción Operaciones - Copia de seguridad de datos).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/restore_1.png}
+		\caption{Pantalla de restauración.}
+		\label{restore_1}
+	\end{figure}
+
+	Si se realiza una restauración SOLO de datos, presionamos sobre Examinar para buscar el .zip que contiene el backup y una vez adjuntado, presionar sobre Subir (Fig. \ref{restore_2}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=1]{./img/restore_2.png}
+		\caption{Restauración de datos.}
+		\label{restore_2}
+	\end{figure}
+
+	Una vez subido el fichero zip de backup de datos, aparecerá la lista de archivos encriptados que componen los datos del backup (Fig. \ref{restore_3}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=1]{./img/restore_3.png}
+		\caption{Subida de archivos del backup.}
+		\label{restore_3}
+	\end{figure}
+
+	Vamos subiendo los archivos hasta que todos ellos tengan un mensaje en color verde informando que el archivo se ha subido, entonces nos aparecerá una nueva opción abajo diciendo restaurar (Fig. \ref{restore_5}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=1]{./img/restore_5.png}
+		\caption{Subida de archivos del backup.}
+		\label{restore_5}
+	\end{figure} 
+
+	Si pulsamos el botón Restaurar, nos muestra una advertencia que debemos aceptar para que se proceda a la restauración y una vez realizada mostrará el resultado al terminar (Fig. \ref{restore_7}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/restore_7.png}
+		\caption{Pantalla de éxito de restauración de datos.}
+		\label{restore_7}
+	\end{figure}
+
+	En cambio, si se va a realizar una restauración INCLUYENDO las claves, al importar el fichero de claves el sistema informará que el servidor web será reiniciado tras el proceso (Fig. \ref{restore_8}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/restore_8.png}
+		\caption{Restauración de claves.}
+		\label{restore_8}
+	\end{figure}
+
+	Si pulsamos el botón Restaurar, tras finalizar la restauración el servidor web se reinicia automáticamente y se debe esperar varios minutos para asegurarnos que dicho reinicio ha terminado (Fig. \ref{restore_9}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/restore_9.png}
+		\caption{Pantalla de éxito de restauración de claves.}
+		\label{restore_9}
+	\end{figure}
+
+	Cuando se procede a una operación de restauración, las siguientes operaciones dejan de estar disponibles en la interfaz hasta que nuestra operación de restauración termine:
+	\begin{enumerate}
+		\item Otra restauración.
+		\item Generación de un backup de claves
+		\item Generación manual de un backup de datos
+		\item Parar, iniciar o reiniciar los servicios de base de datos.
+	\end{enumerate}
+
+	Hasta que nuestra operación de restauración de backup haya terminado.
+
+
+	\paragraph{Consultas}
+
+	\subparagraph{Certificados internos}
+
+	Mediante esta operación, el sistema muestra al administrador de seguridad una lista con los certificados internos (Fig. \ref{caroot_fig48}), presionando sobre (\includegraphics[scale=1]{./img/icono_ver_cuerpo.png}), podemos ver el cuerpo del certificado (Fig. \ref{caroot_fig49}), si presionamos sobre el ID, podemos ver el certificado y también podemos descargárnoslo, para ello debemos presionar (\includegraphics[scale=1]{./img/icono_descargar_cert.png} Fig. \ref{caroot_fig50}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig48.png}
+		\caption{Pantalla de certificados internos.}
+		\label{caroot_fig48}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig49.png}
+		\caption{Pantalla con el cuerpo del certificado.}
+		\label{caroot_fig49}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=1]{./img/caroot_fig50.png}
+		\caption{Pantalla con el certificado y la descarga del mismo.}
+		\label{caroot_fig50}
+	\end{figure}
+
+	\subparagraph{Autoridades}
+
+	Mediante esta operación, el sistema muestra al administrador de seguridad una lista con las	autoridades disponibles para la emisisón de certificados, en el caso de la (Fig. \ref{caroot_fig50_5}) se muestran 3 autoridades una de ellas no materializadas aún.
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=1]{./img/caroot_fig50_5.png}
+		\caption{Pantalla la lista de autoridades disponibles, en este caso hay 3.}
+		\label{caroot_fig50_5}
+	\end{figure}
+
+	
+	\paragraph{Gestión de acceso}
+
+	\subparagraph{Roles}
+
+	En esta sección, visualizamos los roles disponibles (Fig. \ref{caroot_fig51}), para poder acceder, así como una pequeña descripción de cada uno de ellos, el número de autenticaciones requeridas, y si está activo o no. Para editar su configuración  debemos presionar sobre el icono correspondiente (\includegraphics[scale=1]{./img/icono_editar_role.png}) que nos llevará a una pantalla como la que se muestra en la Fig. \ref{caroot_fig52}, donde podremos seleccionar cuantas autenticaciones serán requeridas (multi-autenticación), así como activar/desactivar el rol, finalizando con el botón Actualizar.
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig51.png}
+		\caption{Pantalla de roles.}
+		\label{caroot_fig51}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig52.png}
+		\caption{Pantalla de edición del rol.}
+		\label{caroot_fig52}
+	\end{figure}
+
+	\subparagraph{Certificados de miniCA}
+	\ifthenelse{\equal{\jobname}{\detokenize{va}}}{
+		Al seleccionar esta opción se desplegará un menú con las opciones disponibles relacionadas con la gestión del certificado de MiniCA. En la VA la única operación disponible será la renovación del certificado.
+	}
+	{
+		\begin{itemize}
+			\item \textbf{Políticas de certificación}
+		\end{itemize}
+
+		En este apartado, igual que ocurre para Certificados de miniCA, certificado de servidor web y operadores, se podrán añadir, editar y eliminar los campos y extensiones de los certificados de miniCA, así como editar las propiedades de la política completando para ello el cuestionario de propiedades de la política. Una vez completado el mismo, presionamos Enviar propiedades y posteriormente en Salvar cambios (Fig. \ref{caroot_fig53}).
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=.5]{./img/caroot_fig53.png}
+			\caption{Pantalla para editar políticas de certificados miniCA.}
+			\label{caroot_fig53}
+		\end{figure}
+
+		Si presionamos el botón de añadir campos y extensiones de los certificados CA Raíz (\includegraphics[scale=1]{./img/icono_anadir_atributo.png}), el sistema nos muestra los distintos campos y extensiones que podemos añadir (Fig. \ref{caroot_fig54}).
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=1]{./img/caroot_fig54.png}
+			\caption{Listado de perfiles que podemos añadir al certificado.}
+			\label{caroot_fig54}
+		\end{figure}
+
+		Si presionamos el botón de editar campos y extensiones de los certificados CA Raíz (\includegraphics[scale=1]{./img/icono_editar.png}), el sistema nos muestra los campos del certificado seleccionado, pudiendo añadir, editar y eliminar propiedades del mismo modo, una vez realizados los cambios, presionar Salvar cambios (Fig. \ref{caroot_fig55}).
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=.5]{./img/caroot_fig55.png}
+			\caption{Listado de propiedades de perfil.}
+			\label{caroot_fig55}
+		\end{figure}
+
+		Si presionamos el botón de eliminar campos y extensiones de los certificados CA Raíz (\includegraphics[scale=1]{./img/icono_eliminar.png}), el sistema nos muestra una advertencia, la cual debemos aceptar para que sea eliminado y posteriormente presionar el botón Salvar cambios (Fig. \ref{caroot_fig35b}).
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=1]{./img/caroot_fig35.png}
+			\caption{Advertencia para eliminar perfil.}
+			\label{caroot_fig35b}
+		\end{figure}
+
+		Si presionamos el botón Importar desde archivo XML, el sistema nos muestra una nueva ventana, a través de la cual podemos importar la política mediante un fichero XML (Fig. \ref{caroot_fig57}).
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[scale=.5]{./img/caroot_fig57.png}
+			\caption{Pantalla para importar política mediante fichero XML.}
+			\label{caroot_fig57}
+		\end{figure}
+
+	}
+
+	\begin{itemize}
+		\item \textbf{Renovación}
+	\end{itemize}
+
+	En esta sección, se renueva el certificado de miniCA, para ello, en la primera pantalla debemos presionar el botón Crear (Fig. \ref{caroot_fig58}), para crear un nuevo certificado de miniCA, posteriormente, podemos observar la información del certificado (Fig. \ref{caroot_fig59}) y debemos presionar el botón Generar. Una vez generado, nos aparece el certificado (Fig. \ref{caroot_fig60}), el cual tiene que ser instalado para poder seguir haciendo uso de la aplicación y finalmente presionamos el botón continuar y volvemos a la página de inicio.
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig58.png}
+		\caption{Pantalla para crear certificado de miniCA.}
+		\label{caroot_fig58}
+	\end{figure}         
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig59.png}
+		\caption{Pantalla con la información previa del certificado y nos permite generarlo.}
+		\label{caroot_fig59}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig60.png}
+		\caption{Pantalla con los datos del certificado y fichero de descarga del mismo para su instalación.}
+		\label{caroot_fig60}
+	\end{figure}
+
+	\subparagraph{Certificado de Servidor Web}
+
+	\begin{itemize}
+		\item \textbf{Renovación por miniCA}
+	\end{itemize}
+
+	En este apartado, podemos crearnos un certificado de Servidor Web, para ello en la pantalla que nos muestra el sistema (Fig. \ref{caroot_fig61}), presionamos el botón Crear; una vez realizado, el sistema nos muestra la información previa del certificado (Fig. \ref{caroot_fig62}) y presionamos sobre el botón Generar, en la pantalla siguiente podemos ver el certificado y descargárnoslo (Fig. \ref{caroot_fig63}), una vez que terminamos, presionamos continuar y volvemos a la página de inicio.
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig61.png}
+		\caption{Pantalla para crear certificado de Servidor Web.}
+		\label{caroot_fig61}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig62.png}
+		\caption{Pantalla con la información previa del certificado.}
+		\label{caroot_fig62}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig63.png}
+		\caption{Pantalla para ver y descargar el certificado.}
+		\label{caroot_fig63}
+	\end{figure}
+
+	\begin{itemize}
+		\item \textbf{Renovación por CA Externa}
+	\end{itemize}
+
+	En este apartado, el administrador de seguridad, puede renovar un certificado, para ello, en la primera pantalla que nos aparece (Fig. \ref{caroot_fig64}) debemos presionar sobre el botón Generar, el sistema nos muestra la petición PKCS10 que puede ser descargada debiendo presionar para ello sobre PEM; con dicha petición, el usuario con el rol correspondiente debe emitir un certificado, y posteriormente el usuario con el rol administrador de seguridad importarlo para renovar el certificado de servidor web (Fig. \ref{caroot_fig65}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig64.png}
+		\caption{Pantalla inicial para renovar certificado mediante CA Raíz.}
+		\label{caroot_fig64}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig65.png}
+		\caption{Pantalla de petición PKCS10 para generar certificado de servidor web mediante CA externa.}
+		\label{caroot_fig65}
+	\end{figure}
+
+	\subparagraph{Operadores}
+
+	En esta sección, podemos dar de alta un operador externo, un operador interno, también buscar operadores, y se puede ver un listado de operadores, los cuales pueden ser editados, eliminados y descargados (Fig. \ref{caroot_fig66}).
+
+	A continuación explicamos cada uno de ellos explícitamente.
+
+	En la opción Buscar operadores (Fig. \ref{caroot_fig66}), podemos completar los campos del formulario para filtrar por ellos.
+
+	En Operadores (Fig. \ref{caroot_fig66}), vemos el listado de operadores, si marcamos el campo Seleccionar y presionamos Eliminar, podemos eliminar dicho operados, debiendo para ello aceptar la advertencia que muestra el sistema. También podemos descargarnos el certificado para el cual se ha instalado.
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig66.png}
+		\caption{Pantalla principal de operadores.}
+		\label{caroot_fig66}
+	\end{figure}
+
+	Para dar de alta un operador externo, debemos adjuntar un certificado de operador web y asignarle los roles deseados para dicho operador (Fig. \ref{caroot_fig67}), y presionamos el botón Importar, devolviendo el sistema el siguiente mensaje (Fig. \ref{caroot_fig68}), apareciendo el nuevo operador en la lista de operadores. Para poder llevar a cabo esta función, debemos haber importado previamente un certificado de CA externo tal y como se indica en el siguiente apartado.
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig67.png}
+		\caption{Pantalla para crear un operador externo.}
+		\label{caroot_fig67}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig68.png}
+		\caption{Pantalla de operador creado con éxito.}
+		\label{caroot_fig68}
+	\end{figure}
+
+	Para crear un nuevo operador interno, si la política de operador web tiene alguna variable, debemos completar el campo en el formulario y posteriormente presionar el botón \textit{Generar}. El sistema nos muestra una ventana con la información previa del certificado, así como el nombre del mismo y debemos seleccionar los roles que queremos asignarle (Fig. \ref{caroot_fig69}), una vez seleccionado el/los rol/es, el sistema nos muestra una ventana en la cual debemos seleccionar un proveedor de Criptografía y presionar sobre \textit{Generar} (si esta operación la realizamos con el navegador Firefox, este paso se omite) (Fig. \ref{caroot_fig70}). Si todo es correcto, nos mostrará la ventana con el mensaje de certificado instalado con éxito (Fig. \ref{caroot_fig71}). A continuación, nos muestra una pantalla con la confirmación de operador creado y los datos y la posibilidad de descargar el correspondiente certificado (Fig. \ref{caroot_fig72}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig69.png}
+		\caption{Pantalla para generar un operador interno.}
+		\label{caroot_fig69}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig70.png}
+		\caption{Pantalla para seleccionar un proveedor de criptografía.}
+		\label{caroot_fig70}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=1]{./img/caroot_fig71.png}
+		\caption{Mensaje de certificado instalado con éxito.}
+		\label{caroot_fig71}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig72.png}
+		\caption{Pantalla de operador creado y descarga de certificado.}
+		\label{caroot_fig72}
+	\end{figure}
+
+	\begin{itemize}
+		\item \textbf{Certificados de CA externos}
+	\end{itemize}
+
+	Mediante esta operación, podemos importar certificados de CA emisora. Para ello mediante el botón \textit{Examinar}, indicamos una descripción para el certificado, y posteriormente se presiona el botón \textit{Importar}.
+
+	También podemos observar el listado con todos los certificados externos de los que disponemos, si marcamos el botón Seleccionar y presionamos el botón Eliminar, aceptando posteriormente la advertencia que aparece, eliminamos el certificado seleccionado, además se puede marcar/desmarcar Servidor, lo cual permite que todos los certificados de clientes firmados por dicho certificado tengan acceso a la aplicación (Fig. \ref{caroot_fig73}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig73.png}
+		\caption{Pantalla de certificados de CA externos.}
+		\label{caroot_fig73}
+	\end{figure}
+
+	\subparagraph{Usuarios}
+
+	En esta sección, podemos dar de alta usuarios para el servicio de Timestamp, también se puede ver un listado de usuarios, los cuales pueden ser eliminados (Fig. \ref{tsauser_fig1}).
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/tsa-usertsa-1.png}
+		\caption{Sección de usuarios del servicio de Timestamp.}
+		\label{tsauser_fig1}
+	\end{figure}
+
+	Mediante el botón \textit{Crear Nuevo} se pueden crear usuarios indicando el nombre del mismo y su contraseña. En cambio, si se desea eliminar un usuario debe seleccionar el usuario en el listado y pinchar el botón \textit{Eliminar}

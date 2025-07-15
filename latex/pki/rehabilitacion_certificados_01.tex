@@ -1,0 +1,43 @@
+	\subparagraph{Certificados - Rehabilitación}
+
+	Para poder llevar a cabo esta operación, es necesario tener configurada la CRL, para ello es necesario que mediante el rol administrador de seguridad se configure.
+
+	En este apartado, el sistema permite rehabilitar certificados que previamente han sido suspendidos, para ello presionamos el botón Buscar de la pantalla inicial de rehabilitación de certificado (Fig. \ref{caroot_fig96}) y nos aparecerá el listado  de certificados que se encuentran en dicho estado (Fig. \ref{caroot_fig97})  (todos, si no asignamos ningún criterio, en caso contrario los filtrará según las propiedades que completemos en el formulario), si en la búsqueda presionamos (\includegraphics[scale=1]{./img/icono_ver_cuerpo.png}), podemos ver el cuerpo del certificado (Fig. \ref{caroot_fig98}), si presionamos sobre \textit{Rehabilitar}, el sistema nos muestra una pantalla para rehabilitar el certificado (Fig. \ref{caroot_fig99}) en esta ventana también podemos descargarnos el certificado, presionamos \textit{Continuar} y el sistema nos muestra una nueva pantalla con el certificado suspendido (Fig. \ref{caroot_fig100}), presionamos \textit{Continuar} y volvemos a la página de inicio.
+
+	\ifthenelse{\equal{\jobname}{\detokenize{ra}}}{
+		Una vez realizada la rehabilitación, el sistema envía un email con el cuerpo del email que hayamos configurado mediante el rol Administrador de Seguridad, en el apartado Administración ->\ Configuración de las notificaciones.
+	}{}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig96.png}
+		\caption{Pantalla principal de rehabilitación de certificados.}
+		\label{caroot_fig96}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig97.png}
+		\caption{Pantalla con la búsqueda de certificados.}
+		\label{caroot_fig97}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig98.png}
+		\caption{Pantalla con la visualización del cuerpo del certificado.}
+		\label{caroot_fig98}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig99.png}
+		\caption{Pantalla para rehabilitar el certificado.}
+		\label{caroot_fig99}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=.5]{./img/caroot_fig100.png}
+		\caption{Pantalla de certificado rehabilitado.}
+		\label{caroot_fig100}
+	\end{figure}
