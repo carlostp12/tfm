@@ -4,11 +4,7 @@
 % \usepackage {lmodern}
 
 \usepackage[scaled=1]{couriers}
-<<<<<<< HEAD
-\usepackage [spanish] {babel} 
-=======
 % \usepackage [spanish] {babel} 
->>>>>>> ef67754 (Latex: First documentation and examples)
 \usepackage [T1]{fontenc}
 \usepackage [utf8]{inputenc}
 \usepackage {lipsum}
@@ -16,6 +12,7 @@
 \usepackage {fancyhdr}
 \usepackage {graphicx}
 \usepackage {marginnote}
+\usepackage{amsmath}
 \usepackage {eso-pic}
 \usepackage {booktabs}
 \usepackage {float}
@@ -59,11 +56,7 @@
 \fancyhead[L]{\begin{picture}(0,0) \put(0,0){\includegraphics[scale=.4]{./img/logorealsec.eps}} \end{picture}}
 \fancyhead[R]{\begin{picture}(0,0) \put(-90,0){\includegraphics[scale=.4]{./img/encabezado_dcho.eps}} \end{picture}}
 \fancyfoot[L]{\marginnote{\begin{picture}(0,0) \put(-525,400){\rotatebox[origin=c]{90}{\begin{tikzpicture}\node [opacity=0.5] (0,0){\tiny La propiedad intelectual de este documento pertenece a \textbf{REALSEC}. Queda prohibida su reproducción, venta, o cesión a terceros.};\end{tikzpicture}}} \end{picture}}[0cm]}
-<<<<<<< HEAD
-\fancyfoot[C]{Realia Technologies, S.L. \hfill Page \small \thepage \hfill \small \today}
-=======
 \fancyfoot[C]{Carlos Toro Peñas. \hfill Page \small \thepage \hfill \small \today}
->>>>>>> ef67754 (Latex: First documentation and examples)
 \fancyfoot[R]{\small \today}
 
 \pagestyle{fancy}
@@ -77,22 +70,6 @@
 	\null\vfill
 	\centering\begin{picture}(0,0) \put(-70,170){\includegraphics[scale=.4]{./img/logo_portada.png}} \end{picture}
 	\AddToShipoutPicture{\put(90,190){\includegraphics[scale=1]{./img/cover_background.png}}}
-<<<<<<< HEAD
-	{\Huge \textbf{Universidad Oberta de Catalunya}}\\
-	\Large\textbf{\\}
-	{\Huge \textbf{Master's degre in Data Science}}\\
-	\Large\textbf{\\}
-	{\Huge \textbf{Master Thesis}}\\
-	{\Huge \textbf{AREA: Specialized fields}}\\
-	{
-		{
-			\Large\textbf{Unsupervised methods applied to Galaxy distribution\\}
-		}
-	}
-	\textcolor{colorGreen}{\\\rule{150mm}{0.3mm}\\}
-	\Large\textbf{\\Manual de usuario\\}
-	{Rev. 2.0\\}
-=======
 	{\Large {UNIVERSIDAD OBERTA DE CATALUNYA}}\\
 	\Large\textbf{\\}
 	{\Large {Master's degree in Data Science}}\\
@@ -111,9 +88,9 @@
 	\Large\textbf{\\Supervisors: ...\\}
 	\Large\textbf{\\Advisors: ...\\}
 	\Large\textbf{\\Professor: Laura Ruíz Dern\\}
->>>>>>> ef67754 (Latex: First documentation and examples)
 	\vfill
 	{\normalsize \textbf{REALIA TECHNOLOGIES, SL} \hfill \small \today }
 }
-
+\newpage
+\motivation
 \end{document}
