@@ -2,11 +2,14 @@ sessionInfo()
 #readr_2.1.5    dbscan_1.2.2   jsonlite_2.0.0
 
 if (!require('jsonlite')) install.packages('jsonlite')
+library(jsonlite)
 if (!require('dbscan')) install.packages('dbscan')
 library(dbscan)
 if (!require('readr')) install.packages('readr')
 library(readr)
+
 get_distance <- function(z){
+  print(z)
   url <- paste ("http://www.mathstools.com:8080/math/servlet/CosmologyServlet?z=",z,"&q=distance", sep="")
   data <- fromJSON(url)
   return (data$PD)
@@ -22,7 +25,8 @@ parseRANumeric <- function (hour, min=0, sec=0)
 parseDECNumeric <- function (degree, min=0, sec=0)
 {
   suma = 1
-  if (degree< -0){
+  
+  if (any(degree < 0)) {
     suma = -1
   }
   return ((suma)*sec/3600 + (suma)*min/60 + degree);
@@ -59,3 +63,8 @@ changeCoordsSpericalZ <- function (r, zeta_ra, psi_dec)
   x= r*cos(psi_dec)
   return (z)
 }
+
+
+datad2$dec <- parseDECNumeric(datad2$Ded, datad2$Dem, datad2$Des)
+datad2$ra <- parseRANumeric(datad2$RAh, datad2$Ram, datad2$Ras)
+
