@@ -7,13 +7,26 @@ if (!require('dbscan')) install.packages('dbscan')
 library(dbscan)
 if (!require('readr')) install.packages('readr')
 library(readr)
+if (!require('rjson')) install.packages('rjson')
+library(rjson)
 
 get_distance <- function(z){
-  print(z)
   url <- paste ("http://www.mathstools.com:8080/math/servlet/CosmologyServlet?z=",z,"&q=distance", sep="")
-  data <- fromJSON(url)
-  return (data$PD)
+  tryCatch(
+    expr = {
+    datad <- rjson::fromJSON(file=url)
+    print(datad$PD)
+    return (datad$PD)
+    },
+    error = function(e){
+      print(paste('Error!!', errors, sep =" "))
+      print(e)
+      print(z)
+      return (0)
+    }
+  )
 }
+
 parseRANumeric <- function (hour, min=0, sec=0)
 {
   number = hour * 360 /24
@@ -67,4 +80,10 @@ changeCoordsSpericalZ <- function (r, zeta_ra, psi_dec)
 
 datad2$dec <- parseDECNumeric(datad2$Ded, datad2$Dem, datad2$Des)
 datad2$ra <- parseRANumeric(datad2$RAh, datad2$Ram, datad2$Ras)
+setwd('C:/Users/Carlos/OneDrive/data-science/TFM/tfm/data')
+datad2 <- read.csv('2dfgrs-title.csv')
+datad2$dist <- get_distance(datad2$Z)
 
+datad2$dist <- sapply (X=datad2$Z, FUN = get_distance)
+
+#Objetivo mañana: Consultar el SDSS

@@ -12,7 +12,6 @@
 \usepackage {fancyhdr}
 \usepackage {graphicx}
 \usepackage {marginnote}
-\usepackage{amsmath}
 \usepackage {eso-pic}
 \usepackage {booktabs}
 \usepackage {float}
@@ -24,7 +23,9 @@
 \usepackage {parskip}
 \usepackage {svn-multi}
 \usepackage {verbatim}
-
+% Mine
+\usepackage{datetime}
+\usepackage{amsmath}
 
 \makeatletter
 \renewcommand\paragraph{\@startsection{paragraph}{4}{\z@}%
@@ -35,6 +36,16 @@
             {-2.5ex\@plus -1ex \@minus -.25ex}%
             {1.25ex \@plus .25ex}%
             {\normalfont\normalsize\bfseries}}
+
+\renewcommand{\@seccntformat}[1]{%
+  \ifcsname prefix@#1\endcsname
+    \csname prefix@#1\endcsname
+  \else
+    \csname the#1\endcsname\quad
+  \fi}
+% define \prefix@section
+\newcommand\prefix@section{Chapter \thesection }
+			
 \makeatother
 
 \setcounter{secnumdepth}{5}
@@ -45,6 +56,10 @@
 \definecolor{colorGreen}{RGB}{155,187,89}
 \definecolor{colorGray}{RGB}{220,220,220}
 
+%define month/date:
+\newdateformat{monthyeardate}{%
+  \monthname[\THEMONTH], \THEYEAR}
+  
 \hypersetup{
     colorlinks=true,%para colorear los enlaces
     urlcolor=blue,
@@ -68,7 +83,7 @@
 \thispagestyle{empty}
 {
 	\null\vfill
-	\centering\begin{picture}(0,0) \put(-70,170){\includegraphics[scale=.4]{./img/logo_portada.png}} \end{picture}
+	\centering\begin{picture}(0,0) \put(-70,170){\includegraphics[scale=.4]{./img/uoc.jpg}} \end{picture}
 	\AddToShipoutPicture{\put(90,190){\includegraphics[scale=1]{./img/cover_background.png}}}
 	{\Large {UNIVERSIDAD OBERTA DE CATALUNYA}}\\
 	\Large\textbf{\\}
@@ -89,7 +104,7 @@
 	\Large\textbf{\\Advisors: ...\\}
 	\Large\textbf{\\Professor: Laura Ruíz Dern\\}
 	\vfill
-	{\normalsize \textbf{REALIA TECHNOLOGIES, SL} \hfill \small \today }
+	{\normalsize \textbf{REALIA TECHNOLOGIES, SL} \hfill \small \monthyeardate\today }
 }
 \newpage
 \motivation
