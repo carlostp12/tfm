@@ -44,7 +44,7 @@
     \csname the#1\endcsname\quad
   \fi}
 % define \prefix@section
-\newcommand\prefix@section{Chapter \thesection }
+\newcommand\prefix@section{ }
 			
 \makeatother
 
@@ -79,7 +79,7 @@
 
 \begin{document}
 
-%pagina 1: PORTADA
+%page 1: PORTADA
 \thispagestyle{empty}
 {
 	\null\vfill
@@ -105,6 +105,14 @@
 	\Large\textbf{\\Professor: Laura Ruíz Dern\\}
 	\vfill
 	{\normalsize \textbf{REALIA TECHNOLOGIES, SL} \hfill \small \monthyeardate\today }
+}
+
+\newpage
+%page 2: INDEX
+\thispagestyle{empty}
+{
+	\hypersetup{linkcolor=colorLinks}
+	\tableofcontents
 }
 \newpage
 \motivation
