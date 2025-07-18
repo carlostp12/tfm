@@ -67,8 +67,31 @@ cuál sería la aportación principal buscada con el proyecto?
 SOBRE SDSS: Se puede obtener de aquí https://skyserver.sdss.org/dr9/en/tools/search/sql.asp
  - Solo hay 3 tipos de objetos: STAR, QSO y GALAXY.
  - Los objetos se guardan en una tabla llamada PhotoObjAll. Esta tabla contiene TODA la información y no debe usarse a menos que que quiera buscar sobre un objeto en concreto.
- - La vista que se debe usar es PhotoObj.
+ - La vista que se debe usar es PhotoObj. la descripción de los campos es es https://skyserver.sdss.org/dr9/en/help/browser/browser.asp
+ Campos importantes:
+	objID: ObjectID form SDSS.
+	type: Object type: galaxy(3), STAR(6), ...
+	petroMag_z: Petrosian magnitude, hay(u, g, i, z, z). Otras magnitudes: deVMag_u (de Vaucouleurs magnitude fit), psfMag_u(PSF magnitude), expMag_u(Exponential fit magnitude)
+		modelMag_u (better of DeV/Exp magnitude fit)
+	ra
+	dec
+	b: Galactic latitude
+	l: galactic longitude
+	extinction_u: Extinction in u-band
+	psffwhm_u: 	FWHM in u-band
+	u, g, r, i z: Shorthand alias for modelMag
+	dered_u: Simplified mag, corrected for extinction: modelMag-extinction.
+	
  - Hay otra vista de observaciones llamada SpecObj, su tabla correspondiente es la SpecObjAll. Igual que anterior, esta tabla no se puede usar porque contiene información redundante e incorrecta, hay que usar la vista. (IMPORTANTE).
+	Por tanto, hay que hacer un JOIN para el redshift con otra vista:
+		FROM PhotoObj AS p JOIN SpecObj AS s ON s.bestobjid = p.objid
+	SpecObj:
+		specObjID: sepect id
+		bestobjid: el objID para la tabla PhotoObj.
+		targetType: 
+		z: final redshift
+	Hay otra vista solo para galaxias: Galaxy, que contiene los mismos campos que la tabla PhotoObj.
+	
  - En cuanto a las magnitudes: hay varios datos: psfMagnitude, fiberMagnitude. El llamado modelMag no debe usarse.
  - La clasificación STAR/GALAXY se hace aquí https://skyserver.sdss.org/dr1/en/help/docs/algorithm.asp?search=expMag&submit1=Search
  Ahí dice que para galaxias se recomienda petrosianMagnitudes, para estrellas psfMag y para Quasares también psfMag.

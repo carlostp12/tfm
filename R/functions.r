@@ -10,6 +10,10 @@ library(readr)
 if (!require('rjson')) install.packages('rjson')
 library(rjson)
 
+if (!require('akima')) install.packages('akima')
+library(akima)
+
+
 get_distance <- function(z){
   url <- paste ("http://www.mathstools.com:8080/math/servlet/CosmologyServlet?z=",z,"&q=distance", sep="")
   tryCatch(
@@ -86,4 +90,14 @@ datad2$dist <- get_distance(datad2$Z)
 
 datad2$dist <- sapply (X=datad2$Z, FUN = get_distance)
 
+x<-datad2$ra
+y<-datad2$dec
+z <- datad2$dist
+im <- with(data,interp(x,y,z))
+with(im,image(x,y,z))
+
 #Objetivo mañana: Consultar el SDSS
+
+a<- datad2[,c('ra', 'dec')]
+res <- optics(a, minPts = 1000)
+res <- extractDBSCAN(res, eps_cl = 5)
