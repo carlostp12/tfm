@@ -19,6 +19,9 @@ library(akima)
 if (!require('astrolibR')) install.packages("astrolibR")
 library(astrolibR)
 
+if (!require('scatterplot3d')) install.packages("scatterplot3d")
+library(scatterplot3d)
+
 get_distance <- function(z){
   url <- paste ("http://www.mathstools.com:8080/math/servlet/CosmologyServlet?z=",z,"&q=distance", sep="")
   tryCatch(
@@ -102,20 +105,22 @@ parseCoords2Numeric <- function (hour, min=0, sec=0, degree, m=0, s=0)
   ))
 }
 
-changeCoordsSpericalX <- function (r, zeta_ra, psi_dec)
+changeCoordsSpericalX <- function (r, psi_dec, zeta_ra)
 {
-  x= r*cos(zeta_ra) * sin(psi_dec)
+  #x = r*cos(zeta_ra) * sin(psi_dec)
+  x = r*cos(psi_dec) * sin(zeta_ra)
   return (x)
 }
 
-changeCoordsSpericalY <- function (r, zeta_ra, psi_dec)
+changeCoordsSpericalY <- function (r, psi_dec, zeta_ra)
 {
-  x= r * sin(zeta_ra) * sin(psi_dec)
+  #x= r * sin(zeta_ra) * sin(psi_dec)
+  y = r * sin(psi_dec) * sin(zeta_ra)
   return (y)
 }
-changeCoordsSpericalZ <- function (r, zeta_ra, psi_dec)
+changeCoordsSpericalZ <- function (r, psi_dec, zeta_ra)
 {
-  x= r*cos(psi_dec)
+  z = r*cos(zeta_ra)
   return (z)
 }
 
@@ -147,6 +152,16 @@ a<- datad2[,c('ra', 'dec')]
 res <- optics(a, minPts = 1000)
 res <- extractDBSCAN(res, eps_cl = 5)
 
+# Galactic coords
 dt_sample$gl <- mapply(changeCoordsGalacticGL, dt_sample$ra, dt_sample$dec)
 dt_sample$gb <- mapply(changeCoordsGalacticGB, dt_sample$ra, dt_sample$dec)
 
+# Distance
+dt_sample$dist <- sapply (X=dt_sample, FUN = get_distance)
+
+# Rectangulars
+dt_sample$x <- mapply(changeCoordsSpericalX, dt_sample$dist , dt_sample$gl, dt_sample$gb)
+dt_sample$y <- mapply(changeCoordsSpericalY, dt_sample$dist , dt_sample$gl, dt_sample$gb)
+dt_sample$z <- mapply(changeCoordsSpericalZ, dt_sample$dist , dt_sample$gl, dt_sample$gb)
+
+scatterplot3d(dt_sample[,42:44])
