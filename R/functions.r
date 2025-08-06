@@ -22,6 +22,12 @@ library(astrolibR)
 if (!require('scatterplot3d')) install.packages("scatterplot3d")
 library(scatterplot3d)
 
+if (!require('gMOIP')) install.packages("gMOIP")
+library(gMOIP)
+
+if (!require('pracma')) install.packages("pracma")
+library(pracma)
+
 get_distance <- function(z){
   url <- paste ("http://www.mathstools.com:8080/math/servlet/CosmologyServlet?z=",z,"&q=distance", sep="")
   tryCatch(
@@ -42,8 +48,8 @@ get_distance <- function(z){
 parseRANumeric <- function (hour, min=0, sec=0)
 {
   number = hour * 360 /24
-  number = number + min/60
-  number = number + sec/3600
+  number = number + (360 /24) * (min/60)
+  number = number + (360 /24) * (sec/3600)
   return (number)
 }
 
@@ -57,7 +63,7 @@ parseDECNumeric <- function (degree, min=0, sec=0)
   return ((suma)*sec/3600 + (suma)*min/60 + degree);
 }
 
-changeCoordsSpericalX <- function (r, zeta_ra, psi_dec)
+changeCoordsSperical <- function (r, zeta_ra, psi_dec)
 {
   return (c(changeCoordsSpericalX(r, zeta_ra, psi_dec),
             changeCoordsSpericalY(r, zeta_ra, psi_dec),
@@ -105,22 +111,25 @@ parseCoords2Numeric <- function (hour, min=0, sec=0, degree, m=0, s=0)
   ))
 }
 
-changeCoordsSpericalX <- function (r, psi_dec, zeta_ra)
+to_radians <- function(angle)
 {
-  #x = r*cos(zeta_ra) * sin(psi_dec)
-  x = r*cos(psi_dec) * sin(zeta_ra)
+  return (angle * pi / 180)
+}
+
+changeCoordsSpericalX <- function (r, longitude, latitude)
+{
+  x = r * cos(longitude) * cos(latitude)
   return (x)
 }
 
-changeCoordsSpericalY <- function (r, psi_dec, zeta_ra)
+changeCoordsSpericalY <- function (r, longitude, latitude)
 {
-  #x= r * sin(zeta_ra) * sin(psi_dec)
-  y = r * sin(psi_dec) * sin(zeta_ra)
+  y = r * cos(longitude) * sin(latitude)
   return (y)
 }
-changeCoordsSpericalZ <- function (r, psi_dec, zeta_ra)
+changeCoordsSpericalZ <- function (r, longitude, latitude)
 {
-  z = r*cos(zeta_ra)
+  z = r*sin(latitude)
   return (z)
 }
 
@@ -128,14 +137,15 @@ setwd('C:/Users/Carlos/OneDrive/data-science/TFM/tfm/data')
 dt <- read.csv('2dfgrs-title-dist.csv')
 # podemos tomar una muestra:
 dt_sample <-sample_n(dt, 10)
-
-
+orig_dt <- dt
+the_values <- c('RAh', 'Ram', 'Ras', 'Ded', 'Dem', 'Des', 'dist', 'Z', 'Q_Z', 'ra', 'dec')
+dt2 <- dt[,the_values]
 """
 plot(df$ra, df$dec)
 df[ df$ra<20,'ra']
 """
-datad2$dec <- parseDECNumeric(datad2$Ded, datad2$Dem, datad2$Des)
-datad2$ra <- parseRANumeric(datad2$RAh, datad2$Ram, datad2$Ras)
+dt$dec <- parseDECNumeric(dt$Ded, dt$Dem, dt$Des)
+dt$ra <- parseRANumeric(dt$RAh, dt$Ram, dt$Ras)
 setwd('C:/Users/Carlos/OneDrive/data-science/TFM/tfm/data')
 datad2 <- read.csv('2dfgrs-title.csv')
 datad2$dist <- get_distance(datad2$Z)
@@ -153,11 +163,11 @@ res <- optics(a, minPts = 1000)
 res <- extractDBSCAN(res, eps_cl = 5)
 
 # Galactic coords
-dt_sample$gl <- mapply(changeCoordsGalacticGL, dt_sample$ra, dt_sample$dec)
-dt_sample$gb <- mapply(changeCoordsGalacticGB, dt_sample$ra, dt_sample$dec)
+dt$gl <- mapply(changeCoordsGalacticGL, dt$ra, dt$dec)
+dt$gb <- mapply(changeCoordsGalacticGB, dt$ra, dt$dec)
 
 # Distance
-dt_sample$dist <- sapply (X=dt_sample, FUN = get_distance)
+dt_sample$dist <- sapply (X=dt_sample$Z, FUN = get_distance)
 
 # Rectangulars
 dt_sample$x <- mapply(changeCoordsSpericalX, dt_sample$dist , dt_sample$gl, dt_sample$gb)
@@ -165,3 +175,35 @@ dt_sample$y <- mapply(changeCoordsSpericalY, dt_sample$dist , dt_sample$gl, dt_s
 dt_sample$z <- mapply(changeCoordsSpericalZ, dt_sample$dist , dt_sample$gl, dt_sample$gb)
 
 scatterplot3d(dt_sample[,42:44])
+
+'''
+Si se toman 
+a<- datad2[,c('x', 'y', 'z')]
+res <- optics(a, minPts = 10)
+res <- extractDBSCAN(res, eps_cl = 0.0151)
+Se obtienen 4 grupos y 862 elementos de ruido
+
+
+dt_sample3 <- dt[dt$RAh<=1 & dt$RAh>=0 & dt$Ded>=-29 & dt$Ded<=-27,]
+dt_sample3$gl <- mapply(changeCoordsGalacticGL, dt_sample3$ra, dt_sample3$dec)
+dt_sample3$gb <- mapply(changeCoordsGalacticGB, dt_sample3$ra, dt_sample3$dec)
+
+dt_sample3$x <- mapply(changeCoordsSpericalX, dt_sample3$dist , dt_sample3$gl, dt_sample3$gb)
+dt_sample3$y <- mapply(changeCoordsSpericalY, dt_sample3$dist , dt_sample3$gl, dt_sample3$gb)
+dt_sample3$z <- mapply(changeCoordsSpericalZ, dt_sample3$dist , dt_sample3$gl, dt_sample3$gb)
+
+dt_sample3$xx <- mapply(changeCoordsSpericalX, dt_sample3$Z , dt_sample3$gl, dt_sample3$gb)
+dt_sample3$yy <- mapply(changeCoordsSpericalY, dt_sample3$Z , dt_sample3$gl, dt_sample3$gb)
+dt_sample3$zz <- mapply(changeCoordsSpericalZ, dt_sample3$Z , dt_sample3$gl, dt_sample3$gb)
+
+#dt_sample3 <- dt_sample3[dt_sample3$Z< 0.3,]
+
+a<- dt_sample3[,c('x', 'y', 'z')]
+scatterplot3d(dt_sample3[,42:44])
+ggplot(dt_sample3, aes(x=Z, y=Z))+geom_violin()
+
+dt_sample3 <- dt_sample[dt_sample$Z< 0.1,]
+
+res <- optics(a, minPts = 20)
+blo_scan <- extractDBSCAN(res, eps_cl = 0.01401)
+ hullplot(a, blo_scan)
