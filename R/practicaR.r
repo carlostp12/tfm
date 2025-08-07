@@ -23,7 +23,9 @@ res$order
 plot(res)
 
 ### identify clusters by cutting the reachability plot (black is noise)
-res <- optics_cut(res, eps_cl = .065)
+# res <- optics_cut(res, eps_cl = .065) --> Do not work
+
+opt <- extractDBSCAN(opt, eps_cl = .065)
 res
 
 plot(res)

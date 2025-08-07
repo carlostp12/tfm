@@ -116,20 +116,20 @@ to_radians <- function(angle)
   return (angle * pi / 180)
 }
 
-changeCoordsSpericalX <- function (r, longitude, latitude)
+changeCoordsSpericalX <- function (r, ra_longitude, dec_latitude)
 {
-  x = r * cos(longitude) * cos(latitude)
+  x = r * cos(to_radians(ra_longitude)) * cos(to_radians(dec_latitude))
   return (x)
 }
 
-changeCoordsSpericalY <- function (r, longitude, latitude)
+changeCoordsSpericalY <- function (r, ra_longitude, dec_latitude)
 {
-  y = r * cos(longitude) * sin(latitude)
+  y = r * sin(to_radians(ra_longitude)) * cos(to_radians(dec_latitude))
   return (y)
 }
-changeCoordsSpericalZ <- function (r, longitude, latitude)
+changeCoordsSpericalZ <- function (r, ra_longitude, dec_latitude)
 {
-  z = r*sin(latitude)
+  z = r*sin(to_radians(dec_latitude))
   return (z)
 }
 
@@ -184,13 +184,17 @@ res <- extractDBSCAN(res, eps_cl = 0.0151)
 Se obtienen 4 grupos y 862 elementos de ruido
 
 
-dt_sample3 <- dt[dt$RAh<=1 & dt$RAh>=0 & dt$Ded>=-29 & dt$Ded<=-27,]
+dt_sample3 <- dt2[dt2$RAh<=1 & dt2$RAh>=0 & dt2$Ded>=-29 & dt2$Ded<=-27,]
 dt_sample3$gl <- mapply(changeCoordsGalacticGL, dt_sample3$ra, dt_sample3$dec)
 dt_sample3$gb <- mapply(changeCoordsGalacticGB, dt_sample3$ra, dt_sample3$dec)
 
 dt_sample3$x <- mapply(changeCoordsSpericalX, dt_sample3$dist , dt_sample3$gl, dt_sample3$gb)
 dt_sample3$y <- mapply(changeCoordsSpericalY, dt_sample3$dist , dt_sample3$gl, dt_sample3$gb)
 dt_sample3$z <- mapply(changeCoordsSpericalZ, dt_sample3$dist , dt_sample3$gl, dt_sample3$gb)
+
+dt_sample3$x <- mapply(changeCoordsSpericalX, dt_sample3$dist , dt_sample3$ra, dt_sample3$dec)
+dt_sample3$y <- mapply(changeCoordsSpericalY, dt_sample3$dist , dt_sample3$ra, dt_sample3$dec)
+dt_sample3$z <- mapply(changeCoordsSpericalZ, dt_sample3$dist , dt_sample3$ra, dt_sample3$dec)
 
 dt_sample3$xx <- mapply(changeCoordsSpericalX, dt_sample3$Z , dt_sample3$gl, dt_sample3$gb)
 dt_sample3$yy <- mapply(changeCoordsSpericalY, dt_sample3$Z , dt_sample3$gl, dt_sample3$gb)
