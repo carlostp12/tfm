@@ -1,1 +1,4 @@
 data/
+latex/*.aux
+latex/*.out
+latex/*.log

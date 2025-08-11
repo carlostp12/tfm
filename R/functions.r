@@ -25,6 +25,12 @@ library(scatterplot3d)
 if (!require('gMOIP')) install.packages("gMOIP")
 library(gMOIP)
 
+if (!require('ggplot2')) install.packages("ggplot2")
+library(ggplot2)
+
+if (!require('rgl')) install.packages("rgl")
+library(rgl)
+
 if (!require('pracma')) install.packages("pracma")
 library(pracma)
 
@@ -137,13 +143,65 @@ changeCoordsSpericalZ <- function (r, ra_longitude, dec_latitude)
   return (z)
 }
 
+#Work aready done
+------------------------------------------------------------
+dt <- read.csv('2dfgrs-title.csv')
+dt$dec <- parseDECNumeric(dt$Ded, dt$Dem, dt$Des)
+dt$ra <- parseRANumeric(dt$RAh, dt$Ram, dt$Ras)
+
+# Galactic coords
+dt$gl <- mapply(changeCoordsGalacticGL, dt$ra, dt$dec)
+dt$gb <- mapply(changeCoordsGalacticGB, dt$ra, dt$dec)
+
+
+# Distance
+dt$dist <- sapply (X=dt$Z, FUN = get_distance)
+
+setwd('C:/Users/Carlos/OneDrive/data-science/TFM/tfm/data')
+
+#Rectangulars
+dt$x <- mapply(changeCoordsSpericalX, dt$dist , dt$ra, dt$dec)
+dt$y <- mapply(changeCoordsSpericalY, dt$dist , dt$ra, dt$dec)
+dt$z <- mapply(changeCoordsSpericalZ, dt$dist , dt$ra, dt$dec)
+
+#save file
+write.csv(dt, '2dfgrs-title-dist.csv')
+
+#Rectangulars - Galactic
+dt$x <- mapply(changeCoordsSpericalX, dt$dist , dt$gl, dt$gb)
+dt$y <- mapply(changeCoordsSpericalY, dt$dist , dt$gl, dt$gb)
+dt$z <- mapply(changeCoordsSpericalZ, dt$dist , dt$gl, dt$gb)
+
+write.csv(dt, '2dfgrs-title-dist.csv')
+
+dt <- read.csv('2dfgrs-title-dist.csv')
+
+the_values <- c('RAh', 'Ram', 'Ras', 'Ded', 'Dem', 'Des', 'dist', 'Z', 'Q_Z', 'ra', 'dec', 'x', 'y', 'z')
+dt <- dt[,the_values]
+
+dt_sample3 <- dt[dt$RAh<=1 & dt$RAh>=0 & dt$Ded>=-29 & dt$Ded<=-27 & dt$Z < 0.3,]
+a<- dt_sample3[,c('x', 'y', 'z')]
+scatterplot3d(dt_sample3[,12:14])
+ggplot(dt_sample3, aes(x=Z, y=Z))+geom_violin()
+
+res <- optics(a, minPts = 20)
+blo_scan <- extractDBSCAN(res, eps_cl = 0.001401)
+hullplot(a, blo_scan)
+plot(res)
+
+db <- dbscan(a, eps = 0.0014, minPts = 20)
+plot3d(a$x, a$y, a$z, col = db$cluster + 1, size = 2, xlab = "X", 
+       ylab = "Y", zlab = "Z")
+
+------------------------------------------------------------
+
+
 setwd('C:/Users/Carlos/OneDrive/data-science/TFM/tfm/data')
 dt <- read.csv('2dfgrs-title-dist.csv')
-# podemos tomar una muestra:
+podemos tomar una muestra:
 dt_sample <-sample_n(dt, 10)
 orig_dt <- dt
-the_values <- c('RAh', 'Ram', 'Ras', 'Ded', 'Dem', 'Des', 'dist', 'Z', 'Q_Z', 'ra', 'dec')
-dt <- dt[,the_values]
+
 """
 plot(df$ra, df$dec)
 df[ df$ra<20,'ra']

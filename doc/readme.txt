@@ -90,6 +90,10 @@ SOBRE SDSS: Se puede obtener de aquí https://skyserver.sdss.org/dr9/en/tools/se
 		bestobjid: el objID para la tabla PhotoObj.
 		targetType: 
 		z: final redshift
+		ra.
+		dec
+		elodieBV: (B-V):color
+		elodieZ: REdshift
 	Hay otra vista solo para galaxias: Galaxy, que contiene los mismos campos que la tabla PhotoObj.
 	
  - En cuanto a las magnitudes: hay varios datos: psfMagnitude, fiberMagnitude. El llamado modelMag no debe usarse.
