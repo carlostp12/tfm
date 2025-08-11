@@ -28,6 +28,10 @@ library(gMOIP)
 if (!require('pracma')) install.packages("pracma")
 library(pracma)
 
+if (!require('plotly')) install.packages("plotly")
+
+library(plotly)
+
 get_distance <- function(z){
   url <- paste ("http://www.mathstools.com:8080/math/servlet/CosmologyServlet?z=",z,"&q=distance", sep="")
   tryCatch(
@@ -129,7 +133,7 @@ changeCoordsSpericalY <- function (r, ra_longitude, dec_latitude)
 }
 changeCoordsSpericalZ <- function (r, ra_longitude, dec_latitude)
 {
-  z = r*sin(to_radians(dec_latitude))
+  z = r * sin(to_radians(dec_latitude))
   return (z)
 }
 
@@ -139,7 +143,7 @@ dt <- read.csv('2dfgrs-title-dist.csv')
 dt_sample <-sample_n(dt, 10)
 orig_dt <- dt
 the_values <- c('RAh', 'Ram', 'Ras', 'Ded', 'Dem', 'Des', 'dist', 'Z', 'Q_Z', 'ra', 'dec')
-dt2 <- dt[,the_values]
+dt <- dt[,the_values]
 """
 plot(df$ra, df$dec)
 df[ df$ra<20,'ra']
@@ -184,7 +188,7 @@ res <- extractDBSCAN(res, eps_cl = 0.0151)
 Se obtienen 4 grupos y 862 elementos de ruido
 
 
-dt_sample3 <- dt2[dt2$RAh<=1 & dt2$RAh>=0 & dt2$Ded>=-29 & dt2$Ded<=-27,]
+dt_sample3 <- dt[dt$RAh<=1 & dt$RAh>=0 & dt$Ded>=-29 & dt$Ded<=-27,]
 dt_sample3$gl <- mapply(changeCoordsGalacticGL, dt_sample3$ra, dt_sample3$dec)
 dt_sample3$gb <- mapply(changeCoordsGalacticGB, dt_sample3$ra, dt_sample3$dec)
 
@@ -211,3 +215,7 @@ dt_sample3 <- dt_sample[dt_sample$Z< 0.1,]
 res <- optics(a, minPts = 20)
 blo_scan <- extractDBSCAN(res, eps_cl = 0.01401)
  hullplot(a, blo_scan)
+ 
+ db <- dbscan(a, eps = 0.0014, minPts = 20)
+ plot3d(a$x, a$y, a$z, col = db$cluster + 1, size = 5, xlab = "X", 
+       ylab = "Y", zlab = "Z")
