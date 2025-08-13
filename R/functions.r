@@ -277,3 +277,8 @@ blo_scan <- extractDBSCAN(res, eps_cl = 0.01401)
  db <- dbscan(a, eps = 0.0014, minPts = 20)
  plot3d(a$x, a$y, a$z, col = db$cluster + 1, size = 5, xlab = "X", 
        ylab = "Y", zlab = "Z")
+       
+       
+cl <- hdbscan(a, minPts = 20, cluster_selection_epsilon = 0.0020)
+plot3d(a$x, a$y, a$z, col = cl$cluster + 1, size = 2, xlab = "X", 
+       ylab = "Y", zlab = "Z")

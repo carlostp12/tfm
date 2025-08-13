@@ -10,6 +10,7 @@ def load_csv(complete_path):
     output_file = data_directory + "objects.js"
     out = open(output_file, 'w')
 
+    out.write('function addObjectClusters() {\n')
     for index, row in csv_data.iterrows():
         print("""'ra': {:.2f}, 'dec': {:.2f},""".format(row['ra'], row['dec']))
         out.write('''planetarium.addPointer({
@@ -18,8 +19,10 @@ def load_csv(complete_path):
            "label": "",
            "colour": " rgb(255,0,0) "});\n''')
 
+    out.write('\n}\n')
     out.close()
-    csv_data.close()
+
+
 def print_hi(name):
     # Use a breakpoint in the code line below to debug your script.
     print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
@@ -28,7 +31,7 @@ def print_hi(name):
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     print_hi('PyCharmsss')
-    data_directory = 'C:\\carlos\\oneDrive\\data-science\\TFM\\tfm\\data\\'
-    file = data_directory + "2dfgrs-title-dist.csv"
+    data_directory = 'C:\\users\\carlos\\oneDrive\\data-science\\TFM\\tfm\\data\\'
+    file = data_directory + "sample.csv"
     print(file)
     load_csv(file)
