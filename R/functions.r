@@ -176,10 +176,12 @@ write.csv(dt, '2dfgrs-title-dist.csv')
 
 dt <- read.csv('2dfgrs-title-dist.csv')
 
-the_values <- c('RAh', 'Ram', 'Ras', 'Ded', 'Dem', 'Des', 'dist', 'Z', 'Q_Z', 'ra', 'dec', 'x', 'y', 'z')
+the_values <- c('SEQNUM', 'RAh', 'Ram', 'Ras', 'Ded', 'Dem', 'Des', 'dist', 'Z', 'Q_Z', 'ra', 'dec', 'x', 'y', 'z')
 dt <- dt[,the_values]
 
 dt_sample3 <- dt[dt$RAh<=1 & dt$RAh>=0 & dt$Ded>=-29 & dt$Ded<=-27 & dt$Z < 0.3,]
+
+#dt_sample3 <- dt[dt$RAh<=1 & dt$RAh>=0 & dt$Ded>=-29 & dt$Ded<=-27 & dt$Z < 0.2 & dt$Z > 0.01 & dt$Q_Z>=3,]
 a<- dt_sample3[,c('x', 'y', 'z')]
 scatterplot3d(dt_sample3[,12:14])
 ggplot(dt_sample3, aes(x=Z, y=Z))+geom_violin()
@@ -198,7 +200,7 @@ plot3d(a$x, a$y, a$z, col = db$cluster + 1, size = 2, xlab = "X",
 
 setwd('C:/Users/Carlos/OneDrive/data-science/TFM/tfm/data')
 dt <- read.csv('2dfgrs-title-dist.csv')
-podemos tomar una muestra:
+#podemos tomar una muestra:
 dt_sample <-sample_n(dt, 10)
 orig_dt <- dt
 
@@ -270,15 +272,71 @@ ggplot(dt_sample3, aes(x=Z, y=Z))+geom_violin()
 
 dt_sample3 <- dt_sample[dt_sample$Z< 0.1,]
 
+######################
+#     OPTICS         #    
+###################### 
 res <- optics(a, minPts = 20)
 blo_scan <- extractDBSCAN(res, eps_cl = 0.01401)
  hullplot(a, blo_scan)
- 
+
+######################
+#     DBSCAN         #    
+###################### 
  db <- dbscan(a, eps = 0.0014, minPts = 20)
  plot3d(a$x, a$y, a$z, col = db$cluster + 1, size = 5, xlab = "X", 
        ylab = "Y", zlab = "Z")
-       
-       
+######################
+#     HDBSCAN         #    
+######################
 cl <- hdbscan(a, minPts = 20, cluster_selection_epsilon = 0.0020)
 plot3d(a$x, a$y, a$z, col = cl$cluster + 1, size = 2, xlab = "X", 
        ylab = "Y", zlab = "Z")
+
+# table -------------------------------------------------------------------
+
+res <- extractDBSCAN(res, eps_cl = 0.00049)
+
+       
+######################
+#     GROUPS reading #    
+######################       
+dt_groups <- read.csv('groups/group_members.csv', sep = ',')       
+mm<-merge(dt_sample3, dt_groups, by.x = 'SEQNUM', by.y = 'ID_2DF')
+
+a<- mm[,c('x', 'y', 'z')]
+res <- optics(a, minPts = 10)
+res <- extractDBSCAN(res, eps_cl = 0.00151)
+plot3d(a$x, a$y, a$z, col = mm$GROUP_ID, size = 2, xlab = "X", 
+       ylab = "Y", zlab = "Z")
+plot3d(a$x, a$y, a$z, col = res$cluster + 1, size = 2, xlab = "X", 
+        ylab = "Y", zlab = "Z")     
+        
+f<- function(x_vector, y_vector){
+suma <- 0
+norma = sum(x_vector * x_vector)^0.5
+  for(x in x_vector){
+    for(y in y_vector){
+      print(x)
+      suma <- suma + (x-y)*x
+    }
+  }
+return (suma/norma)
+}
+
+Rutina para tomar un objeto como distancia
+aa <- head(a)
+mi_matrix = matrix(0, ncol = ncol(aa), nrow = nrow(aa))
+
+distancia <- function(vector1, vector2){
+  sqrt((vector1$x-vector2$x)^2 + (vector1$y-vector2$y)^2 
+  + (vector1$z-vector2$z)^2)
+}
+
+for(i in 1:nrow(aa)){
+  for(j in 1:nrow(aa)){
+    mi_matrix[i,j] = distancia(aa[i,],aa[j,])
+    #print(paste(i, " ", indice ))
+  }
+}
+
+as.dist(mi_matrix)
