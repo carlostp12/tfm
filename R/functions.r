@@ -325,11 +325,23 @@ return (suma/norma)
 
 Rutina para tomar un objeto como distancia
 aa <- head(a)
-mi_matrix = matrix(0, ncol = ncol(aa), nrow = nrow(aa))
+mi_matrix = matrix(0, ncol = nrow(aa), nrow = nrow(aa))
 
 distancia <- function(vector1, vector2){
   sqrt((vector1$x-vector2$x)^2 + (vector1$y-vector2$y)^2 
   + (vector1$z-vector2$z)^2)
+}
+
+distancia <- function(vector1, vector2){
+  sqrt(sum((vector1$z-vector2$z)^2)
+}
+
+projected_distance <- function(vector1, vector2){
+  sum(vector1$z-vector2)*vector1) / sqrt(sum(vector1^2))
+}
+
+distancia_s <- function(vector1, vector2, sfactor){
+  distancia(vector1, vector2) + sfactor * projected_distance(vector1, vector2)
 }
 
 for(i in 1:nrow(aa)){
