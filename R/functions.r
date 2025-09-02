@@ -38,6 +38,12 @@ if (!require('plotly')) install.packages("plotly")
 
 library(plotly)
 
+if (!require('sqldf')) install.packages("sqldf")
+library(sqldf)
+
+# Renombrar una columna:
+names(mm)[names(mm) == 'Z'] <- 'zz'
+
 get_distance <- function(z){
   url <- paste ("http://www.mathstools.com:8080/math/servlet/CosmologyServlet?z=",z,"&q=distance", sep="")
   tryCatch(
@@ -267,10 +273,10 @@ dt_sample3$zz <- mapply(changeCoordsSpericalZ, dt_sample3$Z , dt_sample3$gl, dt_
 #dt_sample3 <- dt_sample3[dt_sample3$Z< 0.3,]
 
 a<- dt_sample3[,c('x', 'y', 'z')]
-scatterplot3d(dt_sample3[,42:44])
+scatterplot3d(dt_sample3[,41:43])
 ggplot(dt_sample3, aes(x=Z, y=Z))+geom_violin()
 
-dt_sample3 <- dt_sample[dt_sample$Z< 0.1,]
+dt_sample3 <- dt_sample3[dt_sample3$Z< 0.2,]
 
 ######################
 #     OPTICS         #    
@@ -278,6 +284,7 @@ dt_sample3 <- dt_sample[dt_sample$Z< 0.1,]
 res <- optics(a, minPts = 20)
 blo_scan <- extractDBSCAN(res, eps_cl = 0.01401)
  hullplot(a, blo_scan)
+hullplot(a, mm$GROUP_ID) 
 
 ######################
 #     DBSCAN         #    
@@ -302,6 +309,7 @@ res <- extractDBSCAN(res, eps_cl = 0.00049)
 ######################       
 dt_groups <- read.csv('groups/group_members.csv', sep = ',')       
 mm<-merge(dt_sample3, dt_groups, by.x = 'SEQNUM', by.y = 'ID_2DF')
+mm<- mm[,c('SEQNUM','x', 'y', 'z', "dist", 'GROUP_ID')]
 
 a<- mm[,c('x', 'y', 'z')]
 res <- optics(a, minPts = 10)
@@ -333,22 +341,156 @@ distancia <- function(vector1, vector2){
 }
 
 distancia <- function(vector1, vector2){
-  sqrt(sum((vector1$z-vector2$z)^2)
+  sqrt(sum((vector1-vector2)^2))
 }
 
 projected_distance <- function(vector1, vector2){
-  sum(vector1$z-vector2)*vector1) / sqrt(sum(vector1^2))
+  (sum(vector1-vector2)*vector1) / sqrt(sum(vector1^2))
 }
 
-distancia_s <- function(vector1, vector2, sfactor){
-  distancia(vector1, vector2) + sfactor * projected_distance(vector1, vector2)
+distancia_s <- function(vector1, vector2){
+    sqrt (sum((vector1-vector2)^2) + 
+              (sfactor * sum((vector1-vector2)*vector1) / sqrt(sum(vector1^2)))^2
+    )
 }
 
-for(i in 1:nrow(aa)){
-  for(j in 1:nrow(aa)){
-    mi_matrix[i,j] = distancia(aa[i,],aa[j,])
-    #print(paste(i, " ", indice ))
-  }
+for(i in 1:n){
+  ai<- a[i,]
+    for(j in 1:n){
+        aj <- a[j,]
+        if (i<j) {
+            mi_matrix[i,j] = distancia(ai,aj)
+        }else if (i>j)
+        {
+            mi_matrix[i,j] = mi_matrix[j,i]
+        }else{
+            mi_matrix[i,j] =0
+        }
+    }
+    print(paste("J es ", i ))
 }
 
+# R es ineficiente para iterar por índices, es mejor vectorizar o como en este
+# caso usar la función outer y mapply
+
+FN <- function(i, j) {
+    if (i<j) {
+            mi_matrix[i,j] = distancia(a[i,],a[j,])
+            print(mi_matrix[i,j])
+        }else if (i>j)
+        {
+            mi_matrix[i,j] = mi_matrix[j,i]
+        }else{
+            mi_matrix[i,j] =0
+           # print(0)
+        }
+         #print(paste("i J es ", i, " " , j, "\n"))
+}
+FN <- function(j,i) {
+    if(i %% 10 == 1 & j %% 100 == 1){
+      print(paste("i J es ", i, " " , j, "\n"))
+    }
+    if (i<j) {
+        distancia(a[i,],a[j,])
+    }
+}
+aaa <- outer(1:n, 1:n, FUN=function(x, y) mapply(FN, x, y))
+n<-nrow(a)
 as.dist(mi_matrix)
+
+# Mejor todavía, vectorizar y aplicar por fila
+sfactor <- 0.2
+lista_filas <- as.list(data.frame(t(a)))
+matriz_distancias <- outer(lista_filas, lista_filas, FUN = Vectorize(distancia_s))
+matriz_distancias<- sqrt(matriz_distancias)
+aaa <- as.dist(matriz_distancias)
+res <- optics(aaa, minPts = 5)
+blo_scan <- extractDBSCAN(res, eps_cl = 0.00049)
+ hullplot(a, blo_scan)
+hullplot(a, mm$GROUP_ID) 
+
+plot3d(a$x, a$y, a$z, col = mm$GROUP_ID, size = 2, xlab = "X", 
+       ylab = "Y", zlab = "Z")
+plot3d(a$x, a$y, a$z, col = blo_scan$cluster + 1, size = 2, xlab = "X", 
+        ylab = "Y", zlab = "Z")
+        
+mm<- mm[,c('SEQNUM','x', 'y', 'z', "dist", 'GROUP_ID')]        
+h<-sqldf("SELECT count(SEQNUM) as members, GROUP_ID FROM mm GROUP BY GROUP_ID order by members DESC")        
+h2<-sqldf("SELECT mm.x, mm.y, mm.z, mm.GROUP_ID FROM mm as mm, h 
+    where mm.GROUP_ID=h.GROUP_ID and h.members>5")
+
+plot3d(a$x, a$y, a$z, col = h2$GROUP_ID, size = 2, xlab = "X", 
+        ylab = "Y", zlab = "Z")
+
+aa<- mm[,c('x', 'y', 'z')]
+
+#Una de las mejores opciones:
+blo_scan <- extractDBSCAN(res, eps_cl = 0.00069)
+
+calculate_purity <- function(cluster_id, dataset) {
+  total<-sqldf(sprintf("SELECT count(SEQNUM) AS how_many
+    FROM dataset 
+    WHERE cluster=%s", cluster_id))
+  total_in_cluster <- total$how_many
+  
+  print(sprintf('total %s', total_in_cluster))
+  total<-sqldf(sprintf("SELECT count(SEQNUM) AS how_many, GROUP_ID
+    FROM dataset WHERE cluster=%s  
+    GROUP BY GROUP_ID 
+    order by how_many DESC limit 1", cluster_id))
+    
+  total_in_group <- total$how_many
+  group <- total$GROUP_ID
+  
+   print(sprintf('group %s', group))
+   print(sprintf('total_in_group %s', total_in_group))
+  # a cluster is pure if tg/tc > 0.6666
+  list('cluster_id' = cluster_id, 'total_in_group' = total_in_group, 
+       'total_in_cluster' = total_in_cluster, 'group_id' = group, 
+      'purity' = total_in_group/total_in_cluster)
+}
+
+calculate majority_group(cluster_id, dataset){
+total<-sqldf(sprintf("SELECT count(SEQNUM) AS how_many, GROUP_ID
+    FROM dataset 
+    WHERE cluster=%s 
+   group by GROUP_ID 
+   order by how_many desc limit 1", cluster_id))
+    
+     total$GROUP_ID
+}
+calculate_completeness <- function(cluster_id, dataset, dataset_original){
+ # calculate the majority group
+  total<-sqldf(sprintf("SELECT count(SEQNUM) AS how_many, GROUP_ID
+    FROM dataset 
+    WHERE cluster=%s 
+   group by GROUP_ID 
+   order by how_many desc limit 1", cluster_id))
+    
+  total_in_cluster <- total$how_many
+  majority_group <- total$GROUP_ID
+  
+  # calculate number of members of majority groups 
+  total<-sqldf(sprintf("SELECT count(SEQNUM) AS how_many, GROUP_ID
+    FROM dataset_original 
+    WHERE GROUP_ID=%s
+    group by GROUP_ID 
+    limit 1", majority_group))
+  
+  total_in_group <- total$how_many
+  group <- total$GROUP_ID
+  
+  list('cluster_id' = cluster_id, 'members' = total_in_group, 'group_id' = group, 
+      'completeness' = total_in_cluster/total_in_group)
+}
+
+cluster_results=data.frame('cluster' = blo_scan$cluster)
+completeness <- c()
+purity <- c()
+for(r in cluster_results){
+  bb <- calculate_completeness(r, mm, mm)
+  append(completeness, bb$completeness) 
+  bb <- calculate_purity(r, mm)
+  append(purity, bb$purity)
+  print(r)
+}
