@@ -426,6 +426,8 @@ aa<- mm[,c('x', 'y', 'z')]
 
 #Una de las mejores opciones:
 blo_scan <- extractDBSCAN(res, eps_cl = 0.00069)
+'''
+
 
 calculate_purity <- function(cluster_id, dataset) {
   total<-sqldf(sprintf("SELECT count(SEQNUM) AS how_many
@@ -450,47 +452,20 @@ calculate_purity <- function(cluster_id, dataset) {
       'purity' = total_in_group/total_in_cluster)
 }
 
-calculate majority_group(cluster_id, dataset){
-total<-sqldf(sprintf("SELECT count(SEQNUM) AS how_many, GROUP_ID
-    FROM dataset 
-    WHERE cluster=%s 
-   group by GROUP_ID 
-   order by how_many desc limit 1", cluster_id))
-    
-     total$GROUP_ID
-}
-calculate_completeness <- function(cluster_id, dataset, dataset_original){
- # calculate the majority group
-  total<-sqldf(sprintf("SELECT count(SEQNUM) AS how_many, GROUP_ID
-    FROM dataset 
-    WHERE cluster=%s 
-   group by GROUP_ID 
-   order by how_many desc limit 1", cluster_id))
-    
-  total_in_cluster <- total$how_many
-  majority_group <- total$GROUP_ID
-  
-  # calculate number of members of majority groups 
-  total<-sqldf(sprintf("SELECT count(SEQNUM) AS how_many, GROUP_ID
-    FROM dataset_original 
-    WHERE GROUP_ID=%s
-    group by GROUP_ID 
-    limit 1", majority_group))
-  
-  total_in_group <- total$how_many
-  group <- total$GROUP_ID
-  
-  list('cluster_id' = cluster_id, 'members' = total_in_group, 'group_id' = group, 
-      'completeness' = total_in_cluster/total_in_group)
-}
 
 cluster_results=data.frame('cluster' = blo_scan$cluster)
 completeness <- c()
 purity <- c()
-for(r in cluster_results){
-  bb <- calculate_completeness(r, mm, mm)
-  append(completeness, bb$completeness) 
-  bb <- calculate_purity(r, mm)
-  append(purity, bb$purity)
-  print(r)
+for(r in cluster_results$cluster){
+  if(r != 0) {
+    bb <- calculate_completeness(r, mm)
+    completeness <- append(completeness, bb$completeness) 
+    bb <- calculate_purity(r, mm)
+    purity <- append(purity, bb$purity)
+
+  }else{
+    completeness <- append(completeness, 0)
+    purity <- append(purity, 0)
+  }
+      print(r)
 }
