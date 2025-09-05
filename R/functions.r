@@ -469,3 +469,38 @@ for(r in cluster_results$cluster){
   }
       print(r)
 }
+
+#######################################
+# Calculate angle between two points
+#######################################
+calculate_angle <- function(v1, v2) {
+	dot_product <- sum(v1 * v2)
+	mod_v1 <- sqrt(sum(v1^2))
+	mod_v2 <- sqrt(sum(v2^2))
+	acos_angle <- dot_product / (mod_v1 * mod_v2)
+	acos(acos_angle)
+}
+
+#######################################
+# Calculate traverse distance
+#######################################
+traverse_distance <- function(v1, v2, distance) {
+	calculate_angle(v1, v2) * distance
+}
+
+#######################################
+# Calculate elongated distance
+# To calculate it must to be done:
+#	a<- mm[,c('x', 'y', 'z', 'dist)]
+#   sfactor <- 0.2
+#   lista_filas <- as.list(data.frame(t(a)))
+#   matriz_distancias <- outer(lista_filas, lista_filas, FUN = Vectorize(distancia_s))
+#   matriz_distancias<- sqrt(matriz_distancias)
+#   aaa <- as.dist(matriz_distancias)
+#   res <- optics(aaa, minPts = 5)
+#######################################
+distancia_s <- function(vector1, vector2, proper_distance, sfactor){
+    sqrt (traverse_distance(vector1, vector2, proper_distance) + 
+              (sfactor * sum((vector1-vector2)*vector1) / sqrt(sum(vector1^2)))^2
+    )
+}
