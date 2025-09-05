@@ -482,7 +482,7 @@ calculate_angle <- function(v1, v2) {
 }
 
 #######################################
-# Calculate traverse distance
+# Calculate traverse distance from proper distance
 #######################################
 traverse_distance <- function(v1, v2, distance) {
 	calculate_angle(v1, v2) * distance
