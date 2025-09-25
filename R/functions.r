@@ -169,9 +169,21 @@ setwd('C:/Users/Carlos/OneDrive/data-science/TFM/tfm/data')
 dt$x <- mapply(changeCoordsSpericalX, dt$dist , dt$ra, dt$dec)
 dt$y <- mapply(changeCoordsSpericalY, dt$dist , dt$ra, dt$dec)
 dt$z <- mapply(changeCoordsSpericalZ, dt$dist , dt$ra, dt$dec)
+#sdss
+dt_sdss$x <- mapply(changeCoordsSpericalX, dt_sdss$dist , dt_sdss$RA, dt_sdss$DEC)
+dt_sdss$y <- mapply(changeCoordsSpericalY, dt_sdss$dist , dt_sdss$RA, dt_sdss$DEC)
+dt_sdss$z <- mapply(changeCoordsSpericalZ, dt_sdss$dist , dt_sdss$RA, dt_sdss$DEC)
+dt_sample3 <- dt[dt$RA<210 & dt$RA>180 & dt$DEC>27 & dt$DEC<30,] # ==> RA [12h,14h] dec in [27, 30]
+dt_sample3 <- dt[dt$RA<210 & dt$RA>180 & dt$DEC>25 & dt$DEC<30,]
+
+dt_sample3<- dt[,c('GAL_ID','x', 'y', 'z', 'Z',  "dist", "GROUP_ID")]
+names(dt_sample3)[names(dt_sample3) == 'Z'] <- 'redshift'
+names(dt_sample3)[names(dt_sample3) == 'GAL_ID'] <- 'SEQNUM'
+dt_sample3<- dt_sample3[,c('GAL_ID','x', 'y', 'z', 'redshift',  "dist", "GROUP_ID")]
 
 #save file
 write.csv(dt, '2dfgrs-title-dist.csv')
+write.csv(dt_sdss, 'sdss-title-dist.csv')
 
 #Rectangulars - Galactic
 dt$x <- mapply(changeCoordsSpericalX, dt$dist , dt$gl, dt$gb)
@@ -453,15 +465,21 @@ calculate_purity <- function(cluster_id, dataset) {
 }
 
 
-cluster_results=data.frame('cluster' = blo_scan$cluster)
-completeness <- c()
-purity <- c()
+mm$cluster <- blo_scan$cluster
+# cluster_results=data.frame('cluster' = blo_scan$cluster)
+mm0 <- mm[mm$cluster != 0, ]
+cluster_results <-sqldf("SELECT distinct(cluster) AS cluster
+    FROM mm0")
+completeness <- data.frame('group'=integer(),'cluster'=integer(),'count_in_group'=integer(),'count_in_group_cluster'=integer(), 'completeness'=numeric())
+purity <- data.frame('group'=integer(),'cluster'=integer(),'total_in_group'=integer(),'total_in_cluster'=integer(), 'purity'=numeric())
 for(r in cluster_results$cluster){
   if(r != 0) {
-    bb <- calculate_completeness(r, mm)
-    completeness <- append(completeness, bb$completeness) 
-    bb <- calculate_purity(r, mm)
-    purity <- append(purity, bb$purity)
+    bb <- calculate_completeness(r, mm0)
+ #   completeness <- append(completeness, bb$completeness) 
+	completeness[nrow(completeness) +1,] <- c(bb$group_id, bb$cluster_id, bb$count_in_group, bb$count_in_group_cluster,  bb$completeness)
+    bb <- calculate_purity(r, mm0)
+  #  purity <- append(purity, bb$purity)
+  purity[nrow(purity) +1,] <- c(bb$group_id, bb$cluster_id, bb$total_in_group, bb$total_in_cluster,  bb$purity)
 
   }else{
     completeness <- append(completeness, 0)
@@ -469,6 +487,8 @@ for(r in cluster_results$cluster){
   }
       print(r)
 }
+ print(r)
+
 
 #######################################
 # Calculate angle between two points
@@ -504,3 +524,46 @@ distancia_s <- function(vector1, vector2, proper_distance, sfactor){
               (sfactor * sum((vector1-vector2)*vector1) / sqrt(sum(vector1^2)))^2
     )
 }
+
+
+
+###############################################################################
+#	Executions
+###############################################################################
+mm$cluster <- blo_scan$cluster
+mm0 <- mm[mm$cluster != 0, ]
+cluster_results <-sqldf("SELECT distinct(cluster) AS cluster
+    FROM mm0")
+completeness <- data.frame('group'=integer(),'cluster'=integer(),'count_in_group'=integer(),'count_in_group_cluster'=integer(), 'completeness'=numeric())
+purity <- data.frame('group'=integer(),'cluster'=integer(),'total_in_group'=integer(),'total_in_cluster'=integer(), 'purity'=numeric())
+for(r in cluster_results$cluster){
+  if(r != 0) {
+    bb <- calculate_completeness(r, mm0)
+ #   completeness <- append(completeness, bb$completeness) 
+	completeness[nrow(completeness) +1,] <- c(bb$group_id, bb$cluster_id, bb$count_in_group, bb$count_in_group_cluster,  bb$completeness)
+    bb <- calculate_purity(r, mm0)
+  #  purity <- append(purity, bb$purity)
+  purity[nrow(purity) +1,] <- c(bb$group_id, bb$cluster_id, bb$total_in_group, bb$total_in_cluster,  bb$purity)
+
+  }else{
+    completeness <- append(completeness, 0)
+    purity <- append(purity, 0)
+  }
+      print(r)
+}
+
+print("**************************************************")
+print("Completeness analysys")
+ccc <- completeness[completeness$count_in_group > threshold,]
+print(sprintf(' Total groups with more than %s members: %s', threshold, nrow(ccc)))
+print(sprintf(' Completeness avg: %s', 	mean(ccc$completeness)))
+print(sprintf(' Total clusters complete: %s out of %s', 	nrow(ccc[ccc$completeness>0.5,]), nrow(ccc)))
+print("**************************************************")
+
+print("**************************************************")
+print("Purity analysys")
+ccc <- purity[purity$total_in_group > threshold,]
+print(sprintf(' Total groups with more than %s members: %s', threshold, nrow(ccc)))
+print(sprintf(' Purity avg: %s', 	mean(ccc$purity)))
+print(sprintf(' Total clusters pure: %s out of %s', nrow(ccc[ccc$purity>0.666,]), nrow(ccc)))
+print("**************************************************")
