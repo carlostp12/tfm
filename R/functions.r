@@ -179,7 +179,7 @@ dt_sample3 <- dt[dt$RA<210 & dt$RA>180 & dt$DEC>25 & dt$DEC<30,]
 dt_sample3<- dt[,c('GAL_ID','x', 'y', 'z', 'Z',  "dist", "GROUP_ID")]
 names(dt_sample3)[names(dt_sample3) == 'Z'] <- 'redshift'
 names(dt_sample3)[names(dt_sample3) == 'GAL_ID'] <- 'SEQNUM'
-dt_sample3<- dt_sample3[,c('GAL_ID','x', 'y', 'z', 'redshift',  "dist", "GROUP_ID")]
+dt_sample3<- dt_sample3[,c('SEQNUM','x', 'y', 'z', 'redshift',  "dist", "GROUP_ID")]
 
 #save file
 write.csv(dt, '2dfgrs-title-dist.csv')
