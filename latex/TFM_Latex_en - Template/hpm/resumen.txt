@@ -1,0 +1,4 @@
+El objetivo de este trabajo es el estudio de agrupaciones de galaxias mediante modelos no supervidados basados en densidad. 
+Uno de los resultados de este estudio es la posibilidad de asociar clusters con agrupaciones galácticas reales a través de su propia gravedad o debido la asocuación de la materia bariónica con la materia oscura. 
+
+Ello seria interesante para averiguar si los métodos son útiles para la detección, en futuros grupos de datos, de acumulaciones de materia y en último caso, contribuir al cartografiado de las galaxias en el universo.

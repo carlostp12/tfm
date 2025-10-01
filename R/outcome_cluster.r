@@ -90,8 +90,8 @@ calculate_stats <- function(cluster_id, dataset) {
   
   purity <- ifelse(total_in_cluster > 0, total_in_cluster_group/total_in_cluster, 0)
   completeness <- ifelse(total_in_group > 0, total_in_cluster_group/total_in_group, 0)	
-  bad_classified <- total_in_group - total_in_cluster_group
-  spurious <- total_in_cluster - total_in_cluster_group
+  bad_classified <- total_in_group - total_in_cluster_group # belowing to group but classified outside
+  spurious <- total_in_cluster - total_in_cluster_group # Outside of the group classified inside
   list('cluster_id' = cluster_id, 
 		'group_id' = group_id , 
 		'total_in_group' = total_in_group, 
