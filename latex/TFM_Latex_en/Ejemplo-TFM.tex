@@ -109,8 +109,17 @@ citecolor=blue,
 
 % chapters of the document
 \section{Introduction}
+\subsection{Justification of interest and relevance}
 
-This template aims to be a guide for students. This template can be adapted to the specific needs of each project if the project supervisor agrees with the changes.
+In recent times, it has been established that the large-scale structure of the universe is formed by a vast cosmic web \cite{Eniasto:2014} primarily composed of dark matter. The topology of this web consists of filaments that enclose large voids \cite{Eniasto:2014}. These filaments direct and channel baryonic matter, mainly comprised of galaxy clusters and interstellar matter. It is at the intersection points of these dark matter filaments, and within the filaments themselves, where the largest and most populated galaxy clusters and superclusters reside, thus forming the largest structures of the visible universe.
+
+Determining the structure of these clusters is therefore crucial for understanding the matter distribution in the universe. This is where clustering algorithms come into play. For reasons that will be discussed further, those algorithms based on density may be the most appropriate for this study.
+
+In this work we want to partially answer the question of how those density-based algorithms can be applied to determine how the matter is groupd in the universe.
+
+\subsection{Personal motivation}
+
+Given my background and strong interest in astrophysics and cosmology, upon entering the field of Data Science, I quickly recognized the vast potential for applying various Machine Learning (ML) techniques to these scientific domains. Specifically, the study of the large-scale structure of the Universe is, without a doubt, one of the most fascinating topics in science today.
 
 \begin{figure}[h]
 \centering
@@ -119,13 +128,20 @@ This template aims to be a guide for students. This template can be adapted to t
 \label{fig:sample_figure}
 \end{figure}
 
-\subsection{Context and motivation}
 
-Starting point of the project (Which is the problem that needs to be solved? Why is it a relevant topic? How is the problem currently being solved?) and description of the contribution (What is the intended outcome?)
+\subsection{Goals definition}
 
-\subsection{Goals}
+First of all we want to obtain a visualization of data object in this study.
+ 
+There is a list of objectives I aim with the present work:
+\begin{itemize}
+	\item Apply some density-based algorithm to SDSS and 2dfgRS datasets.
+	\item Figure out which of these algorithms work better and determine the possible causes.
+	\item Obtain a hyperparameters adjustements that optimize the gruops detection.
+	\item Detect possible methods to improve this study.
+\end{itemize}
 
-List of the goals to be achieved in this project.
+It is also expected some dregree of approximation to actual groups of galaxies through the clusters obtained by the methods.
 
 \subsection{Sustainability, diversity, and ethical/social challenges}
 
@@ -137,12 +153,33 @@ This section should assess the positive/negative impact of the project in the fo
     \item[Diversity, gender and human rights] Is the result of this project so technical that it has no positive/negative impact in terms of gender, diversity, or human rights? And in any laws/regulations? And in terms of accessibility, disability, ergonomics and/or information security? If it does not have any impact, either positive or negative, you should explain how you reached this conclusion and justify your answer.
 \end{description}
 
-\subsection{Approach and methodology}
+\subsection{Methodology and project development}
+We will apply density-based unsupervised algorithms to datasets sampled from surveys such as the SDSS and 2DFGRS to generate models for galaxy clustering.
+To evaluate the performance of these models, we will assess the following parameters:
 
-Describe the potential strategies to develop this project and explain the selected strategy. Discuss why the selected strategy is the most suitable one to achieve the project’s goals.
+\begin{itemize}
+    \item {Detected Clusters}: Groups successfully classified as clusters (often referred to as True Positives at the group level).
+
+	\item {Undetected Clusters}: Groups not found or identified as clusters (equivalent to False Negatives at the group level).
+
+	\item {Cluster Purity Ratio}: The proportion of members in a detected cluster that truly belong to the underlying group/structure.
+
+	\item {Cluster Completeness Ratio}: The proportion of members of a true underlying group/structure that are successfully included in the detected cluster.
+
+	\item {Misclassified Members}: Individual data points (galaxies) belonging to a true group but classified outside of any detected cluster. (Often referred to as False Negatives at the individual member level).
+
+	\item {External Data Classified as Members}: Individual data points (galaxies) not belonging to a true group but erroneously classified inside a detected cluster. (Often referred to as False Positives at the individual member level).
+\end{itemize}
 
 \subsection{Schedule}
 
+A Gantt diagram has been created in the figure  to show the different stages of the project development. The stages have been grouped on three sets:
+\begin{itemize}
+	- In blue: Planning: gethering resources and objectives of the project.
+	- In green: Writing the outputs of the project.
+	- In red: Technical development of the project: data pocessing, methods application and assesing the ourcomes.
+\end{itemize}	
+In most of the time there is a ovelapping of stages
 Description of the resources needed to develop the project, the tasks to be carried out and a schedule for each task using a Gantt diagram or equivalent. This planning should define the milestones that will be completed in each Continuous Assessment Test.
 
 \subsection{Summary of the outputs of the project}
