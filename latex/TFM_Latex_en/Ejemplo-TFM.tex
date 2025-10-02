@@ -63,10 +63,10 @@ citecolor=blue,
 \newcommand{\keywords}{Clustering, Galaxy groups, cosmology}
 \newcommand{\keywordses}{Clusterización, cúmulos de galaxias, cosmología}
 
-
 % cover page
 \input{0_titulo.tex}
 \newpage
+
 % abstract
 \input{0_resumen.tex}
 \newpage
@@ -88,11 +88,12 @@ citecolor=blue,
 \phantomsection
 \addcontentsline{toc}{chapter}{List of Figures}
 \listoffigures
+
 % list of tables
-\cleardoublepage
-\phantomsection
-\addcontentsline{toc}{chapter}{List of Tables}
-\listoftables
+%\cleardoublepage
+%\phantomsection
+%\addcontentsline{toc}{chapter}{List of Tables}
+%\listoftables
 
 \thispagestyle{empty}
 
@@ -111,7 +112,7 @@ citecolor=blue,
 \section{Introduction}
 \subsection{Justification of interest and relevance}
 
-In recent times, it has been established that the large-scale structure of the universe is formed by a vast cosmic web \cite{Eniasto:2014} primarily composed of dark matter. The topology of this web consists of filaments that enclose large voids \cite{Eniasto:2014}. These filaments direct and channel baryonic matter, mainly comprised of galaxy clusters and interstellar matter. It is at the intersection points of these dark matter filaments, and within the filaments themselves, where the largest and most populated galaxy clusters and superclusters reside, thus forming the largest structures of the visible universe.
+In recent times, it has been established that the large-scale structure of the universe is formed by a vast cosmic web \cite{Eniasto:2014} primarily composed of dark matter. The topology of this cosmic web consists of filaments that enclose large voids \cite{Eniasto:2014}. These filaments direct and channel baryonic matter, mainly comprised of galaxy clusters and interstellar matter. At the filaments of dark matter and mainly at the intersection points of them is where the largest and most populated clusters and superclusters of galaxies reside, thus forming the largest structures of the visible universe.
 
 Determining the structure of these clusters is therefore crucial for understanding the matter distribution in the universe. This is where clustering algorithms come into play. For reasons that will be discussed further, those algorithms based on density may be the most appropriate for this study.
 
@@ -119,7 +120,7 @@ In this work we want to partially answer the question of how those density-based
 
 \subsection{Personal motivation}
 
-Given my background and strong interest in astrophysics and cosmology, upon entering the field of Data Science, I quickly recognized the vast potential for applying various Machine Learning (ML) techniques to these scientific domains. Specifically, the study of the large-scale structure of the Universe is, without a doubt, one of the most fascinating topics in science today.
+Given my background and strong interest in astrophysics and cosmology, upon entering the field of Data Science, it is easy to recognize the vast potential for applying the multiple Machine Learning (ML) techniques to these scientific domains. Specifically, the study of the large-scale structure of the Universe is, without a doubt, one of the most fascinating topics in science today.
 
 \begin{figure}[h]
 \centering
@@ -131,36 +132,31 @@ Given my background and strong interest in astrophysics and cosmology, upon ente
 
 \subsection{Goals definition}
 
-First of all we want to obtain a visualization of data object in this study.
- 
+
 There is a list of objectives I aim with the present work:
 \begin{itemize}
-	\item Apply some density-based algorithm to SDSS and 2dfgRS datasets.
+	\item Generate a visualization map of the data object in this study.
+	\item Apply some density-based algorithm to SDSS and 2DFGRS datasets.
 	\item Figure out which of these algorithms work better and determine the possible causes.
 	\item Obtain a hyperparameters adjustements that optimize the gruops detection.
 	\item Detect possible methods to improve this study.
 \end{itemize}
 
-It is also expected some dregree of approximation to actual groups of galaxies through the clusters obtained by the methods.
+It is also expected to achieve some dregree of approximation to actual groups of galaxies through the clusters obtained by the density-based methods.
 
-\subsection{Sustainability, diversity, and ethical/social challenges}
+% sustentability
+% \input{2_sustentability.tex}
 
-This section should assess the positive/negative impact of the project in the following dimensions. It is not required to reach a positive impact in any/all dimensions, but it is necessary to consider and discuss whether there is an impact or not from the beginning of the project.
-
-\begin{description}
-    \item[Sustainability] In the development of the project or during its entire lifecycle (e.g., deployment, retirement), does the output of this project have an impact on sustainability and/or ecological footprint (energy/resource consumption/savings, waste, pollution, depletion of raw materials)? Is it affected by laws or regulations on this matter? Considering another perspective, does it affect any of the Sustainable Development Goals (SDG) related to these dimensions? If it does not have any impact, either positive or negative, you should explain how you reached this conclusion and justify your answer.
-    \item[Ethical behaviour and social responsibility] Is the outcome of the project too technical to have any positive/negative impact in ethical/social aspects? Does it have an impact on laws/regulations (data, privacy, labour, intellectual property, personal security, …)? Does it adhere to the deontological principles of the profession? Does it endanger/improve/worsen any job position? If it does not have any impact, either positive or negative, you should explain how you reached this conclusion and justify your answer.
-    \item[Diversity, gender and human rights] Is the result of this project so technical that it has no positive/negative impact in terms of gender, diversity, or human rights? And in any laws/regulations? And in terms of accessibility, disability, ergonomics and/or information security? If it does not have any impact, either positive or negative, you should explain how you reached this conclusion and justify your answer.
-\end{description}
 
 \subsection{Methodology and project development}
-We will apply density-based unsupervised algorithms to datasets sampled from surveys such as the SDSS and 2DFGRS to generate models for galaxy clustering.
-To evaluate the performance of these models, we will assess the following parameters:
+For this study, both R as programming language and RStudio as environment will be used. Unsupervised algorithms and in particular density-based will be applied in to datasets sampled from surveys such as the SDSS and 2DFGRS to generate models for galaxy clustering.
+
+To evaluate the performance of these models, the following criteria will be evaluate:
 
 \begin{itemize}
     \item {Detected Clusters}: Groups successfully classified as clusters (often referred to as True Positives at the group level).
 
-	\item {Undetected Clusters}: Groups not found or identified as clusters (equivalent to False Negatives at the group level).
+	\item {Undetected Clusters}: Groups not found or not identified in the clusters set (equivalent to True Negatives at the group level).
 
 	\item {Cluster Purity Ratio}: The proportion of members in a detected cluster that truly belong to the underlying group/structure.
 
@@ -171,36 +167,26 @@ To evaluate the performance of these models, we will assess the following parame
 	\item {External Data Classified as Members}: Individual data points (galaxies) not belonging to a true group but erroneously classified inside a detected cluster. (Often referred to as False Positives at the individual member level).
 \end{itemize}
 
+
 \subsection{Schedule}
-
-A Gantt diagram has been created in the figure  to show the different stages of the project development. The stages have been grouped on three sets:
+A Gantt diagram has been created in the \ref{fig:stages_figure} to show the different stages of the project development. The stages have been grouped on two sets:
 \begin{itemize}
-	- In blue: Planning: gethering resources and objectives of the project.
-	- In green: Writing the outputs of the project.
-	- In red: Technical development of the project: data pocessing, methods application and assesing the ourcomes.
+	\item In green: Planning: gethering resources and objectives of the project and writing the outputs of the project.
+	\item In red: Technical development of the project: design, data pocessing, methods application and assesing the outcomes.
 \end{itemize}	
-In most of the time there is a ovelapping of stages
-Description of the resources needed to develop the project, the tasks to be carried out and a schedule for each task using a Gantt diagram or equivalent. This planning should define the milestones that will be completed in each Continuous Assessment Test.
+In most of the time there is a ovelapping of stages, this is due following:
+	- Inital stages compund: starting the project are composed of several tasks.
+	- There are two different stages of objectives, one on the starting of the project and other one in the implementation.
+	
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.5\textwidth]{./figs/gantt_conogram.png}
+\caption{Stages of the project.}
+\label{fig:stages_figure}
+\end{figure}
 
-\subsection{Summary of the outputs of the project}
-
-It is not necessary to describe each output in detail: this will be done in the remaining chapters of the project.
-
-\subsection{Brief description of the remaining chapters of the report}
-
-Brief description of the contents of each chapter and their relationship with the rest of the project.
-
-\section{Methods and resources}
-
-In these sections, it is necessary to describe:
-
-\begin{itemize}
-    \item The most relevant aspects of the design and development of the project.
-    \item The methodology used in the development process, describing the potential alternatives, the decisions that have been taken and the criteria used to take these decisions.
-    \item A description of the products that have been created.
-\end{itemize}
-
-The structure of these sections may change according to the type of project being developed.
+% Other subsections from template are still possible to be included
+%\input{2_other_subsections.tex}
 
 \section{Results}
 
