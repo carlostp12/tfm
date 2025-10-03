@@ -109,8 +109,8 @@ citecolor=blue,
 \onehalfspacing
 
 % chapters of the document
-\section{Introduction}
-\subsection{Justification of interest and relevance}
+\addcontentsline{toc}{chapter}{Introduction}
+\section{Justification of interest and relevance}
 
 In recent times, it has been established that the large-scale structure of the universe is formed by a vast cosmic web \cite{Eniasto:2014} primarily composed of dark matter. The topology of this cosmic web consists of filaments that enclose large voids \cite{Eniasto:2014}. These filaments direct and channel baryonic matter, mainly comprised of galaxy clusters and interstellar matter. At the filaments of dark matter and mainly at the intersection points of them is where the largest and most populated clusters and superclusters of galaxies reside, thus forming the largest structures of the visible universe.
 
@@ -118,7 +118,7 @@ Determining the structure of these clusters is therefore crucial for understandi
 
 In this work we want to partially answer the question of how those density-based algorithms can be applied to determine how the matter is groupd in the universe.
 
-\subsection{Personal motivation}
+\section{Personal motivation}
 
 Given my background and strong interest in astrophysics and cosmology, upon entering the field of Data Science, it is easy to recognize the vast potential for applying the multiple Machine Learning (ML) techniques to these scientific domains. Specifically, the study of the large-scale structure of the Universe is, without a doubt, one of the most fascinating topics in science today.
 
@@ -130,7 +130,7 @@ Given my background and strong interest in astrophysics and cosmology, upon ente
 \end{figure}
 
 
-\subsection{Goals definition}
+\section{Goals definition}
 
 
 There is a list of objectives I aim with the present work:
@@ -148,7 +148,7 @@ It is also expected to achieve some dregree of approximation to actual groups of
 % \input{2_sustentability.tex}
 
 
-\subsection{Methodology and project development}
+\section{Methodology and project development}
 For this study, both R as programming language and RStudio as environment will be used. Unsupervised algorithms and in particular density-based will be applied in to datasets sampled from surveys such as the SDSS and 2DFGRS to generate models for galaxy clustering.
 
 To evaluate the performance of these models, the following criteria will be evaluate:
@@ -168,7 +168,7 @@ To evaluate the performance of these models, the following criteria will be eval
 \end{itemize}
 
 
-\subsection{Schedule}
+\section{Schedule}
 A Gantt diagram has been created in the \ref{fig:stages_figure} to show the different stages of the project development. The stages have been grouped on two sets:
 \begin{itemize}
 	\item In green: Planning: gethering resources and objectives of the project and writing the outputs of the project.
@@ -180,7 +180,7 @@ In most of the time there is a ovelapping of stages, this is due following:
 	
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.5\textwidth]{./figs/gantt_conogram.png}
+\includegraphics[width=1.0\textwidth]{./figs/gantt_conogram.png}
 \caption{Stages of the project.}
 \label{fig:stages_figure}
 \end{figure}
@@ -190,32 +190,15 @@ In most of the time there is a ovelapping of stages, this is due following:
 
 \section{Results}
 
-Describe the results achieved using the previously described methodology.
+-
 
 \section{Conclusions and future work}
 
-This section should include the following:
-Citando a longair \cite{Longair:1996}
-\begin{itemize}
-    \item A description of the conclusions of the work.
-    \item A critical assessment of the degree of achievement of the initial goals.
-    \item A critical assessment of the schedule and methodology used in the project.
-    \item Considering the sustainability, diversity and ethical-social challenges linked to the project.
-    \item A discussion of topics for potential future work that have not been explored in this project.
-\end{itemize}
+-
 
 \section{Glossary}
 
-Definition of the most relevant terms and acronyms used in this report.
-Random citation \cite{Hai-Xia-Ma:2025} embeddeed in text.
-
-% bibliography
-\addcontentsline{toc}{chapter}{Bibliography}
-\bibliographystyle{plain}
-\bibliography{refs}
-\section{Appendices}
-
-List of sections that are too long to be included in the body of the report and that are self-contained.
+-
 
 
 \end{document}
