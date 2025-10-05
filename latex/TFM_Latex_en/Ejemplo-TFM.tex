@@ -99,106 +99,44 @@ citecolor=blue,
 
 \pagenumbering{arabic}
 
-\pagestyle{fancy}
-\renewcommand{\chaptermark}[1]{ \markboth{#1}{}}
-\renewcommand{\sectionmark}[1]{\markright{ \thesection.\ #1}}
-\lhead[\fancyplain{}{\bfseries\thepage}]{\fancyplain{}{\bfseries\rightmark}}
-\rhead[\fancyplain{}{\bfseries\leftmark}]{\fancyplain{}{\bfseries\thepage}}
-\cfoot{}
+%\pagestyle{fancy}
+%\renewcommand{\chaptermark}[1]{ \markboth{#1}{}}
+%\renewcommand{\sectionmark}[1]{\markright{ \thesection.\ #1}}
+%\lhead[\fancyplain{}{\bfseries\thepage}]{\fancyplain{}{\bfseries\rightmark}}
+%\rhead[\fancyplain{}{\bfseries\leftmark}]{\fancyplain{}{\bfseries\thepage}}
+%\cfoot{}
 
-\onehalfspacing
 
 % chapters of the document
-\addcontentsline{toc}{chapter}{Introduction}
-\section{Justification of interest and relevance}
 
-In recent times, it has been established that the large-scale structure of the universe is formed by a vast cosmic web \cite{Eniasto:2014} primarily composed of dark matter. The topology of this cosmic web consists of filaments that enclose large voids \cite{Eniasto:2014}. These filaments, made up mainly by dark matter direct and channel baryonic matter, mainly comprised of galaxy clusters and interstellar matter. At the filaments of dark matter and mainly at the intersection points of them is where the largest and most populated clusters and superclusters of galaxies reside, thus forming the largest structures of the visible universe.
-
-Determining the structure of these clusters is therefore crucial for understanding the matter distribution in the universe. This is where clustering algorithms come into play. For reasons that will be discussed further, those algorithms based on density may be the most appropriate for this study.
-
-In this work we want to partially answer the question of how those density-based algorithms can be applied to determine how the matter is groupd in the universe.
-
-\section{Personal motivation}
-
-Given my background and strong interest in astrophysics and cosmology, upon entering the field of Data Science, it is easy to recognize the vast potential for applying the multiple Machine Learning (ML) techniques to these scientific domains. Specifically, the study of the large-scale structure of the Universe is, without a doubt, one of the most fascinating topics in science today.
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.5\textwidth]{./figs/image1.png}
-\caption{Sample figure. It will be indexed in the “List of Figures”.}
-\label{fig:sample_figure}
-\end{figure}
-
-
-\section{Goals definition}
-
-
-There is a list of objectives I aim with the present work:
-\begin{itemize}
-	\item Generate a visualization map of the data object in this study.
-	\item Apply some density-based algorithm to SDSS and 2DFGRS datasets.
-	\item Figure out which of these algorithms work better and determine the possible causes.
-	\item Obtain a hyperparameters adjustements that optimize the gruops detection.
-	\item Detect possible methods to improve this study.
-\end{itemize}
-
-It is also expected to achieve some dregree of approximation to actual groups of galaxies through the clusters obtained by the density-based methods.
-
-% sustentability
-% \input{2_sustentability.tex}
-
-
-\section{Methodology and project development}
-For this study, both R as programming language and RStudio as environment will be used. Unsupervised algorithms and in particular density-based will be applied in to datasets sampled from surveys such as the SDSS and 2DFGRS to generate models for galaxy clustering.
-
-To evaluate the performance of these models, the following criteria will be evaluate:
-
-\begin{itemize}
-    \item {Detected Clusters}: Groups successfully classified as clusters (often referred to as True Positives at the group level).
-
-	\item {Undetected Clusters}: Groups not found or not identified in the clusters set (equivalent to True Negatives at the group level).
-
-	\item {Cluster Purity Ratio}: The proportion of members in a detected cluster that truly belong to the underlying group/structure.
-
-	\item {Cluster Completeness Ratio}: The proportion of members of a true underlying group/structure that are successfully included in the detected cluster.
-
-	\item {Misclassified Members}: Individual data points (galaxies) belonging to a true group but classified outside of any detected cluster. (Often referred to as False Negatives at the individual member level).
-
-	\item {External Data Classified as Members}: Individual data points (galaxies) not belonging to a true group but erroneously classified inside a detected cluster. (Often referred to as False Positives at the individual member level).
-\end{itemize}
-
-
-\section{Schedule}
-A Gantt diagram has been created in the \ref{fig:stages_figure} to show the different stages of the project development. The stages have been grouped on two sets:
-\begin{itemize}
-	\item In green: Planning: gethering resources and objectives of the project and writing the outputs of the project.
-	\item In red: Technical development of the project: design, data pocessing, methods application and assesing the outcomes.
-\end{itemize}	
-In most of the time there is a ovelapping of stages, this is due following:
-	- Inital stages compund: starting the project are composed of several tasks.
-	- There are two different stages of objectives, one on the starting of the project and other one in the implementation.
-	
-\begin{figure}[h]
-\centering
-\includegraphics[width=1.0\textwidth]{./figs/gantt_conogram.png}
-\caption{Stages of the project.}
-\label{fig:stages_figure}
-\end{figure}
+\cleardoublepage
+% Introduction
+\input{1_introduction.tex}
+\newpage
 
 % Other subsections from template are still possible to be included
 %\input{2_other_subsections.tex}
 
-\section{Results}
+%\section{Results}
 
--
+%-
 
-\section{Conclusions and future work}
+%\section{Conclusions and future work}
 
--
+%-
 
-\section{Glossary}
+%\section{Glossary}
 
--
+%-
 
+\phantomsection
+\pagestyle{fancy}
+% \chapter{Bibliography}
+
+\addcontentsline{toc}{chapter}{Bibliography}
+\bibliographystyle{plain}
+\bibliography{refs}
+
+\section{Appendices}
 
 \end{document}
