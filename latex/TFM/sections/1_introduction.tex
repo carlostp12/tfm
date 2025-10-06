@@ -1,0 +1,91 @@
+\phantomsection
+\pagestyle{fancy}
+
+\chapter{Introduction}
+\onehalfspacing
+%\addcontentsline{toc}{chapter}{Introduction}
+%\section{Introduction}
+\section{Justification of interest and relevance}
+
+Currently, it has been established that on large scales, the structure of the universe is formed by a vast cosmic web primarily composed of dark matter \cite{Eniasto:2014}. The topology of this cosmic web consists of a network of filaments that enclosing large voids \cite{Anatole:2024}. These filaments, comprising mainly of dark matter halos, contain the baryonic matter composed of galaxy clusters and intergalactic matter. The largest and most populated clusters and superclusters of galaxies reside within these dark matter filaments, predominantly at their intersection points, and thus form the largest structures of the visible universe.
+
+Determining the structure of these clusters is therefore crucial for understanding the matter distribution in the universe. This is where clustering algorithms come into play. For reasons that will be discussed further, the density-based algorithms may be the most appropriate for this study.
+
+In this work we want to partially answer how density-based algorithms can be applied to determine how the matter is grouped in the universe.
+
+\section{Personal motivation}
+
+Given my background and strong interest in astrophysics and cosmology, upon entering the field of Data Science, it is easy to recognize the vast potential for applying the multiple Machine Learning (ML) techniques to these scientific domains. In particular, the study of the large-scale structure of the Universe is, without a doubt, one of the most fascinating topics in science today and where ML methods can find a large number of applications.
+
+%% FUTURE INCLUSION OF M33 Image galaxy of our Local Group
+%\begin{figure}[h]
+%\centering
+%\includegraphics[width=0.5\textwidth]{./figs/M33_2.jpg}
+%\caption{M33: A galaxy belonging to our local group.}
+%\label{fig:sample_figure}
+%\end{figure}
+
+
+\section{Goals definition}
+
+There is a list of objectives I aim to achieve with this work:
+\begin{itemize}
+	\item Generate a visualization map of the data object in this study.
+	\item Apply some density-based algorithm to galaxy and galaxy-groups datasets obtained from SDSS and 2DFGRS.
+	\item Figure out which of these algorithms work better and determine the possible causes.
+	\item Create a validation methods to obtain a hyperparameter tunning that optimize the group detection.
+	\item Detect possible methods to improve this study.
+\end{itemize}
+
+It is also expected to achieve an approximation to actual groups of galaxies through the clusters obtained by the density-based methods.
+
+% sustentability from now it will be leave out
+% \input{2_sustentability.tex}
+
+
+\section{Methodology and project development}
+
+Unsupervised algorithms, particularly density-based methods, will be applied to datasets drawn from surveys such as the SDSS and 2DFGRS to generate galaxy clustering models. These datasets are available at \cite{Blanton:2005}:
+
+https://gax.sjtu.edu.cn/data/Group.html
+
+To evaluate the performance of these models, the following criteria will be followed:
+
+\begin{itemize}
+    \item {Detected Clusters}: Groups successfully classified as clusters (often referred to as True Positives at the group level).
+
+	\item {Undetected Clusters}: Groups not found or not identified in the clusters set (equivalent to True Negatives at the group level).
+
+	\item {Cluster Purity Ratio}: The proportion of members in a detected cluster that actually belong to the underlying group/structure.
+
+	\item {Cluster Completeness Ratio}: The proportion of members of a true underlying group/structure that are successfully included within the detected cluster.
+
+	\item {Misclassified Members}: Individual data points (galaxies) belonging to a true group but classified outside of detected cluster. (Often referred to as False Negatives at the individual member level).
+
+	\item {External Data Classified as Members}: Individual data points (galaxies) not belonging to a true group but erroneously classified inside a detected cluster. (Often referred to as False Positives at the individual member level).
+\end{itemize}
+
+For this study, R programming language will be used to deploy and run scripts within RStudio environment. Some python scripts can be used as well.
+
+\section{Schedule}
+
+A Gantt diagram in figure \ref{fig:stages_figure} shows the different stages of project development. The stages have been grouped on three sets:
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.0\textwidth]{./figs/gantt_conogram.png}
+\caption{Stages of the project.}
+\label{fig:stages_figure}
+\end{figure}
+
+\begin{itemize}
+	\item The Planning stage (shown in green) involves gathering resources and defining the project's objectives.
+	\item The technical development stage (shown in red) includes design, data processing, method application and outcomes assessment.
+	\item Research and writing stages (shown in blue).
+\end{itemize}	
+Most of the time there is an overlap of stages, due following:
+\begin{itemize}
+	\item Initial stages: starting the project composed of several tasks.
+	\item There are two stages of objectives: one defined at the start of the project and the other during implementation, which may lead to further development.
+	\item Evaluating the outcomes as part of development.
+\end{itemize}
