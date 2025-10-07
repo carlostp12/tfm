@@ -161,3 +161,19 @@ sstats <- execute_stats(mm, sblo_scan)
 
  cl <- hdbscan(a, minPts = 5, cluster_selection_epsilon = 0.00075)
 '''
+
+###############################################################################
+#	Execution  cluster plotting comparing with the Groups
+#			process_cluster(mm, blo_scan)
+###############################################################################
+process_cluster <- function(dataset, cluster_data){
+  dataset$cluster_id <- cluster_data$cluster
+  hh2<-sqldf("SELECT dataset.x, dataset.y, dataset.z, hh.CLUSTER_ID FROM dataset as dataset, hh 
+    where dataset.CLUSTER_ID=hh.CLUSTER_ID and hh.members >= 5 and hh.cluster_id>0")
+  
+  hh2<-sqldf("SELECT dataset.x, dataset.y, dataset.z, hh.CLUSTER_ID FROM dataset as dataset, hh 
+    where dataset.CLUSTER_ID=hh.CLUSTER_ID and hh.members >= 5 and hh.cluster_id>0")
+  
+  plot3d(hh2$x, hh2$y, hh2$z, col = hh2$cluster_id, size = 2, xlab = "X", 
+         ylab = "Y", zlab = "Z")   
+}

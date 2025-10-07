@@ -58,7 +58,7 @@ ggplot(dt_sample3, aes(x=redshift, y=redshift))+geom_violin()
 ######################       
 dt_groups <- read.csv('groups/group_members.csv', sep = ',')       
 mm<-merge(dt_sample3, dt_groups, by.x = 'SEQNUM', by.y = 'ID_2DF')
-#mm<- mm[,c('SEQNUM','x', 'y', 'z', "dist", 'GROUP_ID')]
+#mm<- mm[,c('SEQNUM','x', 'y', 'z', "dist", 'GROUP_ID', 'redshift)]
 
 a<- mm[,c('x', 'y', 'z')]
 
