@@ -5,15 +5,18 @@
 \onehalfspacing
 %\addcontentsline{toc}{chapter}{Introduction}
 %\section{Introduction}
-\section{Justification of interest and relevance}
+\section{Context and motivation}
 
-Currently, it has been established that on large scales, the structure of the universe is formed by a vast cosmic web primarily composed of dark matter \cite{Eniasto:2014}. The topology of this cosmic web consists of a network of filaments that enclosing large voids \cite{Anatole:2024}. These filaments, comprising mainly of dark matter halos, contain the baryonic matter composed of galaxy clusters and intergalactic matter. The largest and most populated clusters and superclusters of galaxies reside within these dark matter filaments, predominantly at their intersection points, and thus form the largest structures of the visible universe.
+Al estudiar el universo a media y larga escala, nos adentramos en el universo de los cartografiados de galaxias, que son estudios basados en la utilización de telescopios dedicados a la obtención de grandes censos de galaxias. Estos estudios tienen muchos objetivos, uno de los consiste en mapear grandes zonas del universo.
 
-Determining the structure of these clusters is therefore crucial for understanding the matter distribution in the universe. This is where clustering algorithms come into play. For reasons that will be discussed further, the density-based algorithms may be the most appropriate for this study.
+Dos ejemplos son 2dGFRS SDSS, cuyos datos son la base para este trabajo, hablaremos más en detalle en la \label{sec:state-of_art} pero ya adelantamos que gracias a ellos obtenemos grandes juegos de datos con los que es posible realizar muchos trabajos sobre el contenido del universo.
 
-In this work we want to partially answer how density-based algorithms can be applied to determine how the matter is grouped in the universe.
+Currently, it has been established that on large scales, the structure of the universe is formed by a vast cosmic web primarily composed of dark matter \cite{Eniasto:2014}. The topology of this cosmic web consists of a network of filaments enclosing large voids \cite{Anatole:2024}. These filaments, composed mainly of dark matter halos, contain baryonic matter which includes galaxy clusters and intergalactic matter. The largest and most populated clusters and superclusters of galaxies reside within these dark matter filaments, predominantly at their intersection points, and thus form the largest structures of the visible universe.
 
-\section{Personal motivation}
+Determining the structure of these clusters is therefore crucial for understanding the distribution of matter in the universe. This is where clustering algorithms come into play. As will be discussed in section, the density-based algorithms may be the most appropriate for this study.
+
+
+\subsection{Personal motivation}
 
 Given my background and strong interest in astrophysics and cosmology, upon entering the field of Data Science, it is easy to recognize the vast potential for applying the multiple Machine Learning (ML) techniques to these scientific domains. In particular, the study of the large-scale structure of the Universe is, without a doubt, one of the most fascinating topics in science today and where ML methods can find a large number of applications.
 
@@ -26,28 +29,57 @@ Given my background and strong interest in astrophysics and cosmology, upon ente
 %\end{figure}
 
 
-\section{Goals definition}
+\section{Goals}
 
-There is a list of objectives I aim to achieve with this work:
+There are two list of goals we considered to address separatedly:
+
+\subsection {Main goals}
 \begin{itemize}
-	\item Generate a visualization map of the data object in this study.
-	\item Apply some density-based algorithm to galaxy and galaxy-groups datasets obtained from SDSS and 2DFGRS.
-	\item Figure out which of these algorithms work better and determine the possible causes.
-	\item Create a validation methods to obtain a hyperparameter tunning that optimize the group detection.
-	\item Detect possible methods to improve this study.
+	\item Apply density-based algorithms to galaxy datasets adquired from Two-degree Field Galaxy Redshift Survey (2dFGRS) and the Sloan Digital Sky Survey (SDSS), in order to obtain a validated model that can effectively approximate the observed structure of the universe.
+	\item Determine which of the applied algorithms work better and its possible causes.
 \end{itemize}
 
-It is also expected to achieve an approximation to actual groups of galaxies through the clusters obtained by the density-based methods.
+
+\subsection {Secondary goals}
+\begin{itemize}
+	\item Generate a visualization map of the data used in this study.
+	\item Create validation methods to obtain a hyper-parameter tunning that optimizes the galaxy cluster detection.
+\end{itemize}
 
 % sustentability from now it will be leave out
 % \input{2_sustentability.tex}
 
+\subsection{Sustainability, diversity, and ethical/social challenges}
 
-\section{Methodology and project development}
+This section should assess the positive/negative impact of the project in the following dimensions. It is not required to reach a positive impact in any/all dimensions, but it is necessary to consider and discuss whether there is an impact or not from the beginning of the project.
+El modo en que entendemos el universo es el modo en que avanzamos como sociedad, no es baladí que, a lo largo de la historia, los más profundos avances en ciencia tienen como consecuencia avances sociales que se traducen en una mayor la calidad de vida. 
+El conocimiento sobre el universo es también interpretarnos a nosotros mismos.
 
-Unsupervised algorithms, particularly density-based methods, will be applied to datasets drawn from surveys such as the SDSS and 2DFGRS to generate galaxy clustering models. These datasets are available at \cite{Blanton:2005}:
+\begin{description}
+    \item[Sustainability] In the development of the project or during its entire lifecycle (e.g., deployment, retirement), does the output of this project have an impact on sustainability and/or ecological footprint (energy/resource consumption/savings, waste, pollution, depletion of raw materials)? Is it affected by laws or regulations on this matter? Considering another perspective, does it affect any of the Sustainable Development Goals (SDG) related to these dimensions? If it does not have any impact, either positive or negative, you should explain how you reached this conclusion and justify your answer.
+    \item[Ethical behaviour and social responsibility] This work only uses shared datasets which license was freely made available from the authors. Of course, this work reference to other previous works which authority is neccesary recognize and without, this work would never can be possible.
+	
+	Is the outcome of the project too technical to have any positive/negative impact in ethical/social aspects? Does it have an impact on laws/regulations (data, privacy, labour, intellectual property, personal security, …)? Does it adhere to the deontological principles of the profession? Does it endanger/improve/worsen any job position? If it does not have any impact, either positive or negative, you should explain how you reached this conclusion and justify your answer.
+    \item[Diversity, gender and human rights] This work have a small direct impact on the this area, but the author thing that the more our ignorance as a society diminish in science, the better feeling on Diversity, gender, and human rigths, 
+	that sometimes issues derived from these matter have to do more that ignorance,   knledge of the universe 
+	Is the result of this project so technical that it has no positive/negative impact in terms of gender, diversity, or human rights? And in any laws/regulations? And in terms of accessibility, disability, ergonomics and/or information security? If it does not have any impact, either positive or negative, you should explain how you reached this conclusion and justify your answer.
+\end{description}
+
+
+\section{Approach and methodology}
+
+We will apply the phases drawn from the data life cycle, which are as follows.
+
+ - Collection: we will downloasd datasets drawn from surveys such as the SDSS and 2DFGRS to generate galaxy clustering models. These datasets are available at \cite{Blanton:2005}:
 
 https://gax.sjtu.edu.cn/data/Group.html
+ 
+ - Storage: we will keep donwnloaded data set in csv files.
+ - Preprocessing: stage containinig the tasks of cleaning, filtering, sampling, and fusion.
+ - Analysis stage: which contains model building througth application of the algorithms and validation of the outcomes.
+ - Visualization: graphical view of the results.
+
+The third point is the longest; in fact, it is an iterative process dedicated to improving the results obtained from the models. All models will consist of unsupervised algorithms, particularly density-based ones.
 
 To evaluate the performance of these models, the following criteria will be followed:
 
@@ -65,11 +97,11 @@ To evaluate the performance of these models, the following criteria will be foll
 	\item {External Data Classified as Members}: Individual data points (galaxies) not belonging to a true group but erroneously classified inside a detected cluster. (Often referred to as False Positives at the individual member level).
 \end{itemize}
 
-For this study, R programming language will be used to deploy and run scripts within RStudio environment. Some python scripts can be used as well.
+For this study, both programming languages Python and R will be used.
 
 \section{Schedule}
 
-A Gantt diagram in figure \ref{fig:stages_figure} shows the different stages of project development. The stages have been grouped on three sets:
+A Gantt diagram in figure \ref{fig:stages_figure} shows the different stages of project development. Excluding the final project defense, the stages have been grouped on three blocks:
 
 \begin{figure}[h]
 \centering
@@ -82,10 +114,6 @@ A Gantt diagram in figure \ref{fig:stages_figure} shows the different stages of 
 	\item The Planning stage (shown in green) involves gathering resources and defining the project's objectives.
 	\item The technical development stage (shown in red) includes design, data processing, method application and outcomes assessment.
 	\item Research and writing stages (shown in blue).
-\end{itemize}	
-Most of the time there is an overlap of stages, due following:
-\begin{itemize}
-	\item Initial stages: starting the project composed of several tasks.
-	\item There are two stages of objectives: one defined at the start of the project and the other during implementation, which may lead to further development.
-	\item Evaluating the outcomes as part of development.
 \end{itemize}
+
+An iterative and continuous review of the results is performed throughout the analysis process due to several causes: issues stemming from the algorithms, data processing, and the workflow itself. As a result, initial objectives be rearranged and redefined. This is why the aditional objetives stage is necessary.
