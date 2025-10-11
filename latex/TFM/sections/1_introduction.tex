@@ -7,18 +7,18 @@
 %\section{Introduction}
 \section{Context and motivation}
 
-Al estudiar el universo a media y larga escala, nos adentramos en el universo de los cartografiados de galaxias, que son estudios basados en la utilización de telescopios dedicados a la obtención de grandes censos de galaxias. Estos estudios tienen muchos objetivos, uno de los consiste en mapear grandes zonas del universo.
+When studying the universe at medium and large scales, we enter the world of galaxy mapping (or galaxy surveys), which are studies based on the use of telescopes dedicated to obtaining big censuses of galaxies. These studies have many objectives, one of which is to map huge areas of the universe. Examples of those surveys are Two-degree Field Galaxy Redshift Survey (hereafter 2dFGRS) and the Sloan Digital Sky Survey (hereafter SDSS), which data this work relies.
 
-Dos ejemplos son 2dGFRS SDSS, cuyos datos son la base para este trabajo, hablaremos más en detalle en la \label{sec:state-of_art} pero ya adelantamos que gracias a ellos obtenemos grandes juegos de datos con los que es posible realizar muchos trabajos sobre el contenido del universo.
+Most of previous work, as we will see in the \label{sec:state-of_art} make use of such surveys as well by getting datasets drawn from surveys databases, and then machine learing methods are applied. 
 
-Currently, it has been established that on large scales, the structure of the universe is formed by a vast cosmic web primarily composed of dark matter \cite{Eniasto:2014}. The topology of this cosmic web consists of a network of filaments enclosing large voids \cite{Anatole:2024}. These filaments, composed mainly of dark matter halos, contain baryonic matter which includes galaxy clusters and intergalactic matter. The largest and most populated clusters and superclusters of galaxies reside within these dark matter filaments, predominantly at their intersection points, and thus form the largest structures of the visible universe.
+When one looks at the data provided by the surveys, one realizes that the galaxy distribution is far from random; instead, the galaxies are aggregated by gravity and shaped by dark matter into so-called groups, and into more numerous aggregations called galaxy clusters. Still at larger scales, it has been established that the structure of the universe is formed by a vast cosmic web primarily composed of dark matter \cite{Eniasto:2014}. The topology of this cosmic web consists of a network of filaments enclosing large voids \cite{Anatole:2024}. These filaments, composed mainly of dark matter halos, contain baryonic matter which includes galaxy clusters and intergalactic matter. The largest and most populated clusters and superclusters of galaxies reside within these dark matter filaments, predominantly at their intersection points, and thus form the largest structures of the visible universe.
 
-Determining the structure of these clusters is therefore crucial for understanding the distribution of matter in the universe. This is where clustering algorithms come into play. As will be discussed in section, the density-based algorithms may be the most appropriate for this study.
+Determining the structure of these groups/clusters is therefore crucial for understanding the distribution of matter in the universe. This is where clustering algorithms come into play. As will be discussed in section \label{sec:state-of_art}, the density-based algorithms are the most appropriate for this study.
 
 
 \subsection{Personal motivation}
 
-Given my background and strong interest in astrophysics and cosmology, upon entering the field of Data Science, it is easy to recognize the vast potential for applying the multiple Machine Learning (ML) techniques to these scientific domains. In particular, the study of the large-scale structure of the Universe is, without a doubt, one of the most fascinating topics in science today and where ML methods can find a large number of applications.
+Given my background and strong interest in astrophysics and cosmology, upon entering the field of Data Science, it is easy to recognize the vast potential for applying the multiple Machine Learning (ML) techniques to these scientific domains. In particular, the study of the large-scale structure of the Universe is, without a doubt, one of the most fascinating topics in science today and where ML methods can find a vast number of applications.
 
 %% FUTURE INCLUSION OF M33 Image galaxy of our Local Group
 %\begin{figure}[h]
@@ -35,7 +35,7 @@ There are two list of goals we considered to address separatedly:
 
 \subsection {Main goals}
 \begin{itemize}
-	\item Apply density-based algorithms to galaxy datasets adquired from Two-degree Field Galaxy Redshift Survey (2dFGRS) and the Sloan Digital Sky Survey (SDSS), in order to obtain a validated model that can effectively approximate the observed structure of the universe.
+	\item Apply density-based algorithms to galaxy datasets adquired from 2dFGRS and the Sloan Digital Sky Survey SDSS, in order to obtain a validated model that can effectively approximate the observed structure of the universe.
 	\item Determine which of the applied algorithms work better and its possible causes.
 \end{itemize}
 
@@ -51,20 +51,19 @@ There are two list of goals we considered to address separatedly:
 
 \subsection{Sustainability, diversity, and ethical/social challenges}
 
-This section should assess the positive/negative impact of the project in the following dimensions. It is not required to reach a positive impact in any/all dimensions, but it is necessary to consider and discuss whether there is an impact or not from the beginning of the project.
-El modo en que entendemos el universo es el modo en que avanzamos como sociedad, no es baladí que, a lo largo de la historia, los más profundos avances en ciencia tienen como consecuencia avances sociales que se traducen en una mayor la calidad de vida. 
-El conocimiento sobre el universo es también interpretarnos a nosotros mismos.
+Cosmological findings fundamentally change our understanding of humanity's place in the universe. Discoveries related to dark matter, dark energy, or the vastness of the cosmos can have profound philosophical implications.
 
 \begin{description}
-    \item[Sustainability] In the development of the project or during its entire lifecycle (e.g., deployment, retirement), does the output of this project have an impact on sustainability and/or ecological footprint (energy/resource consumption/savings, waste, pollution, depletion of raw materials)? Is it affected by laws or regulations on this matter? Considering another perspective, does it affect any of the Sustainable Development Goals (SDG) related to these dimensions? If it does not have any impact, either positive or negative, you should explain how you reached this conclusion and justify your answer.
-    \item[Ethical behaviour and social responsibility] This work only uses shared datasets which license was freely made available from the authors. Of course, this work reference to other previous works which authority is neccesary recognize and without, this work would never can be possible.
+    \item[Sustainability] The most direct social responsibility implication lies in the immense power required to process and store astronomical data. This work while purely theoretical, relies on an infrastructure that carries a heavy sustainability burden. That is why focus on computational efficiency directly translates into lower energy consumption, this is the most tangible sustainability implication in this project project.
 	
-	Is the outcome of the project too technical to have any positive/negative impact in ethical/social aspects? Does it have an impact on laws/regulations (data, privacy, labour, intellectual property, personal security, …)? Does it adhere to the deontological principles of the profession? Does it endanger/improve/worsen any job position? If it does not have any impact, either positive or negative, you should explain how you reached this conclusion and justify your answer.
-    \item[Diversity, gender and human rights] This work have a small direct impact on the this area, but the author thing that the more our ignorance as a society diminish in science, the better feeling on Diversity, gender, and human rigths, 
-	that sometimes issues derived from these matter have to do more that ignorance,   knledge of the universe 
-	Is the result of this project so technical that it has no positive/negative impact in terms of gender, diversity, or human rights? And in any laws/regulations? And in terms of accessibility, disability, ergonomics and/or information security? If it does not have any impact, either positive or negative, you should explain how you reached this conclusion and justify your answer.
+    \item[Ethical behaviour and social responsibility] The major impact on this matter have to do with how resources are used. This work only uses shared datasets, the license for which was freely made available by the authors for download. Of course, all references to them and to other previous works must be properly recognized, as this project would never have been possible without them.
+	
+	Another matter to be considered is the author's commitment to communicate the outcomes clearly and accurately to the public.
+	
+    \item[Diversity, gender and human rights] Astronomy and cosmology, like many sciences, have historically struggled with issues of diversity and inclusion gender and human rights matters, the author thing that, in general, the more advancing in science the more better for the society to deal with these questions.
 \end{description}
 
+It is important to finish that this work uses powerful analytical methods from Machine Learning techniques, all tools could be adapted for surveillance, military intelligence, or other uses that might infringe on human rights or privacy. Scientists must be mindful of how their methods and code are shared.
 
 \section{Approach and methodology}
 
