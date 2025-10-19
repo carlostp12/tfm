@@ -122,11 +122,11 @@ execute_stats <- function(mm, blo_scan){
 		'total_in_cluster'=integer(),
 		'total_in_cluster_group'=integer(),
 		'purity'=numeric(),
-		'completeness'=numeric(),
+		'completn'=numeric(),
 		'spurious'=numeric(),
-		'bad_classified'=numeric(),
-		'is_pure'=integer(),
-		'is_complete'=integer()		
+		'bad_class'=numeric(),
+		'is_pur'=integer(),
+		'is_comp'=integer()		
 		)
 	for(r in cluster_results$cluster){
 	  if(r != 0) {

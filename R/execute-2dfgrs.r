@@ -81,10 +81,12 @@ h2<-sqldf("SELECT mm.x, mm.y, mm.z, mm.GROUP_ID FROM mm as mm, h
 plot3d(h2$x, h2$y, h2$z, col = h2$GROUP_ID, size = 2, xlab = "X", 
        ylab = "Y", zlab = "Z")
 
+mm$cluster_id <- blo_scan$cluster
+
 #Groups >=8 groups obtained with model
-hh<-sqldf("SELECT count(SEQNUM) as members, cluster FROM mm GROUP BY cluster order by members DESC")
+hh<-sqldf("SELECT count(SEQNUM) as members, cluster_id FROM mm GROUP BY cluster_id order by members DESC")
 hh2<-sqldf("SELECT mm.x, mm.y, mm.z, mm.GROUP_ID FROM mm as mm, hh 
-    where mm.cluster=hh.cluster and hh.cluster>0 and hh.members >= 8")
+    where mm.cluster_id=hh.cluster_id and hh.cluster_id >0 and hh.members >= 8")
 
 '''
 sfactor <- 3
