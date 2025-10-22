@@ -1,0 +1,625 @@
+---
+title: "PAC2_Estadística_CARLOS_TORO_PEÑAS"
+author: "Carlos Toro Peñas"
+date: '2022-11-08'
+output:
+  pdf_document:
+    toc: yes
+    number_sections: true
+    df_print: kable
+    highlight: default
+  word_document: default
+  html_document:
+    highlight: default
+    number_sections: yes
+    theme: cosmo
+    toc: yes
+    toc_depth: 2
+    includes:
+      in_header: 75.584-PEC-header.html
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+if (!require('jsonlite')) install.packages('jsonlite')
+library(jsonlite)
+if (!require('dbscan')) install.packages('dbscan')
+library(dbscan)
+if (!require('readr')) install.packages('readr')
+library(readr)
+if (!require('rjson')) install.packages('rjson')
+library(rjson)
+
+if (!require('dplyr')) install.packages('dplyr')
+library(dplyr)
+
+if (!require('akima')) install.packages('akima')
+library(akima)
+
+if (!require('astrolibR')) install.packages("astrolibR")
+library(astrolibR)
+
+if (!require('scatterplot3d')) install.packages("scatterplot3d")
+library(scatterplot3d)
+
+if (!require('gMOIP')) install.packages("gMOIP")
+library(gMOIP)
+
+if (!require('ggplot2')) install.packages("ggplot2")
+library(ggplot2)
+
+if (!require('rgl')) install.packages("rgl")
+library(rgl)
+
+if (!require('pracma')) install.packages("pracma")
+library(pracma)
+
+if (!require('plotly')) install.packages("plotly")
+
+library(plotly)
+
+if (!require('sqldf')) install.packages("sqldf")
+library(sqldf)
+```
+
+# Lectura del archivo
+
+Leed el fichero gpa.csv y guardad los datos en un objeto denominado gpa. A continuación, verificad el tipo de cada variable.
+
+```{r}
+setwd('C:/Users/Carlos/OneDrive/data-science/TFM/tfm/data')
+dt <- read.csv('../data/2dfgrs-title-dist.csv')
+str(dt)
+```
+
+```{r}
+######################
+#     GROUPS loading #    
+###################### 
+setwd('C:/Users/Carlos/OneDrive/data-science/TFM/tfm/data')
+dt_groups <- read.csv('../data/groups/group_members.csv', sep = ',')       
+
+```
+
+# Preprocesado de datos
+
+## Análisis descriptivo.
+
+**Seleccion de datos y visualización**
+
+Take a sample with:
+
+$$RA \in [0, 1],\, DEC \in [-29, -27],\, and\, z \lt 0.3$$
+
+```{r}
+# Take a sample
+dt_sample3 <- dt[dt$Q_Z>3 & dt$RAh<=1 & dt$RAh>=0 & dt$Ded>=-29 & dt$Ded<=-27,]
+dt_sample3 <- dt_sample3[dt_sample3$Z< 0.3,]
+#Change column name
+names(dt_sample3)[names(dt_sample3) == 'Z'] <- 'redshift'
+
+#Take the parameters necessary for clustering effect.
+dt_sample3<- dt_sample3[,c('SEQNUM','x', 'y', 'z', 'redshift',  "dist")]
+
+# mm is an object containing both groups and galaxy identification
+mm<-merge(dt_sample3, dt_groups, by.x = 'SEQNUM', by.y = 'ID_2DF')
+ggplot(dt_sample3, aes(x=redshift, y=redshift))+geom_violin()
+```
+
+DBOptics clustering:
+
+```{r}
+points<- mm[,c('x', 'y', 'z')]
+
+#clustering
+res <- optics(points, minPts = 5)
+plot(res)
+
+```
+
+DBSCAN application:
+
+```{r}
+blo_scan <- extractDBSCAN(res, eps_cl = 0.00075)
+plot(blo_scan)
+```
+
+Select groups with more than 5 members
+
+```{r}
+h<-sqldf("SELECT count(SEQNUM) as members, GROUP_ID FROM mm GROUP BY GROUP_ID order by members DESC")  
+h2<-sqldf("SELECT mm.x, mm.y, mm.z, mm.GROUP_ID FROM mm as mm, h 
+    where mm.GROUP_ID=h.GROUP_ID and h.members >= 5")
+
+true_groups <- length(unique(h2$GROUP_ID))
+mm$cluster_id <- blo_scan$cluster
+```
+
+We have on one hand all groups with more than 5 members:
+
+```{r}
+plot3d(h2$x, h2$y, h2$z, col = h2$GROUP_ID, 
+       size = 2, xlab = "X", ylab = "Y", zlab = "Z")
+```
+
+in the other hand the output-clusters from DBSCAN:
+
+```{r}
+plot3d(points$x, points$y, points$z, 
+       col = blo_scan$cluster + 1, size = 2, 
+       xlab = "X", ylab = "Y", zlab = "Z")
+
+```
+
+Following code is devoted to asses the outcomes obtained with from an given output-cluster:
+
+```{r}
+
+###############################################################################
+#	Number of elements in a given output-cluster
+###############################################################################
+calculate_count_of_cluster <- function(cluster_id, dataset){
+	ttotal<-sqldf(sprintf("select count(seqnum) as how_many
+			from dataset
+				where cluster =%s", cluster_id))
+#	print(sprintf('      in cluster %s %s', cluster_id, ttotal$how_many))   list('how_many' = ttotal$how_many)
+}
+
+
+###############################################################################
+#	Number of elements in a given true-group
+###############################################################################
+calculate_count_of_group <- function(group_id, dataset){
+	ttotal<-sqldf(sprintf("select count(seqnum) as how_many
+		from dataset
+			where group_id=%s
+			group by group_id", group_id)) 
+    list('how_many' = ttotal$how_many)
+}
+
+
+###############################################################################
+#	The most common group of a given cluster and count elements in the
+#	intersection group and cluster.
+###############################################################################
+calculate_majority_group <- function(cluster_id, dataset){
+	ttotal<-sqldf(sprintf("
+	select count(seqnum) as how_many,
+			group_id as group_id
+		from dataset
+			where cluster=%s
+			group by group_id
+			order by how_many desc
+			limit 1", cluster_id)) 
+    list('group_id' = ttotal$group_id, 'how_many' = ttotal$how_many)
+}
+
+
+###############################################################################
+#	Get the purity rate: a cluster is said to be pure if 2/3 of his
+#	elements belong to a single cluster.
+###############################################################################
+get_global_purity_rate <- function(outcomes_dataset, min_members = 5) {
+	current <- outcomes_dataset[outcomes_dataset$total_in_group >= min_members,]
+	pures <- nrow(outcomes_dataset[outcomes_dataset$purity > 0.666,])
+	pures / nrow(outcomes_dataset)
+}
+
+
+###############################################################################
+#	Get the completeness rate: a cluster is said to be complete if 1/2 of his
+#	elements belong to a single cluster.
+###############################################################################
+get_global_completeness_rate <- function(outcomes_dataset, min_members = 5) {
+	current <- outcomes_dataset[outcomes_dataset$total_in_group >= min_members,]
+	completes <- nrow(outcomes_dataset[outcomes_dataset$completeness > 0.5,])
+	completes / nrow(outcomes_dataset)
+}
+
+
+###############################################################################
+#	Get the recovery rate:  (pure+complete) / total_true_groups
+###############################################################################
+get_global_recovery_rate <- function(outcomes_dataset, original_data_set, min_members = 5) {
+	total_true_groups <-sqldf("
+	    select 
+	      how_many, 
+	      group_id 
+	    from (
+						select
+						  count(group_id) as how_many,
+						  group_id 
+						from 
+						  original_data_set 
+						group by 
+						  group_id 
+						order by how_many desc
+						) a
+	    where 
+	         a.how_many>=5 
+      order by 
+	         how_many 
+	   desc")
+
+	current <- outcomes_dataset[outcomes_dataset$total_in_group >= min_members,]
+	pures_and_complete <- nrow(outcomes_dataset[outcomes_dataset$purity>0.6 & outcomes_dataset$completeness>0.5,])
+	pures_and_complete / nrow(total_true_groups)
+}
+
+
+###############################################################################
+#	Purity and Completeness: 
+#		1- how many per cluster are present in a group.
+#		2- how many in the majority group.
+#	A cluster is said to be pure if 2-/1- >= 0.666 
+#	A cluster is said to be complete if 1-/2- >= 0.5 
+###############################################################################
+calculate_stats <- function(cluster_id, dataset) {
+  #print(sprintf('Calculating stats for  clusterID %s', cluster_id))
+  total<-calculate_majority_group(cluster_id, dataset)
+   
+  total_in_cluster_group <- total$how_many
+  group_id <- total$group_id
+  # print(group_id)
+  total_in_group <- calculate_count_of_group(group_id, dataset)
+  total_in_group <- total_in_group$how_many
+  #print(total_in_group)
+  total_in_cluster<-calculate_count_of_cluster(cluster_id, dataset)
+  total_in_cluster <- total_in_cluster$how_many
+  
+  
+  purity <- ifelse(total_in_cluster > 0, total_in_cluster_group/total_in_cluster, 0)
+  completeness <- ifelse(total_in_group > 0, total_in_cluster_group/total_in_group, 0)	
+  bad_classified <- total_in_group - total_in_cluster_group # belowing to group but classified outside
+  spurious <- total_in_cluster - total_in_cluster_group # Outside of the group classified inside
+  list('cluster_id' = cluster_id, 
+		'group_id' = group_id , 
+		'total_in_group' = total_in_group, 
+		'total_in_cluster' = total_in_cluster, 
+		'total_in_cluster_group' = total_in_cluster_group,
+		'purity' = purity,
+		'completeness' = completeness,
+		'spurious' = spurious,
+		'bad_classified' = bad_classified,
+		'is_pure' = ifelse(purity>=0.666, 1, 0),
+		'is_complete' = ifelse(completeness >= 0.5, 1, 0)
+	   )
+}
+
+
+############################################################################
+# Execute stats from a given mm dataset and a db_scan execution result
+# delete column from dataframe: mm <- select(mm, -'cluster')
+############################################################################
+execute_stats <- function(mm, blo_scan){
+	mm$cluster <- blo_scan$cluster
+	#mm0 <- mm[mm$cluster != 0, ]
+	cluster_results <-sqldf("SELECT distinct(cluster) AS cluster
+		FROM mm")
+	stats <- data.frame('cluster_id'=integer(),
+		'group_id'=integer(),
+		'total_in_group'=integer(),
+		'total_in_cluster'=integer(),
+		'total_in_cluster_group'=integer(),
+		'purity'=numeric(),
+		'completn'=numeric(),
+		'spurious'=numeric(),
+		'bad_class'=numeric(),
+		'is_pur'=integer(),
+		'is_comp'=integer()		
+		)
+	for(r in cluster_results$cluster){
+	  if(r != 0) {
+		bb <- calculate_stats(r, mm)
+		stats[nrow(stats) +1,] <- 
+			c(  bb$cluster_id, 
+				bb$group_id, 
+				bb$total_in_group, 
+				bb$total_in_cluster, 
+				bb$total_in_cluster_group, 
+				bb$purity, 
+				bb$completeness, 
+				bb$spurious,
+				bb$bad_classified,
+				bb$is_pure,  
+				bb$is_complete)
+		}
+		#print(r)
+	}
+	return (stats)
+}
+```
+
+Now we apply to our DBSCAN:
+
+```{r R.options=list(max.print=10)}
+all <- execute_stats(mm, blo_scan)
+head(all, 5)
+```
+
+We have
+
+```{r}
+print(paste("Mean purity", mean(all$purity)))
+print(paste("Mean completness", mean(all$completn)))
+```
+
+We can create a function which test over different values of to test our DBSCAN:
+
+```{r}
+calculate_output <- function(test_eps_cl, res_data){
+  blo_scan <- extractDBSCAN(res_data, eps_cl = test_eps_cl)
+  mm$cluster_id <- blo_scan$cluster
+  predicted_groups <- length(unique(mm$cluster_id))
+  all <- execute_stats(mm, blo_scan)
+  number_pure_groups <- nrow(all[all$purity>0.666,])
+  number_pure_complete_groups <- nrow(all[all$purity>0.666 & all$completn > 0.5,])
+  fp <- number_pure_groups/predicted_groups
+  fr <- number_pure_complete_groups / true_groups
+  c(mean(all$purity), mean(all$completn), length(unique(all$cluster_id)), length(unique(all$group_id)), number_pure_groups, number_pure_complete_groups, fp, fr)
+}
+
+
+assess_sequence <- function(eps_sequence_test) {
+  purity_list <- c()
+  completeness_list <- c()
+  group_list <- c()
+  cluster_list <- c()
+  fp_list <- c()
+  fr_list <- c()
+
+  for (eps_test in eps_sequence_test) {
+      alli <- calculate_output(eps_test, res)
+      purity_list <- c(purity_list, alli[1])
+      completeness_list <- c(completeness_list, alli[2])
+      cluster_list <- c(cluster_list, alli[3])
+      group_list <- c(group_list, alli[4])
+      fp_list <- c(fp_list, alli[5])
+      fr_list <- c(fr_list, alli[6])
+  }
+}
+```
+
+We can now test over different values in order to obtain optimal eps_cl hyper-parameter:
+
+```{r}
+eps_sequence_test <- seq(0.0005, 0.001, 0.00025)
+i<-1
+purity_list <- c()
+completeness_list <- c()
+group_list <- c()
+cluster_list <- c()
+fp_list <- c()
+fr_list <- c()
+
+for (eps_test in eps_sequence_test) {
+    alli <- calculate_output(eps_test, res)
+    purity_list <- c(purity_list, alli[1])
+    completeness_list <- c(completeness_list, alli[2])
+    cluster_list <- c(cluster_list, alli[3])
+    group_list <- c(group_list, alli[4])
+    fp_list <- c(fp_list, alli[5])
+    fr_list <- c(fr_list, alli[6])
+    
+    i<- i+1
+}
+```
+
+```{r}
+print(completeness_list)
+print(purity_list)
+print(group_list)
+print(cluster_list)
+print(true_groups)
+```
+
+It has been discovered than a scale of data improves a lot the results:
+
+```{r}
+
+points_scaled <- scale(points)
+ress <- optics(points_scaled, minPts = 5)
+#optimal value obtained
+blo_scans <- extractDBSCAN(ress, eps_cl = 0.025)
+```
+
+Again we can
+
+```{r}
+eps_sequence_test <- seq(0.015, 0.03, 0.005)
+i<-1
+purity_list <- c()
+completeness_list <- c()
+group_list <- c()
+cluster_list <- c()
+for (eps_test in eps_sequence_test) {
+    alli <- calculate_output(eps_test, ress)
+    purity_list <- c(purity_list, alli[1])
+    completeness_list <- c(completeness_list, alli[2])
+    cluster_list <- c(cluster_list, alli[3])
+    group_list <- c(group_list, alli[4])
+    
+    i<- i+1
+}
+```
+
+```{r}
+print(completeness_list)
+print(purity_list)
+print(group_list)
+print(cluster_list)
+print(true_groups)
+print (eps_sequence_test)
+```
+
+```{}
+```
+
+Results are quite better when all variables are scaled to a mean=0, sd=1
+
+# s-Distances
+
+Following coder allow to calculate the sdistance:
+
+```{r}
+#######################################
+# Calculate angle between two points
+#######################################
+#nulos <- 0
+calculate_angle <- function(v1, v2) {
+	dot_product <- sum(v1 * v2)
+	mod_v1 <- sqrt(sum(v1^2))
+	mod_v2 <- sqrt(sum(v2^2))
+	acos_angle <- dot_product / (mod_v1 * mod_v2)
+	bool <- abs(acos_angle)  >1 | is.na(acos_angle)
+	if(bool == TRUE) {
+		0
+	}else{
+		acos(acos_angle)
+	}
+	
+}
+
+
+#######################################
+# Calculate traverse distance from proper distance
+#######################################
+traverse_distance <- function(v1, v2, distance) {
+	calculate_angle(v1, v2) * distance
+}
+
+
+#######################################
+# Calculate scaled distance symmetric way
+#######################################
+d_LOS_scaled_symmetric <- function(v1, v2, redshift1, redshift2) {
+	(d_LOS(v1, v2, redshift1) + d_LOS(v2, v1, redshift2)) / 2
+}
+
+
+#######################################
+# Calculate scaled distance between two given vectors
+# sfactor is global constant, f.e sfactor=0.2
+#######################################
+d_LOS <- function(v1, v2, redshift) {
+	if(redshift< 0.01){
+		sfactor <- 0.6
+	} else if(redshift< 0.04){
+		sfactor <- 0.5
+	} else if(redshift< 0.06){
+		sfactor <- 0.4
+	} else if(redshift< 0.08){
+		sfactor <- 0.35
+	}else if(redshift< 0.1){
+		sfactor <- 0.3
+	}else if(redshift< 0.12){
+		sfactor <- 0.19
+	}else if(redshift< 0.15){
+		sfactor <- 0.08
+	}else if(redshift< 0.2){
+		sfactor <- 0.01
+	}else {
+		sfactor <- 0.2
+	}
+	
+	sfactor * sum((v1-v2)*v1) / sqrt(sum(v1^2))
+}
+
+
+#######################################
+# Calculate elongated distance
+# depends on sfactor (a factor, for example sfactor=0.2) and proper_distance
+# v1 = c(x, y, x, distance)
+# sfactor must be a global variable
+#######################################
+s_distance <- function(v1, v2){
+	vector1 <- v1[1:3]
+	vector2 <- v2[1:3]
+	proper_distance <- v1[4]
+	redshift1 <- v1[5]
+	redshift2 <- v2[5]
+	
+    sqrt (traverse_distance(vector1, vector2, proper_distance)^2 + 
+              d_LOS_scaled_symmetric(vector1, vector2, redshift1, redshift2)^2
+		)
+}
+
+
+#######################################
+# Get a dist object made up from s_distances
+# use a coordintates matrix as follows:
+#	a<- mm[,c('x', 'y', 'z', 'dist', 'redshift')]
+#   matriz_distancias <- get_matrix_of_distances(a)
+# The aim is to call optics with this object as follows
+#   aaa <- as.dist(matriz_distancias)
+#   res <- optics(aaa, minPts = 5)
+#######################################
+get_matrix_of_distances <- function(matrix_coordintates) {
+	row_list <- as.list(data.frame(t(matrix_coordintates)))
+	distances_matrix <- outer(row_list, row_list, FUN = Vectorize(s_distance))
+	#as.dist(distances_matrix) This is not needed anymore
+	distances_matrix
+}
+```
+
+And then we can calculate distance matrix to apply OPTICS to this new metric, following code takes a lot of time:
+
+```{r}
+a<- mm[,c('x', 'y', 'z', 'dist', 'redshift')]
+distance_matrix <- get_matrix_of_distances(a)
+dist_object <- as.dist(distance_matrix)
+sres <- optics(dist_object, minPts = 5)
+plot(sres)
+```
+
+For the new data, we extract a DBSCAN:
+
+```{r}
+sblo_scan <- extractDBSCAN(sres, eps_cl = 0.00025)
+plot(sblo_scan)
+
+
+
+```
+
+We obtain a notable improvement:
+
+```{r}
+sall <- execute_stats(mm, sblo_scan)
+print(paste("Mean purity", mean(sall$purity)))
+print(paste("Mean completness", mean(sall$completn)))
+```
+
+Test several hyper-parameters:
+
+```{r}
+#optimal value found at 0.00015
+eps_sequence_test <- seq(0.00010, 0.00035, 0.00005)
+i<-1
+purity_list <- c()
+completeness_list <- c()
+group_list <- c()
+cluster_list <- c()
+for (eps_test in eps_sequence_test) {
+    alli <- calculate_output(eps_test, sres)
+    purity_list <- c(purity_list, alli[1])
+    completeness_list <- c(completeness_list, alli[2])
+    cluster_list <- c(cluster_list, alli[3])
+    group_list <- c(group_list, alli[4])
+    
+    i<- i+1
+}
+```
+
+```{r}
+print(completeness_list)
+print(purity_list)
+print(group_list)
+print(cluster_list)
+print(true_groups)
+print (eps_sequence_test)
+```

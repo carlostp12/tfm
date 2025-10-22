@@ -10,6 +10,12 @@ This chapter aims to update the reader on the current state of the research area
 
 \section{Surveys}
 
+Fortunatelly, now a days we can acccess data belonging to several surveys, among others:
+
+	- From 2dfGRS: Contains 245591 objects of then 221414 galaxies reliable data of galaxies.
+	- From SDSS, we downloaded the DR7-modelC petrosian magnitude with 639359.
+
+
 \section{Machine Learning applyied to cosmology}
 
 We will, before presentig the results, give a brief description of the algorithms employed in this work.
@@ -19,14 +25,158 @@ We will, before presentig the results, give a brief description of the algorithm
 Supervised learning focus on find patterns and relations within labeled data. The aim of Supervised Methods is to obtain some knowledge learned from given labeled-data in order to make predictions on some of the classes for new data. In other words given a set of data \( Z = (X, Y) = (X_1,.., X_n, Y_1, ...Y_m) \), we want to find a function F that holds \(Y=F(X) \).
 
 A subset is taken from the original dataset, the so called training data \( Z_i = (X_i, Y_i) \). And then the problem is reduced to find the minumum of a loss function, which measures the difference between \( Y_i \) and \( F(X_i) \) 
-The input of any supervised algorithms are some variables 
+
+The input of any supervised algorithms are the so called independant variables, the output are some other variables called dependant variables. Supervised algorithms used the information contained within the trainning data to learn relations between input variables and target vartiables.
+
+The reason why we will not stop more on Supervised methods is because in our model we are not interested on making predictions on some target, instead we want to find patterns in some data distribution, which can lead to guess hom matter are shaped within a dimensional space.
+
 \subsection{Unsupervised methods}
 
-Unsupervised learning focus on analysis and model of data without using any tags or output classes
+Unsupervised learning focus on analysis and model of data without using any tags or output classes. Instead a set of variables
+\( X^T = (X_1,.., X_n) \) corresponding to n-observations is given, and then the method try to find interestring features from the observations.
+
+From the unsupervised methods set we have:
+	Clustering and segmentation: work by in distance and simillarity patterns, they can be divided as
+	- Hierarquical: work by create sucessive partition of data and hierarquical tree creation called dendogram.   
+	- Partitional: an initial set of clusters must be set in advance, the set is improved on an iterartive proccess. Example k-means
+	Lot of algorithms of this class work by making assmptions of the data distribution, for example, k-means works by given a predefined list of k-groups and have some kind of probability distribution (for example Gaussian) for each group.
+	This result on globular or spherical-shaped clusters and will not work well on non-spherical shapes ofdata. On a spatial distribution, any arbitrarity in the shape of data is expected, for exmaple, linear, stellar-like or polygonal shapes and so on. That is why this algorithm is not suitable for our analysis.
+	
+	
+	Density-based:
+		The key feature is the no-assumption on the distribution of the data is made. Density-based algorithm works by create clusters in dense areas separated by sparser areas. That is why this algorithms are more suitable, provided that no assumtion is made on the shape of dense areas.
+		Other feature of density-based methods is the ability to detect outliers or noise points. These points generate low-density areas which separes more dense areas which result in clusters.
+	Among the density based we selected OPTICS, DBSCAN and HDBSCAN for this study, we will present in the next an overview of each.
 
 \subsection{OPTICS}
+	Ordering Points to Identify Cluster Structure,OPTICS is an unsupervised algorithm that works by ordering the points in function of the so-called reachability distance.
+	In fact, OPTICS output is not a cluster but a graph call the reachability plot.
+	Lets suposse we have a set call S, lets see some definitions:
+	
+	\begin{itemize}
+		\item An eps-neighborhood of a point p in S is \(NE_{\epsilon}(p) =\{q \in S : dist(p, q) \leq eps \} \). Then any eps-neighborhood of p is said to be dense if 
+		\( |NE_{\epsilon}(p)| \geq minPts \).
+	
+		\item The core\_distance of a given point p is the minimum \(\epsilon\) such us \(NE_{\epsilon}(p)\) is dense, in other words:
+		
+		$$ core_-distance(p) = min \{ \epsilon : |NE_{\epsilon}(p)| \geq minPts \} $$
+	
+		\item A point is said to be a core-point when \(NE_{\epsilon}'(p) \) is dense and  \( \epsilon' \leq \epsilon \), finally,
+	
+	
+		\item The reachability distance from q regading a core-point g is the maximum of the two: core-distance and euclidean  distance, in other words:
 
+		$$ reachability-distance(p, q) = max \{ core_-distance(p), dist(p, q) \} $$
+		
+	\end{itemize}
+	
+	\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.5\textwidth]{./figs/core-distance.jpg}
+	\caption{Core and reachability distance obtained from \cite{Rhys:2020}.}
+	\label{fig:optics_figure}
+	\end{figure}
+	
+	Note that reachability-distance is only defined with respect to a core-point. We can see an useful example of both reachability and core distances in the figure \ref{fig:optics_figure}.
+
+	
+	OPTICS work by seting up two parameters for each point: 
+		- \( \epsilon \): 
+		-  minPts
+	For example \ref{fig:reach1} shows a random-generated set points arround four fixed points in [0,1]x[0,1]
+	
+	\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.5\textwidth]{./figs/reach1.png}
+	\caption{An example of data set in plane \( \mathbb{R}^2\).}
+	\label{fig:reach1}
+	\end{figure}
+	
+	The \ref{fig:reach2} shows the reachability plot corresponding to a this set.
+	
+	\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.5\textwidth]{./figs/reach2.png}
+	\caption{Example of OPTICS reachability plot}
+	\label{fig:reach2}
+	\end{figure}
+	
 \subsection{DBSCAN}
+DBSCAN is an algorithm that uses some of OPTICS concepts to extract clusters, but is need to ad some more difinitions, given a set S MinPts and Eps, lets be p a core-point of S then:
+	
+\begin{itemize}
+		\item a point q is said to be direct density reachable with respect to Eps and MinPts from p if \(q \in NE_{\epsilon}(p)\). Note that \(|NE_{\epsilon}(p)| \geq MinPts \).
+		\item a point q is said to be density-reachable with respect to Eps and MinPts if there exists a chanin of points \(p_1, ..., p_n,\_\_ p=p_1, p_n=q \) such us  \( p_{i+1} \) is direct density reachable from \( p_i \).
+		\item A point p is density connected to a point q with respect to Eps and MinPts if there is thirdth point o such that both p and q are density-reachable from o with respect to Eps and MinPts.
+\end{itemize}		
+Then a cluster C is a subset of S satisfying:
+	\begin{itemize}
+		\item \(\forall p, q, in C\)  p is density-connected from q with respect to Eps and MinPts.
+		\item \(\forall p, q, in C\) if q is density reachable from p with respect to Eps and MinPts then \(q \in C \).
+	\end{itemize}
+
+Then with this method, DBSCAN creates a set of clusters \(C_1, ..., C_k\). All points in S are classified as
+		1. Core-points: points with a dense neighborhood.
+		2. Border-points: points belonging to a cluster but without a dense neighborhood.
+		3. Noise points: points do not belonging to any cluster.
+		
+To find a cluster, DBSCAN starts with an arbitrary database point p and retrieves all points density-reachable from p with respect to Eps and MinPts. If p is not a core point, no points are density-reachable from p and DBSCAN assigns p to the noise and applies the same procedure to the next database point. If p is actually a border point of some cluster C, it will later be reached when collecting all the points density-reachable from some core point of C and will then be (re-)assigned to C. The algorithm terminates when all points have been assigned to a cluster or to the noise.
+
+\begin{algorithm}[H]
+\SetKwInOut{Input}{Input}
+\SetKwInOut{Output}{Output}
+\SetKwFunction{RegionQuery}{RegionQuery}
+\SetKwFunction{ExpandCluster}{ExpandCluster}
+
+\Input{Dataset $D$, $\epsilon$ (epsilon), $\text{MinPts}$ (minimum points)}
+\Output{Set of clusters $C$, with noise points unassigned}
+
+\BlankLine
+
+$C \leftarrow 0$ \tcp{Cluster counter}
+\For{each point $P$ in $D$}{
+    \If{$P$ is unvisited}{
+        mark $P$ as visited\;
+        $N \leftarrow \RegionQuery(D, P, \epsilon)$\;
+        \If{$|N| < \text{MinPts}$}{
+            mark $P$ as \textbf{Noise}\;
+        }
+        \Else{
+            $C \leftarrow C + 1$\;
+            $\ExpandCluster(D, P, N, C, \epsilon, \text{MinPts})$\;
+        }
+    }
+}
+
+\BlankLine
+
+\SetKwProg{Fn}{Function}{}{end}
+\Fn{\ExpandCluster{$D, P, N, C, \epsilon, \text{MinPts}$}}{
+    assign $P$ to cluster $C$\;
+    \For{each point $P'$ in $N$}{
+        \If{$P'$ is unvisited}{
+            mark $P'$ as visited\;
+            $N' \leftarrow \RegionQuery(D, P', \epsilon)$\;
+            \If{$|N'| \geq \text{MinPts}$}{
+                $N \leftarrow N \cup N'$\;
+            }
+        }
+        \If{$P'$ is not yet assigned to a cluster}{
+            assign $P'$ to cluster $C$\;
+        }
+    }
+}
+
+\BlankLine
+
+\Fn{\RegionQuery{$D, P, \epsilon$}}{
+    \KwRet{all points $P' \in D$ such that $\text{distance}(P, P') \leq \epsilon$}
+}
+
+\caption{The DBSCAN Algorithm}
+\label{alg:dbscan}
+\end{algorithm}
+
 
 \subsection{HDBSCAN}
 
