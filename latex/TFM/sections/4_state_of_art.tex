@@ -16,6 +16,25 @@ Fortunatelly, now a days we can acccess data belonging to several surveys, among
 	- From SDSS, we downloaded the DR7-modelC petrosian magnitude with 639359.
 
 
+\section{Redshift to distance}
+
+The redshift is a distance indicator, at firts the Hubble Rule was used:
+\begin{equation} \label{eq:1}
+	D=HV
+\end{equation}	
+where H is the Hubble constant. It was easy to see \ref{eq:1} works only as approximation for nearby galaxies, instead a cosmologicval model need to be apply. The most newest models says that:
+
+\begin{equation} \label{eq:2}
+	D_p = \frac{1}{H_0} \int_0^z \frac{dz}{ \sqrt{\sum_i \Omega_{i0} (1+z)^{3(1+w^i)}}} =  \frac{1}{H_0} \int_0^z \frac{dz}{ \sqrt{\sum_i \Omega_{r0} (1+z)^{4} + \Omega_{m0} (1+z)^{3} + \Omega_{\Lambda 0}  } }
+\end{equation}.
+Now, depending on the model of universe we take equation \ref{eq:1} may vary, for this study we choose the values of the so called \Lambda CDM or concordant-model, we assume:
+
+\Omega_{r0} = 0.0001.
+\Omega_{m0} = 0.3.
+\Omega_{\Lambda0} = 0.7.
+
+
+
 \section{Machine Learning applyied to cosmology}
 
 We will, before presentig the results, give a brief description of the algorithms employed in this work.
@@ -102,25 +121,29 @@ From the unsupervised methods set we have:
 	\end{figure}
 	
 \subsection{DBSCAN}
-DBSCAN is an algorithm that uses some of OPTICS concepts to extract clusters, but is need to ad some more difinitions, given a set S MinPts and Eps, lets be p a core-point of S then:
+DBSCAN is an algorithm that uses some of OPTICS concepts to extract clusters, but add more definitions that we will briefly see. Given a set S, MinPts and Eps, lets be p a core-point of S then:
 	
 \begin{itemize}
-		\item a point q is said to be direct density reachable with respect to Eps and MinPts from p if \(q \in NE_{\epsilon}(p)\). Note that \(|NE_{\epsilon}(p)| \geq MinPts \).
-		\item a point q is said to be density-reachable with respect to Eps and MinPts if there exists a chanin of points \(p_1, ..., p_n,\_\_ p=p_1, p_n=q \) such us  \( p_{i+1} \) is direct density reachable from \( p_i \).
-		\item A point p is density connected to a point q with respect to Eps and MinPts if there is thirdth point o such that both p and q are density-reachable from o with respect to Eps and MinPts.
+		\item A point q is said to be direct density reachable with respect to Eps and MinPts from p if \(q \in NE_{\epsilon}(p)\). Note that \(|NE_{\epsilon}(p)| \geq MinPts \).
+		\item A point q is said to be density-reachable with respect to Eps and MinPts if there exists a chanin of points \(p_1, ..., p_n,\_\_ p=p_1, p_n=q \) such us  \( p_{i+1} \) is direct density reachable from \( p_i \).
+		\item The poinit p is density connected to a point q with respect to Eps and MinPts if there is thirdth point o such that both p and q are density-reachable from o with respect to Eps and MinPts.
 \end{itemize}		
 Then a cluster C is a subset of S satisfying:
 	\begin{itemize}
-		\item \(\forall p, q, in C\)  p is density-connected from q with respect to Eps and MinPts.
-		\item \(\forall p, q, in C\) if q is density reachable from p with respect to Eps and MinPts then \(q \in C \).
+		\item \(\forall p, q, \in C\)  p is density-connected from q with respect to Eps and MinPts.
+		\item \(\forall p, q, \in C\) if q is density reachable from p with respect to Eps and MinPts then \(q \in C \). This property is called sometimes as Maximallity.
 	\end{itemize}
 
 Then with this method, DBSCAN creates a set of clusters \(C_1, ..., C_k\). All points in S are classified as
-		1. Core-points: points with a dense neighborhood.
-		2. Border-points: points belonging to a cluster but without a dense neighborhood.
-		3. Noise points: points do not belonging to any cluster.
-		
+\begin{enumerate}
+		\item Core-points: points with a dense neighborhood.
+		\item Border-points: points belonging to a cluster but without a dense neighborhood.
+		\item Noise points: points do not belonging to any cluster.
+\end{enumerate}
+
 To find a cluster, DBSCAN starts with an arbitrary database point p and retrieves all points density-reachable from p with respect to Eps and MinPts. If p is not a core point, no points are density-reachable from p and DBSCAN assigns p to the noise and applies the same procedure to the next database point. If p is actually a border point of some cluster C, it will later be reached when collecting all the points density-reachable from some core point of C and will then be (re-)assigned to C. The algorithm terminates when all points have been assigned to a cluster or to the noise.
+
+We will see it in next pseupdo-code:
 
 \begin{algorithm}[H]
 \SetKwInOut{Input}{Input}
@@ -137,13 +160,13 @@ $C \leftarrow 0$ \tcp{Cluster counter}
 \For{each point $P$ in $D$}{
     \If{$P$ is unvisited}{
         mark $P$ as visited\;
-        $N \leftarrow \RegionQuery(D, P, \epsilon)$\;
-        \If{$|N| < \text{MinPts}$}{
+        $NE \leftarrow \RegionQuery(D, P, \epsilon)$\;
+        \If{$|NE| < \text{MinPts}$}{
             mark $P$ as \textbf{Noise}\;
         }
         \Else{
             $C \leftarrow C + 1$\;
-            $\ExpandCluster(D, P, N, C, \epsilon, \text{MinPts})$\;
+            $\ExpandCluster(D, P, NE, C, \epsilon, \text{MinPts})$\;
         }
     }
 }
@@ -151,14 +174,14 @@ $C \leftarrow 0$ \tcp{Cluster counter}
 \BlankLine
 
 \SetKwProg{Fn}{Function}{}{end}
-\Fn{\ExpandCluster{$D, P, N, C, \epsilon, \text{MinPts}$}}{
+\Fn{\ExpandCluster{$D, P, NE, C, \epsilon, \text{MinPts}$}}{
     assign $P$ to cluster $C$\;
-    \For{each point $P'$ in $N$}{
+    \For{each point $P'$ in $NE$}{
         \If{$P'$ is unvisited}{
             mark $P'$ as visited\;
-            $N' \leftarrow \RegionQuery(D, P', \epsilon)$\;
-            \If{$|N'| \geq \text{MinPts}$}{
-                $N \leftarrow N \cup N'$\;
+            $NE' \leftarrow \RegionQuery(D, P', \epsilon)$\;
+            \If{$|NE'| \geq \text{MinPts}$}{
+                $NE \leftarrow NE \cup NE'$\;
             }
         }
         \If{$P'$ is not yet assigned to a cluster}{
@@ -177,6 +200,7 @@ $C \leftarrow 0$ \tcp{Cluster counter}
 \label{alg:dbscan}
 \end{algorithm}
 
+As said, the algorithm takes an unvisited point p and evaluates its eps-neighborhood througth the function \textit{RegionQuery}, if it contains less than MinPts points p labeled as noise, else it expand the cluster using the \textit{exapandCluster} function.
 
 \subsection{HDBSCAN}
 
