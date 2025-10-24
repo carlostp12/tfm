@@ -12,32 +12,33 @@ This chapter aims to update the reader on the current state of the research area
 
 Fortunatelly, now a days we can acccess data belonging to several surveys, among others:
 
-	- From 2dfGRS: Contains 245591 objects of then 221414 galaxies reliable data of galaxies.
-	- From SDSS, we downloaded the DR7-modelC petrosian magnitude with 639359.
+	\begin{itemize}
+		\item From 2dfGRS: Contains 245591 objects of then 221414 galaxies reliable data of galaxies.
+		\item From SDSS, we downloaded the DR7-modelC petrosian magnitude with 639359.
+	\end{itemize}
 
+\section{Redshift to distance relation}
 
-\section{Redshift to distance}
-
-The redshift is a distance indicator, at firts the Hubble Rule was used:
+As known, the universe is expanding, Hubble-Lemaître's Law states that the farther away a galaxy is, the faster it is moving away from us. This relationship is described by the equation:
 \begin{equation} \label{eq:1}
-	D=HV
+	V=HD
 \end{equation}	
-where H is the Hubble constant. It was easy to see \ref{eq:1} works only as approximation for nearby galaxies, instead a cosmologicval model need to be apply. The most newest models says that:
+where H is the Hubble constant. Now a days it is known that \ref{eq:1} works only as approximation for nearby galaxies \cite{Cepa:2023}, instead a cosmological model need to be apply to address the redshift/distance relation. From the newest theories \cite{Cepa:2023} we have:
 
 \begin{equation} \label{eq:2}
-	D_p = \frac{1}{H_0} \int_0^z \frac{dz}{ \sqrt{\sum_i \Omega_{i0} (1+z)^{3(1+w^i)}}} =  \frac{1}{H_0} \int_0^z \frac{dz}{ \sqrt{\sum_i \Omega_{r0} (1+z)^{4} + \Omega_{m0} (1+z)^{3} + \Omega_{\Lambda 0}  } }
+	D_p =  \frac{1}{H_0} \int_0^z \frac{dz}{ \sqrt{\sum_i \Omega_{r0} (1+z)^{4} + \Omega_{m0} (1+z)^{3} + \Omega_{\Lambda 0}  } }
 \end{equation}.
-Now, depending on the model of universe we take equation \ref{eq:1} may vary, for this study we choose the values of the so called \Lambda CDM or concordant-model, we assume:
 
-\Omega_{r0} = 0.0001.
-\Omega_{m0} = 0.3.
-\Omega_{\Lambda0} = 0.7.
+Now, depending on the model of universe we take, the equation \ref{eq:2} may vary, for this study we assume the values of the so called \( \Lambda CDM \) or concordant-model, according with \cite{Cepa:2023}:
 
+\begin{equation} \label{eq:3}
+ \Omega_{r0} = 0.0001, \,\, \Omega_{m0} = 0.3 , \,\, \Omega_{\Lambda 0} = 0.7.
+\end{equation}.
 
 
 \section{Machine Learning applyied to cosmology}
 
-We will, before presentig the results, give a brief description of the algorithms employed in this work.
+We will presenta brief description of the algorithms employed in this work.
 
 \subsection{Supervised Learning}
 
@@ -56,34 +57,34 @@ Unsupervised learning focus on analysis and model of data without using any tags
 
 From the unsupervised methods set we have:
 	Clustering and segmentation: work by in distance and simillarity patterns, they can be divided as
-	- Hierarquical: work by create sucessive partition of data and hierarquical tree creation called dendogram.   
-	- Partitional: an initial set of clusters must be set in advance, the set is improved on an iterartive proccess. Example k-means
-	Lot of algorithms of this class work by making assmptions of the data distribution, for example, k-means works by given a predefined list of k-groups and have some kind of probability distribution (for example Gaussian) for each group.
-	This result on globular or spherical-shaped clusters and will not work well on non-spherical shapes ofdata. On a spatial distribution, any arbitrarity in the shape of data is expected, for exmaple, linear, stellar-like or polygonal shapes and so on. That is why this algorithm is not suitable for our analysis.
-	
-	
-	Density-based:
+\begin{itemize}
+	\item Hierarquical: work by create sucessive partition of data and hierarquical tree creation called dendogram.   
+	\item Partitional: an initial set of clusters must be set in advance, the set is improved on an iterartive proccess. Example k-means.
+	\item Density-based:
 		The key feature is the no-assumption on the distribution of the data is made. Density-based algorithm works by create clusters in dense areas separated by sparser areas. That is why this algorithms are more suitable, provided that no assumtion is made on the shape of dense areas.
 		Other feature of density-based methods is the ability to detect outliers or noise points. These points generate low-density areas which separes more dense areas which result in clusters.
+	Lot of hierarquical and partitional algorithms work by making assmptions on the data distribution, for example, k-means works by given a predefined list of k-groups and have some kind of probability distribution (for example Gaussian) for each group. This result on globular or spherical-shaped clusters and will not work well on non-spherical shapes of data. On a spatial any arbitrarity shape of data is expected, for exmaple, linear, stellar-like or polygonal shapes and so on. That is why these kind algorithms are not suitable for our analysis.
 	Among the density based we selected OPTICS, DBSCAN and HDBSCAN for this study, we will present in the next an overview of each.
+\end{itemize}
 
 \subsection{OPTICS}
-	Ordering Points to Identify Cluster Structure,OPTICS is an unsupervised algorithm that works by ordering the points in function of the so-called reachability distance.
-	In fact, OPTICS output is not a cluster but a graph call the reachability plot.
+	Namely Ordering Points to Identify Cluster Structure, is an unsupervised algorithm that works by ordering the points in function of the so-called reachability distance.
+	In fact, OPTICS output is not a cluster set but a graph call the reachability plot.
+
 	Lets suposse we have a set call S, lets see some definitions:
 	
 	\begin{itemize}
-		\item An eps-neighborhood of a point p in S is \(NE_{\epsilon}(p) =\{q \in S : dist(p, q) \leq eps \} \). Then any eps-neighborhood of p is said to be dense if 
+		\item \textit{eps-neighborhood} of a point p in S is \(NE_{\epsilon}(p) =\{q \in S : dist(p, q) \leq eps \} \). Then any eps-neighborhood of p is said to be dense if 
 		\( |NE_{\epsilon}(p)| \geq minPts \).
 	
-		\item The core\_distance of a given point p is the minimum \(\epsilon\) such us \(NE_{\epsilon}(p)\) is dense, in other words:
+		\item The \textit{core\_distance} of a given point p is the minimum \(\epsilon\) such us \(NE_{\epsilon}(p)\) is dense, in other words:
 		
 		$$ core_-distance(p) = min \{ \epsilon : |NE_{\epsilon}(p)| \geq minPts \} $$
 	
-		\item A point is said to be a core-point when \(NE_{\epsilon}'(p) \) is dense and  \( \epsilon' \leq \epsilon \), finally,
+		\item A point is said to be a \textit{core-point} when \(NE_{\epsilon}'(p) \) is dense and  \( \epsilon' \leq \epsilon \), finally,
 	
 	
-		\item The reachability distance from q regading a core-point g is the maximum of the two: core-distance and euclidean  distance, in other words:
+		\item The \textit{reachability distance} from q regading a core-point g is the maximum of the two: core-distance and euclidean  distance, in other words:
 
 		$$ reachability-distance(p, q) = max \{ core_-distance(p), dist(p, q) \} $$
 		
@@ -96,7 +97,7 @@ From the unsupervised methods set we have:
 	\label{fig:optics_figure}
 	\end{figure}
 	
-	Note that reachability-distance is only defined with respect to a core-point. We can see an useful example of both reachability and core distances in the figure \ref{fig:optics_figure}.
+	Note that reachability-distance is only defined respect to a core-point. We can see an useful example of both reachability and core distances in the figure \ref{fig:optics_figure}.
 
 	
 	OPTICS work by seting up two parameters for each point: 
@@ -124,26 +125,26 @@ From the unsupervised methods set we have:
 DBSCAN is an algorithm that uses some of OPTICS concepts to extract clusters, but add more definitions that we will briefly see. Given a set S, MinPts and Eps, lets be p a core-point of S then:
 	
 \begin{itemize}
-		\item A point q is said to be direct density reachable with respect to Eps and MinPts from p if \(q \in NE_{\epsilon}(p)\). Note that \(|NE_{\epsilon}(p)| \geq MinPts \).
-		\item A point q is said to be density-reachable with respect to Eps and MinPts if there exists a chanin of points \(p_1, ..., p_n,\_\_ p=p_1, p_n=q \) such us  \( p_{i+1} \) is direct density reachable from \( p_i \).
-		\item The poinit p is density connected to a point q with respect to Eps and MinPts if there is thirdth point o such that both p and q are density-reachable from o with respect to Eps and MinPts.
+		\item A point q is said to be \textit{direct density reachable} with respect to Eps and MinPts from p if \(q \in NE_{\epsilon}(p)\). Note that \(|NE_{\epsilon}(p)| \geq MinPts \).
+		\item A point q is said to be \textit{density-reachable} with respect to Eps and MinPts if there exists a chanin of points \(p_1, ..., p_n,\_\_ p=p_1, p_n=q \) such us  \( p_{i+1} \) is direct density reachable from \( p_i \).
+		\item The poinit p is \textit{density connected} to a point q with respect to Eps and MinPts if there is thirdth point o such that both p and q are density-reachable from o with respect to Eps and MinPts.
 \end{itemize}		
 Then a cluster C is a subset of S satisfying:
 	\begin{itemize}
 		\item \(\forall p, q, \in C\)  p is density-connected from q with respect to Eps and MinPts.
-		\item \(\forall p, q, \in C\) if q is density reachable from p with respect to Eps and MinPts then \(q \in C \). This property is called sometimes as Maximallity.
+		\item \(\forall p, q, \in C\) if q is density reachable from p with respect to Eps and MinPts then \(q \in C \). This property is called sometimes as \textit{Maximallity}.
 	\end{itemize}
 
 Then with this method, DBSCAN creates a set of clusters \(C_1, ..., C_k\). All points in S are classified as
 \begin{enumerate}
-		\item Core-points: points with a dense neighborhood.
-		\item Border-points: points belonging to a cluster but without a dense neighborhood.
-		\item Noise points: points do not belonging to any cluster.
+		\item \textit{Core-points}: points with a dense neighborhood.
+		\item \textit{Border-points}: points belonging to a cluster but without a dense neighborhood.
+		\item \textit{Noise points}: points do not belonging to any cluster.
 \end{enumerate}
 
 To find a cluster, DBSCAN starts with an arbitrary database point p and retrieves all points density-reachable from p with respect to Eps and MinPts. If p is not a core point, no points are density-reachable from p and DBSCAN assigns p to the noise and applies the same procedure to the next database point. If p is actually a border point of some cluster C, it will later be reached when collecting all the points density-reachable from some core point of C and will then be (re-)assigned to C. The algorithm terminates when all points have been assigned to a cluster or to the noise.
 
-We will see it in next pseupdo-code:
+We will see it in following pseudo-code:
 
 \begin{algorithm}[H]
 \SetKwInOut{Input}{Input}
@@ -204,5 +205,9 @@ As said, the algorithm takes an unvisited point p and evaluates its eps-neighbor
 
 \subsection{HDBSCAN}
 
-\subsection{Non density-based algorithims}
+\subsection{Previous machine learning applications in cosmology}
+
+In this section we will briefly present some applications machine learning applications in cosmology, with special attention to the clustering ones.
+The best and recently effort is the \cite{Hai-Xia-Ma:2025} where some density-based algorithms are applied to some catalogs, in this study the authors achive a great result in cluster detection by using OPTICS and a modified algorithm called sOPTICS in order to prevent or to minimize the distorsion produced by the proper movements of galaxies.
+
 
