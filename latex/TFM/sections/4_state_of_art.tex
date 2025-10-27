@@ -6,104 +6,135 @@
 %\addcontentsline{toc}{chapter}{State_of_art}
 %\section{Introduction}
 
-This chapter aims to update the reader on the current state of the research area addressed by this work. For this, we will focus on two different parts, first inherent challenges of the data collected by the surveys, and second, a will brief introduction to Machine Learning, whose techniques we will apply in this work.
+This chapter serves to establish the current academic context for the research area addressed by this work. This is achieved by focusing on two distinct components: first, the inherent challenges associated with survey-collected data; and second, an overview of the Machine Learning techniques that will be applied throughout this study.
 
-\section{Surveys}
+\section{Spectroscopic  Surveys}
 
 Fortunatelly, now a days we can acccess data belonging to several surveys, among others:
 
 	\begin{itemize}
-		\item From 2dfGRS: Contains 245591 objects of then 221414 galaxies reliable data of galaxies.
-		\item From SDSS, we downloaded the DR7-modelC petrosian magnitude with 639359.
+		\item 2dfGRS: Contains 245591 objects, of which 221414 are considered reliable galaxy data.
+		The final data release was published in 2003, the survey leveraged the unique capabilities of the 2dF (2-degree Field) facility built by the Anglo-Australian Observatory in the southern hemisphere.  
+		\item SDSS modelC petrosian magnitude data realease 7 (DR7) contains 639359 galaxy entries. This release offers coverage for approximatyely one quarter of the sky sphere, predominantely in the nothern galactic cap as illustrated in figure \ref{fig:dr7}. Groups constructed are drawn up from \cite{Yang:2007}.
 	\end{itemize}
+	
+	\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.5\textwidth]{./figs/SDSSDR7-coverage.jpg}
+	\caption{SDSS Data release 7 sky coverage \cite{Yang:2007}.}
+	\label{fig:dr7}
+	\end{figure}
+	
+All redshift surveys are subject to several challenges, among others:
 
-\section{Redshift to distance relation}
+\begin{enumerate}
+	\item Observational and measurement errors: produced by instrumental limitations due long time exposures, faint object in high redshifts, and several broad-band. There are also instrumental limitations due several factors: atmospheric distorsion, sky subtraction and so on.
+	\item Systematic errors and biases, for example the already mentioned distorsion on redshifts caused by peculiar velocities of galaxies. This effect leads to the apparent elongation of clusters along the line of sight, a well-known phenomenon often referred to as the "Fingers of God" effect \cite{Longair:1996}. There is also a bias caused by the galaxy type, luminosity or epoch of the Universe can also lead to innacurate outcomes in the survey.
+	\item Theoretical and modeling uncertainties represent a final category of challenges, primarily stemming from the interpretation of observational data. These uncertainties arise both from limitations in the underlying theoretical models and from poorly constrained baryonic effects that impact dark matter simulations.
+\end{enumerate}
+	
+	
+\section{The redshift–distance relation}
 
-As known, the universe is expanding, Hubble-Lemaître's Law states that the farther away a galaxy is, the faster it is moving away from us. This relationship is described by the equation:
+It is well-established that the Universe is undergoing cosmic expansion. The Hubble–Lemaître Law quantifies this expansion, stipulating that the recessional velocity of a galaxy is directly proportional to its proper distance from the observer.cThis relationship is described by the equation:
+
 \begin{equation} \label{eq:1}
-	V=HD
+	V=H_{0}D
 \end{equation}	
-where H is the Hubble constant. Now a days it is known that \ref{eq:1} works only as approximation for nearby galaxies \cite{Cepa:2023}, instead a cosmological model need to be apply to address the redshift/distance relation. From the newest theories \cite{Cepa:2023} we have:
+
+ The equation \ref{eq:1} is strictly valid on small redshifts $ z \ll 1 $ \cite{Cepa:2023} (which means nearby objects), for longer redshifst it is necessary to use a full cosmological model address the redshift-distance relation. According with the most recently theories \cite{Cepa:2023}:
 
 \begin{equation} \label{eq:2}
 	D_p =  \frac{1}{H_0} \int_0^z \frac{dz}{ \sqrt{\sum_i \Omega_{r0} (1+z)^{4} + \Omega_{m0} (1+z)^{3} + \Omega_{\Lambda 0}  } }
 \end{equation}.
 
-Now, depending on the model of universe we take, the equation \ref{eq:2} may vary, for this study we assume the values of the so called \( \Lambda CDM \) or concordant-model, according with \cite{Cepa:2023}:
+Where $\Omega_{r0}, \_, \Omega_{m0}, \_ \Omega_{\Lambda 0}$ represents the density parameters for radiation, mass and dark energy (respectively) in the present epoch $z=0$.
+
+The specific form of equation \ref{eq:2} may vary according with the chosen cosmological model. In this work we assume the values of the $\Lambda\text{CDM}$, according with \cite{Cepa:2023}:
 
 \begin{equation} \label{eq:3}
  \Omega_{r0} = 0.0001, \,\, \Omega_{m0} = 0.3 , \,\, \Omega_{\Lambda 0} = 0.7.
 \end{equation}.
 
 
-\section{Machine Learning applyied to cosmology}
+\section{Machine Learning (ML) applyied to cosmology}
 
-We will presenta brief description of the algorithms employed in this work.
+We will present brief description of the algorithms employed in this work.
 
 \subsection{Supervised Learning}
 
-Supervised learning focus on find patterns and relations within labeled data. The aim of Supervised Methods is to obtain some knowledge learned from given labeled-data in order to make predictions on some of the classes for new data. In other words given a set of data \( Z = (X, Y) = (X_1,.., X_n, Y_1, ...Y_m) \), we want to find a function F that holds \(Y=F(X) \).
+Supervised learning focuses on identifying patterns and relationships within labeled datasets. The primary objective of supervised methods is to extract knowledge from the given training data to enable accurate class predictions for new, unseen data. Formally, given a labeled dataset $Z = (X, Y)$, where $X = (X_1, \dots, X_n)$ are the input features and $Y = (Y_1, \dots, Y_m)$ are the corresponding labels, the goal is to find a function $F$ such that the relationship $Y = F(X)$ is approximated.
 
 A subset is taken from the original dataset, the so called training data \( Z_i = (X_i, Y_i) \). And then the problem is reduced to find the minumum of a loss function, which measures the difference between \( Y_i \) and \( F(X_i) \) 
 
-The input of any supervised algorithms are the so called independant variables, the output are some other variables called dependant variables. Supervised algorithms used the information contained within the trainning data to learn relations between input variables and target vartiables.
+In this context, the input to any supervised algorithm consists of independent variables (or features), and the output comprises the dependent variables (or target variables). Supervised algorithms leverage the information within the training data to learn the intricate relationships between these input and target variables.
 
-The reason why we will not stop more on Supervised methods is because in our model we are not interested on making predictions on some target, instead we want to find patterns in some data distribution, which can lead to guess hom matter are shaped within a dimensional space.
+However, a detailed discussion of supervised methods is not the scope of this work. We are not interested in making target predictions; instead, our objective is to identify patterns and structure within the data distribution, which will subsequently inform the spatial distribution of matter within a dimensional space.
 
 \subsection{Unsupervised methods}
 
-Unsupervised learning focus on analysis and model of data without using any tags or output classes. Instead a set of variables
-\( X^T = (X_1,.., X_n) \) corresponding to n-observations is given, and then the method try to find interestring features from the observations.
+Unsupervised learning focuses on analysis and modeling of data that lack output classes or pre-existing labels. This methodology aims to discover intrinsic structure, patterns, and relevant features within the data itself. 
+
+Formally, the input consists of a set of observations (or data points) where the feature matrix $X$ is given by $X = (X_1, \dots, X_n)^T$. The primary objective is to learn the underlying distribution or to find meaningful representations from these input variables without any prior guidance.
 
 From the unsupervised methods set we have:
 	Clustering and segmentation: work by in distance and simillarity patterns, they can be divided as
 \begin{itemize}
-	\item Hierarquical: work by create sucessive partition of data and hierarquical tree creation called dendogram.   
+	\item Hierarquical: work by create sucessive partition of data and hierarquical tree creation called dendogram. Examples agglomertative clustering.  
 	\item Partitional: an initial set of clusters must be set in advance, the set is improved on an iterartive proccess. Example k-means.
-	\item Density-based:
-		The key feature is the no-assumption on the distribution of the data is made. Density-based algorithm works by create clusters in dense areas separated by sparser areas. That is why this algorithms are more suitable, provided that no assumtion is made on the shape of dense areas.
-		Other feature of density-based methods is the ability to detect outliers or noise points. These points generate low-density areas which separes more dense areas which result in clusters.
-	Lot of hierarquical and partitional algorithms work by making assmptions on the data distribution, for example, k-means works by given a predefined list of k-groups and have some kind of probability distribution (for example Gaussian) for each group. This result on globular or spherical-shaped clusters and will not work well on non-spherical shapes of data. On a spatial any arbitrarity shape of data is expected, for exmaple, linear, stellar-like or polygonal shapes and so on. That is why these kind algorithms are not suitable for our analysis.
-	Among the density based we selected OPTICS, DBSCAN and HDBSCAN for this study, we will present in the next an overview of each.
+	\item Model-Based: Algorithms that assume the data is generated by a mixture of underlying probability distributions (e.g., Gaussian Mixture Models, GMM).
+	\item Density-based: define clusters as contiguous regions of high density separated by regions of low density (e.g., DBSCAN).
+	
 \end{itemize}
 
-\subsection{OPTICS}
-	Namely Ordering Points to Identify Cluster Structure, is an unsupervised algorithm that works by ordering the points in function of the so-called reachability distance.
-	In fact, OPTICS output is not a cluster set but a graph call the reachability plot.
+	The key advantage of density-based methods is the fundamental lack of a priori assumptions regarding the underlying data distribution. These algorithms operate by defining clusters as contiguous, dense regions of data points that are separated by sparser areas. This characteristic makes them highly suitable for exploratory data analysis, as they impose no constraints on the shape of the resultant clusters.
+	
+	Conversely, many hierarchical and partitional algorithms rely on strong assumptions about the data's structure. For instance, the $k$-means algorithm requires the number of clusters ($k$) to be predefined and implicitly assumes that the clusters follow a globular or spherical shape (often analogous to a Gaussian probability distribution). This inherent bias makes them unsuitable for astronomical data, where the spatial distribution of matter is expected to exhibit arbitrary, non-spherical geometries—such as linear filaments, stellar-like distributions, or complex polygonal structures. Thus, these restrictive methods are not appropriate for our analysis.
+	
+	For this study, we have selected three representative density-based algorithms: OPTICS, DBSCAN, and HDBSCAN. The following section will provide a detailed overview of each method.
+	
+	A further feature of density-based methods is their intrinsic ability to detect outliers or noise points. These points typically reside in the low-density regions that naturally separate the dense clusters, allowing for robust identification of anomalous observations without a dedicated process.
+	
 
-	Lets suposse we have a set call S, lets see some definitions:
+\subsection{OPTICS}
+	Namely Ordering Points to Identify Cluster Structure: is a density-based, unsupervised algorithm. Its primary mechanism involves ordering the data points based on their reachability distance relative to a specified density threshold.
+	
+	The output of OPTICS is not a finalized set of clusters but rather a visual tool called the reachability plot (or reachability-distance graph). This plot encodes the density structure of the dataset, from which clusters of varying density and hierarchy can be later extracted.
+
+	Let us define the foundational geometric concepts required to understand the OPTICS algorithm.
 	
 	\begin{itemize}
-		\item \textit{eps-neighborhood} of a point p in S is \(NE_{\epsilon}(p) =\{q \in S : dist(p, q) \leq eps \} \). Then any eps-neighborhood of p is said to be dense if 
+		\item \textit{eps-neighborhood} of a point $p$ in S is \(NE_{\epsilon}(p) =\{q \in S : dist(p, q) \leq eps \} \). Then any eps-neighborhood of $p$ is said to be dense if 
 		\( |NE_{\epsilon}(p)| \geq minPts \).
 	
-		\item The \textit{core\_distance} of a given point p is the minimum \(\epsilon\) such us \(NE_{\epsilon}(p)\) is dense, in other words:
+		\item The \textit{core\_distance} of a given point $p$ is the minimum \(\epsilon\) such us \(NE_{\epsilon}(p)\) is dense, in other words:
 		
-		$$ core_-distance(p) = min \{ \epsilon : |NE_{\epsilon}(p)| \geq minPts \} $$
+		$$ core-distance(p) = min \{ \epsilon : |NE_{\epsilon}(p)| \geq minPts \} $$
 	
 		\item A point is said to be a \textit{core-point} when \(NE_{\epsilon}'(p) \) is dense and  \( \epsilon' \leq \epsilon \), finally,
 	
 	
-		\item The \textit{reachability distance} from q regading a core-point g is the maximum of the two: core-distance and euclidean  distance, in other words:
+		\item The \textit{reachability-distance} from q regading a core-point g is the maximum of the two: core-distance and euclidean  distance, in other words:
 
-		$$ reachability-distance(p, q) = max \{ core_-distance(p), dist(p, q) \} $$
+		$$ reachability-distance(p, q) = max \{ core-distance(p), dist(p, q) \} $$
 		
 	\end{itemize}
 	
 	\begin{figure}[h]
 	\centering
 	\includegraphics[width=0.5\textwidth]{./figs/core-distance.jpg}
-	\caption{Core and reachability distance obtained from \cite{Rhys:2020}.}
+	\caption{Core and reachability distances obtained from \cite{Rhys:2020}.}
 	\label{fig:optics_figure}
 	\end{figure}
 	
-	Note that reachability-distance is only defined respect to a core-point. We can see an useful example of both reachability and core distances in the figure \ref{fig:optics_figure}.
+	Note that reachability-distance is only defined respect to a core-point. We can see an illustrative example of both core-distance and reachability-distance in the figure \ref{fig:optics_figure}.
 
+	OPTICS work by seting up two mandatory parameters: 
 	
-	OPTICS work by seting up two parameters for each point: 
-		- \( \epsilon \): 
-		-  minPts
-	For example \ref{fig:reach1} shows a random-generated set points arround four fixed points in [0,1]x[0,1]
+	\begin{enumerate}
+		\item Eps ($ \epsilon $): The maximum radius to search for neighbors.
+		\item  minPts: The minimum number of neighbors a point needs to have to be considered a core-point.
+	\end{enumerate}
 	
 	\begin{figure}[h]
 	\centering
@@ -112,7 +143,7 @@ From the unsupervised methods set we have:
 	\label{fig:reach1}
 	\end{figure}
 	
-	The \ref{fig:reach2} shows the reachability plot corresponding to a this set.
+	For example figure \ref{fig:reach1} shows a random-generated set points arround four fixed points within [0,1]x[0,1] square. OPTICS is then applied to this set, resulting reachability plot is shown in figure \ref{fig:reach2}.
 	
 	\begin{figure}[h]
 	\centering
@@ -122,27 +153,44 @@ From the unsupervised methods set we have:
 	\end{figure}
 	
 \subsection{DBSCAN}
-DBSCAN is an algorithm that uses some of OPTICS concepts to extract clusters, but add more definitions that we will briefly see. Given a set S, MinPts and Eps, lets be p a core-point of S then:
-	
+
+DBSCAN is another density-based clustering algorithm that leverages several concepts from OPTICS to efficiently extract clusters. However, DBSCAN introduces specific, additional definitions for identifying points and cluster boundaries, which are summarized below.
+
+Given a dataset $S$, a minimum number of points $\text{MinPts}$, and a neighborhood radius $\text{Eps}$, let $p$ be a core-point of $S$. Then:
+
 \begin{itemize}
-		\item A point q is said to be \textit{direct density reachable} with respect to Eps and MinPts from p if \(q \in NE_{\epsilon}(p)\). Note that \(|NE_{\epsilon}(p)| \geq MinPts \).
-		\item A point q is said to be \textit{density-reachable} with respect to Eps and MinPts if there exists a chanin of points \(p_1, ..., p_n,\_\_ p=p_1, p_n=q \) such us  \( p_{i+1} \) is direct density reachable from \( p_i \).
-		\item The poinit p is \textit{density connected} to a point q with respect to Eps and MinPts if there is thirdth point o such that both p and q are density-reachable from o with respect to Eps and MinPts.
+		\item A point $q$ is defined as directly density-reachable from a core-point $p$ if $q$ is within the $\epsilon$-neighborhood of $p$ (i.e., $q \in NE_{\epsilon}(p)$). This definition is valid only when $p$ satisfies the core-point condition: $|NE_{\epsilon}(p)| \geq \text{MinPts}$
+		
+		\item A point q is said to be \textit{density-reachable} with respect to Eps and MinPts if there exists an ordered sequence of points such that:
+		
+		\begin{enumerate}
+			\item $p_1 = p$ and $p_n = q$.
+			\item $p_{i+1}$ is directly density-reachable from $p_i$ for all $1 \leq i < n$.
+		\end{enumerate}
+		
+		\item The point $p$ is \textit{density connected} to a point $q$ with respect to Eps and MinPts if there exists third point o such that both $p$ and $q$ are density-reachable from o.
 \end{itemize}		
-Then a cluster C is a subset of S satisfying:
+Then a cluster $C$ is a subset of S satisfying:
 	\begin{itemize}
-		\item \(\forall p, q, \in C\)  p is density-connected from q with respect to Eps and MinPts.
-		\item \(\forall p, q, \in C\) if q is density reachable from p with respect to Eps and MinPts then \(q \in C \). This property is called sometimes as \textit{Maximallity}.
+		\item \(\forall p, q, \in C\)  $p$ is density-connected from $q$ with respect to Eps and MinPts.
+		\item \(\forall p, q, \in C\) if $q$ is density reachable from $p$ with respect to Eps and MinPts then \(q \in C \). This property is called sometimes as \textit{Maximallity}.
 	\end{itemize}
 
-Then with this method, DBSCAN creates a set of clusters \(C_1, ..., C_k\). All points in S are classified as
+As a result DBSCAN creates a set of clusters $C_1, ..., C_k$. All points in S are classified as:
 \begin{enumerate}
-		\item \textit{Core-points}: points with a dense neighborhood.
-		\item \textit{Border-points}: points belonging to a cluster but without a dense neighborhood.
-		\item \textit{Noise points}: points do not belonging to any cluster.
+		\item \textit{Core-point}: points with a dense neighborhood.
+		\item \textit{Border-point}: points belonging to a cluster but without a dense neighborhood.
+		\item \textit{Noise-point}: points do not belonging to any cluster.
 \end{enumerate}
 
-To find a cluster, DBSCAN starts with an arbitrary database point p and retrieves all points density-reachable from p with respect to Eps and MinPts. If p is not a core point, no points are density-reachable from p and DBSCAN assigns p to the noise and applies the same procedure to the next database point. If p is actually a border point of some cluster C, it will later be reached when collecting all the points density-reachable from some core point of C and will then be (re-)assigned to C. The algorithm terminates when all points have been assigned to a cluster or to the noise.
+The DBSCAN algorithm initiates cluster discovery by selecting an arbitrary, unvisited database point $p$ and retrieving its density-reachable neighborhood (relative to $\epsilon$ and $\text{MinPts}$). The subsequent action depends on the nature of $p$:
+
+\begin{enumerate}
+		\item If $p$ is a core-point: A new cluster is formed containing $p$ and all points density-reachable from $p$. This process is then iteratively expanded.
+		\item If $p$ is not a core point: No points are density-reachable from $p$. DBSCAN assigns $p$ to the noise-point category and proceeds to the next unvisited point.
+\end{enumerate}
+		
+It is important to note that if $p$ is a border-point of a cluster $C$, it will eventually be reached during the expansion phase from a core point of $C$ and correctly assigned to the cluster. The algorithm concludes once every point has been processed and assigned either to a cluster or to the noise-point set.
 
 We will see it in following pseudo-code:
 
@@ -171,9 +219,10 @@ $C \leftarrow 0$ \tcp{Cluster counter}
         }
     }
 }
-
-\BlankLine
-
+\caption{The DBSCAN Algorithm}
+\end{algorithm}
+% \BlankLine
+\begin{algorithm}[H]
 \SetKwProg{Fn}{Function}{}{end}
 \Fn{\ExpandCluster{$D, P, NE, C, \epsilon, \text{MinPts}$}}{
     assign $P$ to cluster $C$\;
@@ -197,17 +246,23 @@ $C \leftarrow 0$ \tcp{Cluster counter}
     \KwRet{all points $P' \in D$ such that $\text{distance}(P, P') \leq \epsilon$}
 }
 
-\caption{The DBSCAN Algorithm}
+\caption{ExpandCluster and RegionQuery functions from DBSCAN Algorithm}
 \label{alg:dbscan}
 \end{algorithm}
 
-As said, the algorithm takes an unvisited point p and evaluates its eps-neighborhood througth the function \textit{RegionQuery}, if it contains less than MinPts points p labeled as noise, else it expand the cluster using the \textit{exapandCluster} function.
+As said, the algorithm takes an unvisited point $p$ and evaluates its eps-neighborhood througth the function \textit{RegionQuery}, if it contains fewer than MinPts points $p$ is labeled as noise. Otherwise $p$ is labeled as core point algorithm expand the cluster througth the \textit{ExpandCluster} function.
 
 \subsection{HDBSCAN}
 
-\subsection{Previous machine learning applications in cosmology}
+\subsection{Previous machine learning applications in galaxy clustering}
 
-In this section we will briefly present some applications machine learning applications in cosmology, with special attention to the clustering ones.
-The best and recently effort is the \cite{Hai-Xia-Ma:2025} where some density-based algorithms are applied to some catalogs, in this study the authors achive a great result in cluster detection by using OPTICS and a modified algorithm called sOPTICS in order to prevent or to minimize the distorsion produced by the proper movements of galaxies.
+This section briefly reviews several Machine Learning (ML) applications in cosmology, with particular emphasis on clustering techniques.
 
+In 1937, Erik Holmberg in Lund Observatory in Sweden published an article \cite{Holmberg:1937} in which he investigated the clustering tendencies in the metagalactic system. The article also includes a catalog of 827 galaxy groups.
+
+It is easy to find works us supervised methods, for example, Thomas et al. \cite{Thomas:2025} generate predictive regression models based on the MACSIS simulation to predict cluster features from specific observables. On the other hand, Sadikov et al. \cite{Sadikov:2025} present an analysis of the X-ray properties of the galaxy cluster population in the $z=0$ snapshot of the IllustrisTNG simulations, utilizing machine learning to perform clustering and regression tasks.
+
+In contrast, other studies applying Machine Learning (ML) to the galactic universe directly address the intrinsic properties of galaxies rather than focus on the clustering problem. For example, Dvorkin et al. \cite{Dvorkin:2022} note that "it has been shown that unknown relations between galaxy properties and parameters describing the composition of the Universe can be easily identified by employing machine learning techniques on top of state-of-the-art hydrodynamic simulations \cite{Villaescusa-Navarro:2022}".
+
+The most significant application of density-based algorithms to galaxy distribution is a recent article (dated 2025) by Hai-Xia-Ma et al.\cite{Hai-Xia-Ma:2025}. The authors successfully applied density-based algorithms, including a modified version called sOPTICS, to several galaxy catalogs, achieving a notable success in cluster detection. They used  a modified version of OPTICS called sOPTICS to mitigate the redshift space distortion along line-of-sight caused by galaxies' peculiar velocities.
 
