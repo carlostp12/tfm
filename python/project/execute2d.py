@@ -25,13 +25,10 @@ def main():
     print(integrate(0.0925))
     print('hi')
 
-<<<<<<< Updated upstream
-    filename = 'C:/desarrollo/astro/tfm/data/2dfgrs-title-dist.csv'
-=======
     #data_dir = C:/desarrollo/astro/tfm/data/
     data_dir = 'C:/carlos/oneDrive/data-science/TFM/tfm/data/'
     filename = data_dir + '2dfgrs-title-dist.csv'
->>>>>>> Stashed changes
+
     dt = pd.read_csv(filename, encoding="ISO-8859-1")
 
     print(dt.head())
@@ -41,11 +38,8 @@ def main():
 
     dt_sample3 = dt_sample3[['ID_2DF', 'x', 'y', 'z', 'redshift', "dist"]]
 
-<<<<<<< Updated upstream
-    dt_groups = pd.read_csv('C:/desarrollo/astro/tfm/data/group_members.csv')
-=======
     dt_groups = pd.read_csv(data_dir + 'groups/group_members.csv')
->>>>>>> Stashed changes
+
     print(dt_sample3.head())
     print(dt_groups.head())
     sns.violinplot(y=dt_sample3["redshift"])
@@ -60,15 +54,9 @@ def main():
     clust = OPTICS(min_samples=5, xi=0.05, min_cluster_size=5)
     clust.fit(X)
 
-<<<<<<< Updated upstream
-    labels1 = cluster_optics_dbscan(reachability = clust.reachability_,
-                                    core_distances = clust.core_distances_,
-                                    ordering = clust.ordering_, eps =0.001)
-=======
     labels1 = cluster_optics_dbscan(reachability=clust.reachability_,
                                     core_distances=clust.core_distances_,
                                     ordering=clust.ordering_, eps =0.00075)
->>>>>>> Stashed changes
 
     print(labels1)
 
@@ -78,10 +66,9 @@ def main():
     print("Estimated number of clusters: %d" % n_clusters_)
     print("Estimated number of noise points: %d" % n_noise_)
 
-<<<<<<< Updated upstream
     dt_sample3['cluster_id'] =  labels1
     #ddd = dt_sample3[dt_sample3['cluster_id'] == 220]
-
+    # dt_sample3['cluster'].unique()
     #noise
     #len(dt_sample3[dt_sample3['cluster_id'] == -1])
 
@@ -130,18 +117,6 @@ def main():
 
     plt.show()
     print("ENDDD")
-
-
-=======
-    dt_sample3['cluster'] = labels1
-
-    dt_sample3['cluster'].unique()
-
-    ddd = dt_sample3[dt_sample3['cluster'] == 220]
-
-    #Noise
-    len(dt_sample3[dt_sample3['cluster'] == -1])
->>>>>>> Stashed changes
 
 
 if __name__ == '__main__':
