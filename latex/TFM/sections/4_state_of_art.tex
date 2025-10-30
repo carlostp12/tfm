@@ -10,38 +10,57 @@ This chapter serves to establish the current academic context for the research a
 
 \section{Spectroscopic  Surveys}
 
-Fortunatelly, now a days we can acccess data belonging to several surveys, among others:
+	\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.5\textwidth]{./figs/survey_2dmap_small.jpg}
+	\caption{2dfGRS sky coverage obtained from \cite{Colless:2001}}
+	\label{fig:2dfGRS}
+	\end{figure}
+	
+	
+Spectroscopic surveys are fundamental projects in astronomy and cosmology that collect and analyze the spectrum of light from a large number of celestial objects over a wide area of the sky. By splitting the light into its constituent wavelengths, these surveys acquire a vast amount of detailed physical information for each object.
+
+One main purpose of this kind of studies is to obtain a highly precise redshift ($z$) of each object in order to estimate distances. Therefore it is possible to construct a three-dimensional map of the universe.
+
+The spectrum serves as well as a unique fingerprint of the source, allowing for the determination of its physical properties. Spectral analysis provides detailed information on the object's chemical composition, temperature, density, and internal motion.
+
+We are fortunate that, nowadays, we have access to data from several major astronomical surveys, including, but not limited to, the following:
+
 
 	\begin{itemize}
 		\item 2dfGRS: Contains 245591 objects, of which 221414 are considered reliable galaxy data.
-		The final data release was published in 2003, the survey leveraged the unique capabilities of the 2dF (2-degree Field) facility built by the Anglo-Australian Observatory in the southern hemisphere.  
+		The final data release was published in 2003, the survey leveraged the unique capabilities of the 2dF (2-degree Field) facility built by the Anglo-Australian Observatory in the southern hemisphere. A view of 2dfGRS coverage is shown in \ref{fig:2dfGRS}
+	
 		\item SDSS modelC petrosian magnitude data realease 7 (DR7) contains 639359 galaxy entries. This release offers coverage for approximatyely one quarter of the sky sphere, predominantely in the nothern galactic cap as illustrated in figure \ref{fig:dr7}. Groups constructed are drawn up from \cite{Yang:2007}.
 	\end{itemize}
 	
 	\begin{figure}[h]
 	\centering
 	\includegraphics[width=0.5\textwidth]{./figs/SDSSDR7-coverage.jpg}
-	\caption{SDSS Data release 7 sky coverage \cite{Yang:2007}.}
+	\caption{SDSS Data release 7 sky coverage obtained from \cite{Yang:2007}.}
 	\label{fig:dr7}
 	\end{figure}
 	
-All redshift surveys are subject to several challenges, among others:
+All redshift survey are subject to several kind of challenges, among others:
 
 \begin{enumerate}
-	\item Observational and measurement errors: produced by instrumental limitations due long time exposures, faint object in high redshifts, and several broad-band. There are also instrumental limitations due several factors: atmospheric distorsion, sky subtraction and so on.
+	\item Observational and measurement errors: produced by instrumental limitations due long time exposures, observing faint objects in high redshifts where long integration times are required to achieve an adequate signal-to-noise ratio (SNR). Additional noise is introduced by environmental factors, such as atmospheric distortion (seeing) or the inherent difficulty of performing accurate sky subtraction during data processing.
+	
 	\item Systematic errors and biases, for example the already mentioned distorsion on redshifts caused by peculiar velocities of galaxies. This effect leads to the apparent elongation of clusters along the line of sight, a well-known phenomenon often referred to as the "Fingers of God" effect \cite{Longair:1996}. There is also a bias caused by the galaxy type, luminosity or epoch of the Universe can also lead to innacurate outcomes in the survey.
-	\item Theoretical and modeling uncertainties represent a final category of challenges, primarily stemming from the interpretation of observational data. These uncertainties arise both from limitations in the underlying theoretical models and from poorly constrained baryonic effects that impact dark matter simulations.
+	
+	\item Theoretical and modeling uncertainties represent another category of challenges, primarily stemming from the interpretation of observational data. These uncertainties arise both from limitations in the underlying theoretical models and from poorly constrained baryonic effects that impact dark matter simulations.
 \end{enumerate}
 
 \section{Galaxy cluster/group catalog and dark matter haloes}
 
-In order to construct our clusteing model, we need not only a galaxy catalog but a group/cluster catalog.
+In order to validate and assess the performance of a constructed galaxy clustering model, it is necessary to compare the results from the target galaxy catalog (the data being clustered) against a well-established, pre-existing group/cluster catalog (the ground truth).
 
-Dark matter haloes are fundamental structures of the universe consisting on a large invisible and quasispherical structures conforming the cosmic web and pervade the entire universe. These dark matter haloes are thougth to sorround clusters and groups of galaxies which bound by gravity ocupy a location near the peak of density of dark matter distribution.
+We begin with a brief introduction to \textit{Dark Matter Halos}. These are considered the fundamental structures of the universe, consisting of large, invisible, and quasi-spherical regions that form the scaffolding of the cosmic web. Dark matter halos are thought to surround and gravitationally bind clusters and groups of galaxies, which occupy locations near the peaks of the dark matter density distribution.
 
-Galaxy groups are defined as galaxy sets residing in the same halos regardless the number of members could be formed even by a single member. Identifying clusters and groups is therefore essential to understanding the distribution of matter across the universe. There are different aproaches to address galaxy/cluster identification, we willuse for this work the \textit{halo-based group finder} optimized for grouping galaxies residing in the same dark mattter halo described in \cite{Yang:2007} which is an iterative and based on an adaptive filter modeled after the general properties of dark matter haloes see in \cite{Yang:2007} for details.
+Galaxy groups are defined as sets of galaxies residing within the same Dark Matter halo, regardless of size; they can even be formed by a single member. Identifying these groups and clusters is essential for understanding the distribution of matter throughout the universe. For this work, we employ the catalog result obtained by the halo-based group finder described in \cite{Yang:2007}. This method is optimized for grouping galaxies residing in the same halo and is an iterative approach based on an adaptive filter modeled after the general properties of dark matter halos (see \cite{Yang:2007} for details).
 
-	
+The halo-based group finder was successfully applied to the galaxy catalogs from both the 2dFGRS and the SDSS (Data Release 7). This valuable group catalog is publicly accessible and can be downloaded from https://gax.sjtu.edu.cn/data/Group.html.
+
 \section{The redshift–distance relation}
 
 It is well-established that the Universe is undergoing cosmic expansion. The Hubble–Lemaître Law quantifies this expansion, stipulating that the recessional velocity of a galaxy is directly proportional to its proper distance from the observer.cThis relationship is described by the equation:
@@ -50,7 +69,7 @@ It is well-established that the Universe is undergoing cosmic expansion. The Hub
 	V=H_{0}D
 \end{equation}	
 
- The equation \ref{eq:1} is strictly valid on small redshifts $ z \ll 1 $ \cite{Cepa:2023} (which means nearby objects), for longer redshifst it is necessary to use a full cosmological model address the redshift-distance relation. According with the most recently theories \cite{Cepa:2023}:
+ The equation \ref{eq:1} is strictly valid on small redshifts $ z \ll 1 $ \cite{Cepa:2023} (which means nearby objects), for higher redshifst it is necessary to use a full cosmological model address the redshift-distance relation. According with the most recently theories \cite{Cepa:2023}:
 
 \begin{equation} \label{eq:2}
 	D_p =  \frac{1}{H_0} \int_0^z \frac{dz}{ \sqrt{\sum_i \Omega_{r0} (1+z)^{4} + \Omega_{m0} (1+z)^{3} + \Omega_{\Lambda 0}  } }
@@ -64,12 +83,11 @@ The specific form of equation \ref{eq:2} may vary according with the chosen cosm
  \Omega_{r0} = 0.0001, \,\, \Omega_{m0} = 0.3 , \,\, \Omega_{\Lambda 0} = 0.7.
 \end{equation}.
 
+\section{Machine Learning applyied to cosmology}
 
-\section{Machine Learning (ML) applyied to cosmology}
+We will present brief description of Machine Learning algorithms emphasizing those used in this work.
 
-We will present brief description of the algorithms employed in this work.
-
-\subsection{Supervised Learning}
+\subsection{Supervised methods}
 
 Supervised learning focuses on identifying patterns and relationships within labeled datasets. The primary objective of supervised methods is to extract knowledge from the given training data to enable accurate class predictions for new, unseen data. Formally, given a labeled dataset $Z = (X, Y)$, where $X = (X_1, \dots, X_n)$ are the input features and $Y = (Y_1, \dots, Y_m)$ are the corresponding labels, the goal is to find a function $F$ such that the relationship $Y = F(X)$ is approximated.
 
@@ -167,7 +185,7 @@ DBSCAN is another density-based clustering algorithm that leverages several conc
 Given a dataset $S$, a minimum number of points $\text{MinPts}$, and a neighborhood radius $\text{Eps}$, let $p$ be a core-point of $S$. Then:
 
 \begin{itemize}
-		\item A point $q$ is defined as directly density-reachable from a core-point $p$ if $q$ is within the $\epsilon$-neighborhood of $p$ (i.e., $q \in NE_{\epsilon}(p)$). This definition is valid only when $p$ satisfies the core-point condition: $|NE_{\epsilon}(p)| \geq \text{MinPts}$
+		\item A point $q$ is defined as \textit{directly density-reachable} from a core-point $p$ if $q$ is within the $\epsilon$-neighborhood of $p$ (i.e., $q \in NE_{\epsilon}(p)$). This definition is valid only when $p$ satisfies the core-point condition: $|NE_{\epsilon}(p)| \geq \text{MinPts}$
 		
 		\item A point q is said to be \textit{density-reachable} with respect to Eps and MinPts if there exists an ordered sequence of points such that:
 		
@@ -176,15 +194,27 @@ Given a dataset $S$, a minimum number of points $\text{MinPts}$, and a neighborh
 			\item $p_{i+1}$ is directly density-reachable from $p_i$ for all $1 \leq i < n$.
 		\end{enumerate}
 		
-		\item The point $p$ is \textit{density connected} to a point $q$ with respect to Eps and MinPts if there exists third point o such that both $p$ and $q$ are density-reachable from o.
-\end{itemize}		
+		\item The point $p$ is \textit{density-connected} to a point $q$ with respect to Eps and MinPts if there exists third point o such that both $p$ and $q$ are density-reachable from o.
+\end{itemize}
+
+The figure \ref{fig:density} illustrates both concepts: density-connectivity and density-reachablability.
+
 Then a cluster $C$ is a subset of S satisfying:
+
 	\begin{itemize}
 		\item \(\forall p, q, \in C\)  $p$ is density-connected from $q$ with respect to Eps and MinPts.
 		\item \(\forall p, q, \in C\) if $q$ is density reachable from $p$ with respect to Eps and MinPts then \(q \in C \). This property is called sometimes as \textit{Maximallity}.
 	\end{itemize}
 
-As a result DBSCAN creates a set of clusters $C_1, ..., C_k$. All points in S are classified as:
+	\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.5\textwidth]{./figs/density.jpg}
+	\caption{Left: density reachablability. Right: density connectivity, from \cite{Rhys:2020}.}
+	\label{fig:density}
+	\end{figure}
+	
+DBSCAN creates then a set of clusters $C_1, ..., C_k$ and all points in $S$ are classified as:
+
 \begin{enumerate}
 		\item \textit{Core-point}: points with a dense neighborhood.
 		\item \textit{Border-point}: points belonging to a cluster but without a dense neighborhood.
@@ -200,7 +230,7 @@ The DBSCAN algorithm initiates cluster discovery by selecting an arbitrary, unvi
 		
 It is important to note that if $p$ is a border-point of a cluster $C$, it will eventually be reached during the expansion phase from a core point of $C$ and correctly assigned to the cluster. The algorithm concludes once every point has been processed and assigned either to a cluster or to the noise-point set.
 
-We will see it in following pseudo-code:
+We will present a DBSCAN implementation in following pseudo-code:
 
 \begin{algorithm}[H]
 \SetKwInOut{Input}{Input}
@@ -270,7 +300,7 @@ In 1937, Erik Holmberg in Lund Observatory in Sweden published an article \cite{
 
 It is easy to find works us supervised methods, for example, Thomas et al. \cite{Thomas:2025} generate predictive regression models based on the MACSIS simulation to predict cluster features from specific observables. On the other hand, Sadikov et al. \cite{Sadikov:2025} present an analysis of the X-ray properties of the galaxy cluster population in the $z=0$ snapshot of the IllustrisTNG simulations, utilizing machine learning to perform clustering and regression tasks.
 
-In contrast, other studies applying Machine Learning (ML) to the galactic universe directly address the intrinsic properties of galaxies rather than focus on the clustering problem. For example, Dvorkin et al. \cite{Dvorkin:2022} note that "it has been shown that unknown relations between galaxy properties and parameters describing the composition of the Universe can be easily identified by employing machine learning techniques on top of state-of-the-art hydrodynamic simulations \cite{Villaescusa-Navarro:2022}".
+In contrast, other studies applying Machine Learning (ML) to the galactic universe directly address the intrinsic properties of galaxies rather than focus on the clustering problem. For example, Dvorkin et al. \cite{Dvorkin:2022} note that "it has been shown that unknown relations between galaxy properties and parameters describing the composition of the Universe can be easily identified by employing machine learning techniques on top of state-of-the-art hydrodynamic simulations" \cite{Villaescusa-Navarro:2022}.
 
 The most significant application of density-based algorithms to galaxy distribution is a recent article (dated 2025) by Hai-Xia-Ma et al.\cite{Hai-Xia-Ma:2025}. The authors successfully applied density-based algorithms, including a modified version called sOPTICS, to several galaxy catalogs, achieving a notable success in cluster detection. They used  a modified version of OPTICS called sOPTICS to mitigate the redshift space distortion along line-of-sight caused by galaxies' peculiar velocities.
 
