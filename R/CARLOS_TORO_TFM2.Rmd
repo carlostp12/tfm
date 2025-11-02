@@ -97,14 +97,14 @@ dt_groups <- read.csv('../data/groups/group_members.csv', sep = ',')
 
 Take a sample with:
 
-$$RA \in [0, 1],\, DEC \in [-29, -27],\, and\, z \lt 0.3$$
+$$RA \in [0, 1],\, DEC \in [-29, -27],\, \,and\,\, z \lt max\_redshift$$
 
 ```{r}
 min_members <- 5
 max_redshift <- 0.3
 # Take a sample
 dt_sample3 <- dt[dt$Q_Z>3 & dt$RAh<=1 & dt$RAh>=0 & dt$Ded>=-29 & dt$Ded<=-27,]
-dt_sample3 <- dt_sample3[dt_sample3$Z< 0.3,]
+dt_sample3 <- dt_sample3[dt_sample3$Z< max_redshift,]
 #Change column name
 names(dt_sample3)[names(dt_sample3) == 'Z'] <- 'redshift'
 
@@ -361,7 +361,7 @@ We have
 print(paste("Mean purity", mean(all$purity)))
 print(paste("Mean completness", mean(all$completn)))
 s<- undetected_groups(all)
-print(paste("Undetected groups", length(s$GROUP_ID)))
+print(paste("Undetected groups", length(s$GROUP_ID), "out of", true_groups))
 
 ```
 
@@ -407,7 +407,7 @@ assess_sequence <- function(eps_sequence_test) {
 We can now test over different values in order to obtain optimal eps_cl hyper-parameter:
 
 ```{r}
-eps_sequence_test <- seq(0.0005, 0.001, 0.00025)
+eps_sequence_test <- seq(0.0004, 0.001, 0.0002)
 
 purity_list <- c()
 completeness_list <- c()
@@ -456,7 +456,7 @@ blo_scans <- extractDBSCAN(ress, eps_cl = 0.025)
 Again we can
 
 ```{r}
-eps_sequence_test <- seq(0.015, 0.03, 0.005)
+eps_sequence_test <- seq(0.02, 0.035, 0.005)
 i<-1
 purity_list <- c()
 completeness_list <- c()
@@ -476,12 +476,12 @@ for (eps_test in eps_sequence_test) {
 ```
 
 ```{r}
-print(completeness_list)
-print(purity_list)
-print(group_list)
-print(cluster_list)
-print(true_groups)
-print (eps_sequence_test)
+pretty_print(pretty_print("Completeness", completeness_list))
+pretty_print(pretty_print("Purity", purity_list))
+pretty_print(pretty_print("Groups", group_list))
+pretty_print(pretty_print("Clusters", cluster_list))
+pretty_print(pretty_print("EPS", eps_sequence_test))
+pretty_print(paste("True Groups", true_groups))
 pretty_print(pretty_print("Und. Groups", und_gr))
 ```
 
@@ -494,8 +494,7 @@ We have selected that minPts = min_members, which is a reasonable value for inte
 From the DBSCAN theory we can use the elbow on:
 
 ```{r}
-X <- dist(points_scaled)
-kNNdistplot(x = X, k = min_members)
+kNNdistplot(x = points_scaled, k = min_members)
 abline(h = 0.03, lty = 3) 
 ```
 
@@ -643,20 +642,24 @@ purity_list <- c()
 completeness_list <- c()
 group_list <- c()
 cluster_list <- c()
+und_gr <- c()
 for (eps_test in eps_sequence_test) {
     alli <- calculate_output(eps_test, sres)
     purity_list <- c(purity_list, alli[1])
     completeness_list <- c(completeness_list, alli[2])
     cluster_list <- c(cluster_list, alli[3])
     group_list <- c(group_list, alli[4])
+    und_gr <- c(und_gr, alli[9])
 }
 ```
 
 ```{r}
-print(completeness_list)
-print(purity_list)
-print(group_list)
-print(cluster_list)
-print(true_groups)
-print (eps_sequence_test)
+pretty_print(pretty_print("Completeness", completeness_list))
+pretty_print(pretty_print("Purity", purity_list))
+pretty_print(pretty_print("Groups", group_list))
+pretty_print(pretty_print("Clusters", cluster_list))
+pretty_print(pretty_print("EPS", eps_sequence_test))
+pretty_print(paste("True Groups", true_groups))
+pretty_print(pretty_print("Und. Groups", und_gr))
+
 ```

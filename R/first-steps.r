@@ -28,11 +28,11 @@ plot(res)
 opt <- extractDBSCAN(opt, eps_cl = .065)
 res
 
-plot(res)
-plot(x, col = res$cluster+1L)
+plot(opt)
+plot(x, col = opt$cluster+1L)
 
 ### re-cutting at a higher eps threshold
-res <- optics_cut(res, eps_cl = .1)
+res <- optics(res, eps_cl = .1)
 res
 plot(res)
 plot(x, col = res$cluster+1L)
