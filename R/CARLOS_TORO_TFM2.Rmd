@@ -64,6 +64,10 @@ library(plotly)
 
 if (!require('sqldf')) install.packages("sqldf")
 library(sqldf)
+
+if (!require('tidyr')) install.packages("tidyr")
+library(tidyr)
+
 ```
 
 # Lectura del archivo
@@ -173,7 +177,6 @@ calculate_count_of_cluster <- function(cluster_id, dataset){
 	ttotal<-sqldf(sprintf("select count(seqnum) as how_many
 			from dataset
 				where cluster =%s", cluster_id))
-#	print(sprintf('      in cluster %s %s', cluster_id, ttotal$how_many))   list('how_many' = ttotal$how_many)
 }
 
 
@@ -205,59 +208,6 @@ calculate_majority_group <- function(cluster_id, dataset){
     list('group_id' = ttotal$group_id, 'how_many' = ttotal$how_many)
 }
 
-
-###############################################################################
-#	Get the purity rate: a cluster is said to be pure if 2/3 of his
-#	elements belong to a single cluster.
-###############################################################################
-get_global_purity_rate <- function(outcomes_dataset, min_members = min_members) {
-	current <- outcomes_dataset[outcomes_dataset$total_in_group >= min_members,]
-	pures <- nrow(outcomes_dataset[outcomes_dataset$purity > 0.666,])
-	pures / nrow(outcomes_dataset)
-}
-
-
-###############################################################################
-#	Get the completeness rate: a cluster is said to be complete if 1/2 of his
-#	elements belong to a single cluster.
-###############################################################################
-get_global_completeness_rate <- function(outcomes_dataset, min_members = min_members) {
-	current <- outcomes_dataset[outcomes_dataset$total_in_group >= min_members,]
-	completes <- nrow(outcomes_dataset[outcomes_dataset$completeness > 0.5,])
-	completes / nrow(outcomes_dataset)
-}
-
-
-###############################################################################
-#	Get the recovery rate:  (pure+complete) / total_true_groups
-###############################################################################
-get_global_recovery_rate <- function(outcomes_dataset, original_data_set, min_members = min_members) {
-	total_true_groups <-sqldf(sprintf("
-	    select 
-	      how_many, 
-	      group_id 
-	    from (
-						select
-						  count(group_id) as how_many,
-						  group_id 
-						from 
-						  original_data_set 
-						group by 
-						  group_id 
-						order by how_many desc
-						) a
-	    where 
-	         a.how_many>=%s 
-      order by 
-	         how_many 
-	   desc", min_members))
-
-	current <- outcomes_dataset[outcomes_dataset$total_in_group >= min_members,]
-	pures_and_complete <- nrow(outcomes_dataset[outcomes_dataset$purity>0.6 & outcomes_dataset$completeness>0.5,])
-	pures_and_complete / nrow(total_true_groups)
-}
-
-
 ###############################################################################
 #	Purity and Completeness: 
 #		1- how many per cluster are present in a group.
@@ -269,18 +219,24 @@ calculate_stats <- function(cluster_id, dataset) {
   #print(sprintf('Calculating stats for  clusterID %s', cluster_id))
   total<-calculate_majority_group(cluster_id, dataset)
    
+  #Number of elements in the cluster_id that also belong
+  #to majority group
   total_in_cluster_group <- total$how_many
   group_id <- total$group_id
-  # print(group_id)
+  
+  #Total number of elements in a group
   total_in_group <- calculate_count_of_group(group_id, dataset)
   total_in_group <- total_in_group$how_many
-  #print(total_in_group)
+  
+  #Total number of elements in a cluster
   total_in_cluster<-calculate_count_of_cluster(cluster_id, dataset)
   total_in_cluster <- total_in_cluster$how_many
   
-  
+  #Purity: all of group in cluster/total un cluster
   purity <- ifelse(total_in_cluster > 0, total_in_cluster_group/total_in_cluster, 0)
+  #completeness: all of group in cluster/total un group
   completeness <- ifelse(total_in_group > 0, total_in_cluster_group/total_in_group, 0)	
+  
   bad_classified <- total_in_group - total_in_cluster_group # belowing to group but classified outside
   spurious <- total_in_cluster - total_in_cluster_group # Outside of the group classified inside
   list('cluster_id' = cluster_id, 
@@ -348,6 +304,78 @@ undetected_groups <- function(dataset){
 } 
 ```
 
+Following calculation is for global clusters, once we have outcomes dataset:
+
+```{r}
+###############################################################################
+#	Get the purity rate: a cluster is said to be pure if 2/3 of his
+#	elements belong to a single cluster.
+###############################################################################
+get_global_purity_rate <- function(outcomes_dataset, min_members = min_members) {
+	current <- outcomes_dataset[outcomes_dataset$total_in_group >= min_members,]
+	pures <- nrow(outcomes_dataset[outcomes_dataset$purity > 0.666,])
+	pures / nrow(outcomes_dataset)
+}
+
+
+###############################################################################
+#	Get the completeness rate: a cluster is said to be complete if 1/2 of his
+#	elements belong to a single cluster.
+###############################################################################
+get_global_completeness_rate <- function(outcomes_dataset, min_members = min_members) {
+	current <- outcomes_dataset[outcomes_dataset$total_in_group >= min_members,]
+	completes <- nrow(outcomes_dataset[outcomes_dataset$completeness > 0.5,])
+	completes / nrow(outcomes_dataset)
+}
+
+
+###############################################################################
+#	Get the recovery rate:  (pure+complete) / total_true_groups
+###############################################################################
+get_global_recovery_rate <- function(outcomes_dataset, original_data_set, min_members = min_members) {
+	total_true_groups <-sqldf(sprintf("
+	    select 
+	      how_many, 
+	      group_id 
+	    from (
+						select
+						  count(group_id) as how_many,
+						  group_id 
+						from 
+						  original_data_set 
+						group by 
+						  group_id 
+						order by how_many desc
+						) a
+	    where 
+	         a.how_many>=%s 
+      order by 
+	         how_many 
+	   desc", min_members))
+
+	current <- outcomes_dataset[outcomes_dataset$total_in_group >= min_members,]
+	pures_and_complete <- nrow(outcomes_dataset[outcomes_dataset$purity>0.6 & outcomes_dataset$completeness>0.5,])
+	pures_and_complete / nrow(total_true_groups)
+}
+
+# Plot a couple of vector in fucntion of a sequence
+plot_purity_completeness <- function(eps_sequence, purity_l,completeness_l, title = ""){
+  df <- data.frame('eps' = eps_sequence, 'Purity'= purity_l, 'Completeness'= completeness_l)
+ 
+df %>%
+    gather(Values,perc, Purity, Completeness) %>%
+    ggplot(aes(x=eps , y=perc, colour=Values)) +
+    geom_line()+
+    ggtitle(title)
+  
+}
+
+# Pretty print a vector pecceed by a title
+pretty_print <- function (title, avector= c()){
+  paste(title, do.call(paste, c(as.list(avector), sep = " ")))  
+}
+```
+
 Now we apply to our DBSCAN:
 
 ```{r R.options=list(max.print=10)}
@@ -378,69 +406,79 @@ calculate_output <- function(test_eps_cl, res_data){
   fp <- number_pure_groups/predicted_groups
   fr <- number_pure_complete_groups / true_groups
   s <- undetected_groups(all)
-  c(mean(all$purity), mean(all$completn), length(unique(all$cluster_id)), length(unique(all$group_id)), number_pure_groups, number_pure_complete_groups, fp, fr, length(s$GROUP_ID) )
+  c(mean(all$purity), mean(all$completn), length(unique(all$cluster_id)), length(unique(all$group_id)), number_pure_groups, number_pure_complete_groups, fp, fr, length(s$GROUP_ID), mean(all$spurious), mean(all$bad_class) )
 }
 
 
-assess_sequence <- function(eps_sequence_test) {
-  purity_list <- c()
-  completeness_list <- c()
-  group_list <- c()
-  cluster_list <- c()
-  fp_list <- c()
-  fr_list <- c()
-  und_gr <- c()
-  
-  for (eps_test in eps_sequence_test) {
-      alli <- calculate_output(eps_test, res)
-      purity_list <- c(purity_list, alli[1])
-      completeness_list <- c(completeness_list, alli[2])
-      cluster_list <- c(cluster_list, alli[3])
-      group_list <- c(group_list, alli[4])
-      fp_list <- c(fp_list, alli[5])
-      fr_list <- c(fr_list, alli[6])
-      und_gr <- c(und_gr, alli[9])
-  }
+extract_stats <- function (eps_sequence_values, local_res) {
+	stats <- data.frame(
+		'purity_list'=integer(),
+		'completeness_list'=integer(),
+		'cluster_list'=integer(),
+		'group_list'=integer(),
+		'pures'=integer(),
+		'completes'=integer(),
+		'fp_list'=numeric(),
+		'fr_list'=numeric(),
+		'und_gr'=numeric(),
+		'spurious'=numeric(),
+		'bad_class'=numeric()
+		
+		)
+		
+	for (eps_test in eps_sequence_values) {
+		alli <- calculate_output(eps_test, local_res)
+		stats[nrow(stats) +1,] <- 
+			c(alli[1], alli[2], alli[3], 
+			  alli[4], alli[5], alli[6], 
+			  alli[7],  alli[8],alli[9], 
+			  alli[10], alli[11])
+	}
+	(stats)
 }
 ```
 
 We can now test over different values in order to obtain optimal eps_cl hyper-parameter:
 
 ```{r}
+
+#It is easy to transform onto a function which admits a sequence and a res set.
 eps_sequence_test <- seq(0.0004, 0.001, 0.0002)
 
-purity_list <- c()
-completeness_list <- c()
-group_list <- c()
-cluster_list <- c()
-fp_list <- c()
-fr_list <- c()
-und_gr <- c()
+x_stats <- extract_stats(eps_sequence_test, res)
 
-for (eps_test in eps_sequence_test) {
-    alli <- calculate_output(eps_test, res)
-    purity_list <- c(purity_list, alli[1])
-    completeness_list <- c(completeness_list, alli[2])
-    cluster_list <- c(cluster_list, alli[3])
-    group_list <- c(group_list, alli[4])
-    fp_list <- c(fp_list, alli[5])
-    fr_list <- c(fr_list, alli[6])
-    
-    und_gr <- c(und_gr, alli[9])
-}
+```
+
+Ahora podemos analizar los resultados obtenidos:
+
+```{r}
+pretty_print(pretty_print("Completeness", x_stats$completeness_list))
+pretty_print(pretty_print("Purity", x_stats$purity_list))
+pretty_print(pretty_print("Groups", x_stats$group_list))
+pretty_print(pretty_print("Clusters", x_stats$cluster_list))
+pretty_print(pretty_print("EPS", eps_sequence_test))
+pretty_print(paste("True Groups", true_groups))
+pretty_print(pretty_print("Und. Groups", x_stats$und_gr))
+pretty_print(pretty_print("Complete gr.:", x_stats$completes))
+pretty_print(pretty_print("Pure gr.:", x_stats$pures))
+pretty_print(pretty_print("Fr:", x_stats$fr_list))
+pretty_print(pretty_print("Fp:", x_stats$fp_list))
+pretty_print(pretty_print("Spurious:", x_stats$spurious))
+pretty_print(pretty_print("Bad class:", x_stats$bad_class))
+```
+
+Lets get a plots for completeness and purity:
+
+```{r}
+
+plot_purity_completeness(eps_sequence_test, x_stats$pures/true_groups, x_stats$completes/true_groups, "Group global group purity and completness on not scaled data")
 ```
 
 ```{r}
-pretty_print <- function (title, avector= c()){
-  paste(title, do.call(paste, c(as.list(avector), sep = " ")))  
-}
-pretty_print(pretty_print("Completeness", completeness_list))
-pretty_print(pretty_print("Purity", purity_list))
-pretty_print(pretty_print("Groups", group_list))
-pretty_print(pretty_print("Clusters", cluster_list))
-pretty_print(pretty_print("EPS", eps_sequence_test))
-pretty_print(paste("True Groups", true_groups))
-pretty_print(pretty_print("Und. Groups", und_gr))
+
+
+plot_purity_completeness(eps_sequence_test, x_stats$purity_list, x_stats$completeness_list, "Purity/completness on not scaled data")
+
 ```
 
 It has been discovered than a scale of data improves a lot the results:
@@ -453,39 +491,41 @@ ress <- optics(points_scaled, minPts = min_members)
 blo_scans <- extractDBSCAN(ress, eps_cl = 0.025)
 ```
 
-Again we can
+Again we can do the same for scaled data:
 
 ```{r}
 eps_sequence_test <- seq(0.02, 0.035, 0.005)
-i<-1
-purity_list <- c()
-completeness_list <- c()
-group_list <- c()
-cluster_list <- c()
-und_gr <- c()
-
-for (eps_test in eps_sequence_test) {
-    alli <- calculate_output(eps_test, ress)
-    purity_list <- c(purity_list, alli[1])
-    completeness_list <- c(completeness_list, alli[2])
-    cluster_list <- c(cluster_list, alli[3])
-    group_list <- c(group_list, alli[4])
-    
-    und_gr <- c(und_gr, alli[9])
-}
+x_stats <- extract_stats(eps_sequence_test, ress)
 ```
 
 ```{r}
-pretty_print(pretty_print("Completeness", completeness_list))
-pretty_print(pretty_print("Purity", purity_list))
-pretty_print(pretty_print("Groups", group_list))
-pretty_print(pretty_print("Clusters", cluster_list))
+pretty_print(pretty_print("Completeness", x_stats$completeness_list))
+pretty_print(pretty_print("Purity", x_stats$purity_list))
+pretty_print(pretty_print("Groups", x_stats$group_list))
+pretty_print(pretty_print("Clusters", x_stats$cluster_list))
 pretty_print(pretty_print("EPS", eps_sequence_test))
 pretty_print(paste("True Groups", true_groups))
-pretty_print(pretty_print("Und. Groups", und_gr))
+pretty_print(pretty_print("Und. Groups", x_stats$und_gr))
+pretty_print(pretty_print("Complete gr.:", x_stats$completes))
+pretty_print(pretty_print("Pure gr.:", x_stats$pures))
+pretty_print(pretty_print("Fr:", x_stats$fr_list))
+pretty_print(pretty_print("Fp:", x_stats$fp_list))
+pretty_print(pretty_print("Spurious:", x_stats$spurious))
+pretty_print(pretty_print("Bad class:", x_stats$bad_class))
+
 ```
 
-Results are quite better when all variables are scaled to a mean=0, sd=1
+```{r}
+plot_purity_completeness(eps_sequence_test, x_stats$purity_list, x_stats$completeness_list)
+```
+
+For global clusters:
+
+```{r}
+plot_purity_completeness(eps_sequence_test, x_stats$pures/true_groups, x_stats$completes/true_groups)
+```
+
+Results are quite better when all variables are scaled to a mean=0, sd=1. The optimal value of eps gives more than 76% for both purity and completeness.
 
 ## Hyperparameter tunning
 
@@ -495,7 +535,7 @@ From the DBSCAN theory we can use the elbow on:
 
 ```{r}
 kNNdistplot(x = points_scaled, k = min_members)
-abline(h = 0.03, lty = 3) 
+abline(h = 0.0235, lty = 3) 
 ```
 
 Take into account that we are data belonging to actual clusters with more than min_members members, this reduced the space to 774 galaxies out of more than 5000.
@@ -637,29 +677,35 @@ Test several hyper-parameters:
 ```{r}
 #optimal value found at 0.00015
 eps_sequence_test <- seq(0.00010, 0.00035, 0.00005)
+x_stats <- extract_stats(eps_sequence_test, sres)
 
-purity_list <- c()
-completeness_list <- c()
-group_list <- c()
-cluster_list <- c()
-und_gr <- c()
-for (eps_test in eps_sequence_test) {
-    alli <- calculate_output(eps_test, sres)
-    purity_list <- c(purity_list, alli[1])
-    completeness_list <- c(completeness_list, alli[2])
-    cluster_list <- c(cluster_list, alli[3])
-    group_list <- c(group_list, alli[4])
-    und_gr <- c(und_gr, alli[9])
-}
 ```
 
 ```{r}
-pretty_print(pretty_print("Completeness", completeness_list))
-pretty_print(pretty_print("Purity", purity_list))
-pretty_print(pretty_print("Groups", group_list))
-pretty_print(pretty_print("Clusters", cluster_list))
+pretty_print(pretty_print("Completeness", x_stats$completeness_list))
+pretty_print(pretty_print("Purity", x_stats$purity_list))
+pretty_print(pretty_print("Groups", x_stats$group_list))
+pretty_print(pretty_print("Clusters", x_stats$cluster_list))
 pretty_print(pretty_print("EPS", eps_sequence_test))
 pretty_print(paste("True Groups", true_groups))
-pretty_print(pretty_print("Und. Groups", und_gr))
+pretty_print(pretty_print("Und. Groups", x_stats$und_gr))
+pretty_print(pretty_print("Complete gr.:", x_stats$completes))
+pretty_print(pretty_print("Pure gr.:", x_stats$pures))
+pretty_print(pretty_print("Fr:", x_stats$fr_list))
+pretty_print(pretty_print("Fp:", x_stats$fp_list))
+pretty_print(pretty_print("Spurious:", x_stats$spurious))
+pretty_print(pretty_print("Bad class:", x_stats$bad_class))
 
+```
+
+```{r}
+plot_purity_completeness(eps_sequence_test, x_stats$purity_list, x_stats$completeness_list)
+```
+
+There is a notable improvement of te results with the sLos distances.
+
+Finally, for groups:
+
+```{r}
+plot_purity_completeness(eps_sequence_test, x_stats$pures/true_groups, x_stats$completes/true_groups)
 ```

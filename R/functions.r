@@ -61,6 +61,19 @@ get_distance <- function(z){
   )
 }
 
+get_distance2 <- function(z){
+  integrand <- function(x) {
+    OMr = 0.0001
+    OMm = 0.3
+    OMv = 0.7
+    1/(sqrt(OMr * (1+x)**4 + OMm * (1+x)**3 + OMv))
+  }
+  i <- integrate(integrand, lower = 0, upper = z)
+  i$value
+}
+
+
+
 parseRANumeric <- function (hour, min=0, sec=0)
 {
   number = hour * 360 /24
@@ -161,7 +174,7 @@ dt$gb <- mapply(changeCoordsGalacticGB, dt$ra, dt$dec)
 
 
 # Distance
-dt$dist <- sapply (X=dt$Z, FUN = get_distance)
+dt$dist <- sapply (X=dt$Z, FUN = get_distance2)
 
 setwd('C:/Users/Carlos/OneDrive/data-science/TFM/tfm/data')
 
@@ -567,3 +580,29 @@ print(sprintf(' Total groups with more than %s members: %s', threshold, nrow(ccc
 print(sprintf(' Purity avg: %s', 	mean(ccc$purity)))
 print(sprintf(' Total clusters pure: %s out of %s', nrow(ccc[ccc$purity>0.666,]), nrow(ccc)))
 print("**************************************************")
+
+
+extract_stats <- function (eps_sequence_values, local_res){
+	stats <- data.frame('cluster_id'=integer(),
+		'purity_list'=integer(),
+		'completeness_list'=integer(),
+		'cluster_list'=integer(),
+		'group_list'=integer(),
+		'fp_list'=numeric(),
+		'fr_list'=numeric(),
+		'und_gr'=numeric(),
+		'spurious'=numeric(),
+		'bad_class'=numeric(),
+		'pures'=integer(),
+		'completes'=integer()		
+		)
+		
+	for (eps_test in eps_sequence_values) {
+		alli <- calculate_output(eps_test, local_res)
+		stats[nrow(stats) +1,] <- 
+			c( alli[1], alli[2] alli[3], alli[4],
+			alli[5], alli[6], alli[7],  alli[8],
+			alli[9], alli[10], alli[11])
+	}
+	(stats)
+}
