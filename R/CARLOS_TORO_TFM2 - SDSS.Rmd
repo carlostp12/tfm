@@ -799,7 +799,7 @@ Test several hyper-parameters:
 
 ```{r}
 #optimal value found at 0.00015
-eps_sequence_test <- seq(0.00010, 0.00035, 0.00005)
+eps_sequence_test <- seq(0.00005, 0.0004, 0.00005)
 sx_stats <- extract_stats(eps_sequence_test, sres)
 
 ```
@@ -829,7 +829,7 @@ plot_purity_completeness_trend(
   sx_stats$completeness_list,
   c('Purity', 'Completeness'),
   'Purity Completeness on Slos data',
-  0.000132
+  0.84e-4
 )
 ```
 
@@ -846,7 +846,7 @@ plot_purity_completeness(
   sx_stats$completes/true_groups,  
   c('Purity', 'Completeness', 'Pur.+Comp.'),
   "Purity and completeness on scaled data",
-  0.000132
+  0.84e-4
   )
 
 ```
