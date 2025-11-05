@@ -82,21 +82,11 @@ Leed el fichero gpa.csv y guardad los datos en un objeto denominado gpa. A conti
 ######################
 
 setwd('C:/Users/Carlos/OneDrive/data-science/TFM/tfm/data')
-dt <- read.csv('../data/2dfgrs-title-dist.csv')
+dt <- read.csv('./groups/sdss/SDSS-dist.csv')
 str(dt)
 ```
 
 ## Galaxy group catalog for 2dFGRS
-
-```{r echo=FALSE, message=FALSE, warning=FALSE}
-######################
-#     GROUPS loading #    
-###################### 
-setwd('C:/Users/Carlos/OneDrive/data-science/TFM/tfm/data')
-dt_groups <- read.csv('../data/groups/group_members.csv', sep = ',')       
-
-
-```
 
 # Preprocesado de datos
 
@@ -108,24 +98,29 @@ $$RA \in [0, 1],\, DEC \in [-29, -27],\, \,and\,\, z \lt max\_redshift$$
 
 ```{r}
 min_members <- 5
-max_redshift <- 0.3
+max_redshift <- 0.15
 # Take a sample
-dt_sample3 <- dt[dt$Q_Z>3 & dt$RAh<=1 & dt$RAh>=0 & dt$Ded>=-29 & dt$Ded<=-27,]
+
+dt_sample3 <- dt[dt$RA<210 & dt$RA>180 & dt$DEC>27 & dt$DEC<30,] # ==> RA [12h,14h] dec in [27, 30]
+#dt_sample3 <- dt_sample3[dt$RA<210 & dt$RA>180 & dt$DEC>25 & dt$DEC<30,]
+
+dt_sample3<- dt_sample3[,c('GAL_ID','x', 'y', 'z', 'Z',  "dist", "GROUP_ID")]
 dt_sample3 <- dt_sample3[dt_sample3$Z< max_redshift,]
 #Change column name
 names(dt_sample3)[names(dt_sample3) == 'Z'] <- 'redshift'
+names(dt_sample3)[names(dt_sample3) == 'GAL_ID'] <- 'SEQNUM'
 
 #Take the parameters necessary for clustering effect.
-dt_sample3<- dt_sample3[,c('SEQNUM','x', 'y', 'z', 'redshift',  "dist")]
+dt_sample3<- dt_sample3[,c('SEQNUM','x', 'y', 'z', 'redshift',  "dist", "GROUP_ID")]
 
-# mm is an object containing both groups and galaxy identification
-mm<-merge(dt_sample3, dt_groups, by.x = 'SEQNUM', by.y = 'ID_2DF')
 ggplot(dt_sample3, aes(x=redshift, y=redshift))+geom_violin()
 ```
 
 Select groups with more than min_members members
 
 ```{r}
+
+mm <- dt_sample3
 h<-sqldf("SELECT count(SEQNUM) as members, GROUP_ID FROM mm GROUP BY GROUP_ID order by members DESC")  
 h2<-sqldf(sprintf("SELECT mm.x, mm.y, mm.z, mm.GROUP_ID FROM mm as mm, h 
     where mm.GROUP_ID=h.GROUP_ID and h.members >= %s", min_members))
@@ -149,7 +144,7 @@ plot(res)
 DBSCAN application:
 
 ```{r}
-blo_scan <- extractDBSCAN(res, eps_cl = 0.00075)
+blo_scan <- extractDBSCAN(res, eps_cl = 0.00055)
 mm$cluster_id <- blo_scan$cluster
 plot(blo_scan)
 ```
@@ -475,7 +470,7 @@ We can now test over different values in order to obtain optimal eps_cl hyper-pa
 
 ```{r}
 #It is easy to transform onto a function which admits a sequence and a res set.
-eps_sequence_test <- seq(0.0004, 0.001, 0.0002)
+eps_sequence_test <- seq(0.0001, 0.0004, 0.000025)
 x_stats <- extract_stats(eps_sequence_test, res)
 ```
 
@@ -551,7 +546,7 @@ plot_purity_completeness_trend(
   x_stats$completeness_list, 
   c('Purity', 'Completeness'),
   "Purity/completness on not scaled data",
-  0.00055
+  3.8e-4
 )
 ```
 
@@ -566,11 +561,9 @@ plot_purity_completeness(
   x_stats$pure_complet/true_groups,
   c('Purity', 'Completeness', 'Pur.+Com.'),
   "Group global group purity and completness on not scaled data",
-  0.00055
+  3.8e-4
 )
 ```
-
-## Normalized data processing
 
 It has been discovered than a scale of data improves a lot the results:
 
@@ -578,13 +571,13 @@ It has been discovered than a scale of data improves a lot the results:
 points_scaled <- scale(points)
 ress <- optics(points_scaled, minPts = min_members)
 #optimal value obtained
-blo_scans <- extractDBSCAN(ress, eps_cl = 0.025)
+blo_scans <- extractDBSCAN(ress, eps_cl = 0.012)
 ```
 
 Again we can do the same for scaled data:
 
 ```{r}
-eps_sequence_test <- seq(0.02, 0.035, 0.005)
+ eps_sequence_test <- seq(0.01, 0.04, 0.005)
 x_stats <- extract_stats(eps_sequence_test, ress)
 ```
 
@@ -614,14 +607,13 @@ pretty_print(pretty_print("Bad class:", x_stats$bad_class))
 ```
 
 ```{r}
-eps_sequence_test <- seq(0.02, 0.035, 0.005)
 plot_purity_completeness_trend(
   eps_sequence_test, 
   x_stats$purity_list,
   x_stats$completeness_list, 
   c('Purity', 'Completeness'),
   "Purity and completeness on scaled data",
-  0.0237
+  0.018
 )
 ```
 
@@ -635,7 +627,7 @@ plot_purity_completeness(
   x_stats$pure_complet/true_groups, 
   c('Purity', 'Completeness', 'Pur.+Comp.'),
   "Purity and completeness on scaled data",
-  0.0237
+  0.018
   )
 ```
 
@@ -647,7 +639,7 @@ plot_purity_completeness(
   ones(length(eps_sequence_test),1)*true_groups,
    c('Purity', 'Completeness', 'True groups.'),
   "Complete and pure groups out of true groups",
-  0.0237
+  0.018
 )
 ```
 
@@ -661,7 +653,7 @@ From the DBSCAN theory we can use the elbow on:
 
 ```{r}
 kNNdistplot(x = points_scaled, k = min_members)
-abline(h = 0.0235, lty = 3) 
+abline(h = 0.018, lty = 3) 
 ```
 
 How reader can see, the "elbow theory" does not apply here, the reason for this is that we are not trying to optimize the clusters given by the algorithm, instead we are trying to detect groups of galaxies.
@@ -788,19 +780,7 @@ sres <- optics(dist_object, minPts = min_members)
 plot(sres)
 ```
 
-```{r}
-a<- mm[,c('x', 'y', 'z', 'dist', 'redshift')]
-distance_matrix <- get_matrix_of_distances(a)
-dist_object <- as.dist(distance_matrix)
-sres <- optics(dist_object, minPts = min_members)
-plot(sres)
-```
-
 For the new data, we extract a DBSCAN:
-
-```{r}
-
-```
 
 ```{r}
 sblo_scan <- extractDBSCAN(sres, eps_cl = 0.00025)
