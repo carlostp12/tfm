@@ -842,8 +842,8 @@ Finally, for groups:
 plot_purity_completeness(
   eps_sequence_test, 
   sx_stats$pures/true_groups, 
-  sx_stats$pure_complet/true_groups, 
   sx_stats$completes/true_groups,  
+  sx_stats$pure_complet/true_groups, 
   c('Purity', 'Completeness', 'Pur.+Comp.'),
   "Purity and completeness on scaled data",
   0.84e-4
