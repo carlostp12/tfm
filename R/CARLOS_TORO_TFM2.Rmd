@@ -875,12 +875,15 @@ Alex Rodriguez and Alessandro Laio (2014).
 
 <https://github.com/thomasp85/densityClust>
 
+By making this way it appears some clusters:
+
 ```{r}
 if (!require('densityClust')) install.packages('densityClust')
 library(densityClust)
 
 galaxyDens <- densityClust(points)
-galaxyClusters <- findClusters(galaxyDens, rho=0.99, delta=0.0012)
+galaxyClusters <- findClusters(galaxyDens, rho=0.99, delta=0.0026)
 plot(galaxyClusters)
 plotMDS(galaxyClusters)
+galaxyClusters$cluster # The clusters dor dataset
 ```

@@ -70,13 +70,17 @@ library(sqldf)
 
 Leed el fichero gpa.csv y guardad los datos en un objeto denominado gpa. A continuación, verificad el tipo de cada variable.
 
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+######################
+#     Galaxy 2dFGRS loading # 
+######################
+
 setwd('C:/Users/Carlos/OneDrive/data-science/TFM/tfm/data')
 dt <- read.csv('../data/2dfgrs-title-dist.csv')
 str(dt)
 ```
 
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 ######################
 #     GROUPS loading #    
 ###################### 
@@ -87,15 +91,16 @@ dt_groups <- read.csv('../data/groups/group_members.csv', sep = ',')
 
 # Preprocesado de datos
 
-## Análisis descriptivo.
+### Análisis descriptivo.
 
-**Seleccion de datos y visualización**
+#### **Seleccion de datos y visualización**
 
 Take a sample with:
 
 $$RA \in [0, 1],\, DEC \in [-29, -27],\, and\, z \lt 0.3$$
 
 ```{r}
+min_members <- 5
 # Take a sample
 dt_sample3 <- dt[dt$Q_Z>3 & dt$RAh<=1 & dt$RAh>=0 & dt$Ded>=-29 & dt$Ded<=-27,]
 dt_sample3 <- dt_sample3[dt_sample3$Z< 0.3,]
@@ -116,7 +121,7 @@ DBOptics clustering:
 points<- mm[,c('x', 'y', 'z')]
 
 #clustering
-res <- optics(points, minPts = 5)
+res <- optics(points, minPts = min_members)
 plot(res)
 
 ```
@@ -128,18 +133,20 @@ blo_scan <- extractDBSCAN(res, eps_cl = 0.00075)
 plot(blo_scan)
 ```
 
-Select groups with more than 5 members
+Select groups with more than min_members members
 
 ```{r}
 h<-sqldf("SELECT count(SEQNUM) as members, GROUP_ID FROM mm GROUP BY GROUP_ID order by members DESC")  
-h2<-sqldf("SELECT mm.x, mm.y, mm.z, mm.GROUP_ID FROM mm as mm, h 
-    where mm.GROUP_ID=h.GROUP_ID and h.members >= 5")
+h2<-sqldf(sprintf("SELECT mm.x, mm.y, mm.z, mm.GROUP_ID FROM mm as mm, h 
+    where mm.GROUP_ID=h.GROUP_ID and h.members >= %s", min_members))
 
 true_groups <- length(unique(h2$GROUP_ID))
 mm$cluster_id <- blo_scan$cluster
+print(sprintf('Number of galaxies in groups with more than %s elements %s out of %s', min_members , dim(h2)[1], dim(mm)[1]))
+
 ```
 
-We have on one hand all groups with more than 5 members:
+We have on one hand all groups with more than min_members members (made up by only 774 galaxies of catalog):
 
 ```{r}
 plot3d(h2$x, h2$y, h2$z, col = h2$GROUP_ID, 
@@ -152,7 +159,6 @@ in the other hand the output-clusters from DBSCAN:
 plot3d(points$x, points$y, points$z, 
        col = blo_scan$cluster + 1, size = 2, 
        xlab = "X", ylab = "Y", zlab = "Z")
-
 ```
 
 Following code is devoted to asses the outcomes obtained with from an given output-cluster:
@@ -203,7 +209,7 @@ calculate_majority_group <- function(cluster_id, dataset){
 #	Get the purity rate: a cluster is said to be pure if 2/3 of his
 #	elements belong to a single cluster.
 ###############################################################################
-get_global_purity_rate <- function(outcomes_dataset, min_members = 5) {
+get_global_purity_rate <- function(outcomes_dataset, min_members = min_members) {
 	current <- outcomes_dataset[outcomes_dataset$total_in_group >= min_members,]
 	pures <- nrow(outcomes_dataset[outcomes_dataset$purity > 0.666,])
 	pures / nrow(outcomes_dataset)
@@ -214,7 +220,7 @@ get_global_purity_rate <- function(outcomes_dataset, min_members = 5) {
 #	Get the completeness rate: a cluster is said to be complete if 1/2 of his
 #	elements belong to a single cluster.
 ###############################################################################
-get_global_completeness_rate <- function(outcomes_dataset, min_members = 5) {
+get_global_completeness_rate <- function(outcomes_dataset, min_members = min_members) {
 	current <- outcomes_dataset[outcomes_dataset$total_in_group >= min_members,]
 	completes <- nrow(outcomes_dataset[outcomes_dataset$completeness > 0.5,])
 	completes / nrow(outcomes_dataset)
@@ -224,8 +230,8 @@ get_global_completeness_rate <- function(outcomes_dataset, min_members = 5) {
 ###############################################################################
 #	Get the recovery rate:  (pure+complete) / total_true_groups
 ###############################################################################
-get_global_recovery_rate <- function(outcomes_dataset, original_data_set, min_members = 5) {
-	total_true_groups <-sqldf("
+get_global_recovery_rate <- function(outcomes_dataset, original_data_set, min_members = min_members) {
+	total_true_groups <-sqldf(sprintf("
 	    select 
 	      how_many, 
 	      group_id 
@@ -240,10 +246,10 @@ get_global_recovery_rate <- function(outcomes_dataset, original_data_set, min_me
 						order by how_many desc
 						) a
 	    where 
-	         a.how_many>=5 
+	         a.how_many>=%s 
       order by 
 	         how_many 
-	   desc")
+	   desc", min_members))
 
 	current <- outcomes_dataset[outcomes_dataset$total_in_group >= min_members,]
 	pures_and_complete <- nrow(outcomes_dataset[outcomes_dataset$purity>0.6 & outcomes_dataset$completeness>0.5,])
@@ -415,6 +421,7 @@ print(purity_list)
 print(group_list)
 print(cluster_list)
 print(true_groups)
+print (eps_sequence_test)
 ```
 
 It has been discovered than a scale of data improves a lot the results:
@@ -422,7 +429,7 @@ It has been discovered than a scale of data improves a lot the results:
 ```{r}
 
 points_scaled <- scale(points)
-ress <- optics(points_scaled, minPts = 5)
+ress <- optics(points_scaled, minPts = min_members)
 #optimal value obtained
 blo_scans <- extractDBSCAN(ress, eps_cl = 0.025)
 ```
@@ -456,10 +463,23 @@ print(true_groups)
 print (eps_sequence_test)
 ```
 
-```{}
+Results are quite better when all variables are scaled to a mean=0, sd=1
+
+## Hyperparameter tunning
+
+We have selected that minPts = min_members, which is a reasonable value for interpreting a group / clustering.
+
+From the DBSCAN theory we can use the elbow on:
+
+```{r}
+X <- dist(points_scaled)
+kNNdistplot(x = X, k = min_members)
+abline(h = 0.03, lty = 3) 
 ```
 
-Results are quite better when all variables are scaled to a mean=0, sd=1
+Take into account that we are data belonging to actual clusters with more than min_members members, this reduced the space to 774 galaxies out of more than 5000.
+
+We can infer that optimal value is content within the interval (0.0023, 0.0033).
 
 # s-Distances
 
@@ -556,7 +576,7 @@ s_distance <- function(v1, v2){
 #   matriz_distancias <- get_matrix_of_distances(a)
 # The aim is to call optics with this object as follows
 #   aaa <- as.dist(matriz_distancias)
-#   res <- optics(aaa, minPts = 5)
+#   res <- optics(aaa, minPts = min_members)
 #######################################
 get_matrix_of_distances <- function(matrix_coordintates) {
 	row_list <- as.list(data.frame(t(matrix_coordintates)))
@@ -572,7 +592,7 @@ And then we can calculate distance matrix to apply OPTICS to this new metric, fo
 a<- mm[,c('x', 'y', 'z', 'dist', 'redshift')]
 distance_matrix <- get_matrix_of_distances(a)
 dist_object <- as.dist(distance_matrix)
-sres <- optics(dist_object, minPts = 5)
+sres <- optics(dist_object, minPts = min_members)
 plot(sres)
 ```
 
@@ -581,9 +601,6 @@ For the new data, we extract a DBSCAN:
 ```{r}
 sblo_scan <- extractDBSCAN(sres, eps_cl = 0.00025)
 plot(sblo_scan)
-
-
-
 ```
 
 We obtain a notable improvement:
