@@ -516,15 +516,21 @@ plot_purity_completeness <- function(
     pures_com, 
     titles, 
     title = "",
-    x=0){
+    x=0,
+    labelx = 'X', labely = 'Y'
+    ){
     test_data <- data.frame('d1' = eps_sequence)	
     g<- ggplot(test_data, aes(eps_sequence)) +
         geom_line(aes(y = purity_l, colour = titles[1])) + 
         geom_line(aes(y = completeness_l, colour = titles[2]))+  
-       geom_line(aes(y = pures_com, colour = titles[3]))+
-    ggtitle(title)
+        geom_line(aes(y = pures_com, colour = titles[3]))+
+    ggtitle(title) +
+      labs(x = labelx, y = labely)
+    
     if (x>0){  
      g+ geom_vline(xintercept = x, linetype="dotted",)
+    }else{
+      g
     }
 }
 
@@ -534,14 +540,19 @@ plot_purity_completeness_trend <- function(
     completeness_l, 
     titles, 
     title = "",
-    x = 0){
+    x = 0,
+    labelx = 'X', labely = 'Y')
+  {
     test_data <- data.frame('d1' = eps_sequence)	
     g <- ggplot(test_data, aes(eps_sequence)) +
         geom_line(aes(y = purity_l, colour = titles[1])) + 
         geom_line(aes(y = completeness_l, colour = titles[2]))+
-    ggtitle(title)
+    ggtitle(title) +
+    labs(x = labelx, y = labely)
     if (x>0){  
       g + geom_vline(xintercept = x, linetype="dotted",)
+    }else{
+      g
     }
 }
 ```
@@ -552,7 +563,7 @@ plot_purity_completeness_trend(
   x_stats$purity_list, 
   x_stats$completeness_list, 
   c('Purity', 'Completeness'),
-  "Purity/completness on not scaled data",
+  "Purity/completeness on not scaled data",
   0.00055
 )
 ```
@@ -654,6 +665,18 @@ plot_purity_completeness(
 ```
 
 Results are quite better when all variables are scaled to a mean=0, sd=1. The optimal value of eps gives more than 76% for both purity and completeness.
+
+```{r}
+eps_sequence_test <- seq(0.02, 0.035, 0.005)
+plot_purity_completeness_trend(
+  eps_sequence_test, 
+  x_stats$und_gr,
+  x_stats$group_list, 
+  c('Undetected GR', 'Groups'),
+  "Purity and completeness on scaled data",
+  0.0237
+)
+```
 
 ## Hyperparameter tunning
 
