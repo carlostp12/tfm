@@ -1,9 +1,0 @@
-del .\*.aux
-del .\*.blg
-del .\*.bbl
-del .\*.lof
-del .\*.log
-del .\*.lot
-del .\*.out
-del .\*.pdf
-del .\*.toc

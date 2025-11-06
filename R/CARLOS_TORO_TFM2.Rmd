@@ -70,11 +70,9 @@ library(tidyr)
 
 ```
 
-# Lectura de archivos de datos.
+# Loading data files
 
 ## Galaxy catalog for 2dFGRS
-
-Leed el fichero gpa.csv y guardad los datos en un objeto denominado gpa. A continuación, verificad el tipo de cada variable.
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 ######################
@@ -98,9 +96,13 @@ dt_groups <- read.csv('../data/groups/group_members.csv', sep = ',')
 
 ```
 
-# Preprocesado de datos
+Fileds for out clustering analisys are: ID, x, y, z, redshift, distance.
 
-### Descriptive analysis. **Data selection and visualization**
+# Data Preprocessing
+
+## Descriptive analysis. **Data selection and visualization**
+
+There is an initial preprocessing of data-file in order to obtain proper distances and cartesian coordinates x,y,z, by now it is omitted here.
 
 Take a sample with: minPts = 5, minQ_Z\>3 and by RA and DEC:
 
@@ -133,7 +135,19 @@ h2<-sqldf(sprintf("SELECT mm.x, mm.y, mm.z, mm.GROUP_ID FROM mm as mm, h
 true_groups <- length(unique(h2$GROUP_ID))
 
 print(sprintf('Number of galaxies in groups with more than %s elements %s out of %s', min_members , dim(h2)[1], dim(mm)[1]))
+print(sprintf("Number of groups with more than %s members: %s", min_members, true_groups))
 ```
+
+We take a look at the groups with more than min_members:
+
+```{r}
+hhh<- h[h$members>=min_members, ]
+ttable <- table(hhh$GROUP_ID, hhh$members)
+barplot(ttable, col=('red'), 
+        main=sprintf("Groups (%s) with at least %s members ", true_groups, min_members))
+```
+
+# Raw data processing
 
 Optics clustering:
 
@@ -149,10 +163,10 @@ plot(res)
 DBSCAN application:
 
 ```{r}
-blo_scan <- extractDBSCAN(res, eps_cl = 0.00075)
-mm$cluster_id <- blo_scan$cluster
-plot(blo_scan)
+dpcplot(blo_scan)
 ```
+
+## Out-put clusters visualization
 
 We have, on one hand all groups with more than min_members members (made up by a reduced amount of galaxies from catalog):
 
@@ -168,6 +182,19 @@ plot3d(points$x, points$y, points$z,
        col = blo_scan$cluster + 1, size = 2, 
        xlab = "X", ylab = "Y", zlab = "Z")
 ```
+
+## Functions to asses outcomes
+
+To aseess the outcomes we will based our analysis on two basic concepts:
+
+**Purity(P)**: measure of an output-cluster: proportion of members are exclusively from a single true group, providing confidence that the algorithm correctly groups members together. A high purity rate indicates the algorithm's effectiveness in identifying true groupings.
+
+**Completeness (C)**: measure of original cluster: proportion of data true-group included in an output-cluster. A original group is considered "complete" if all data points are assigned to the same cluster.
+
+Therefore Purity is a measure of output-clusters and Completeness is a measure in original groups.
+
+For this study we consider an output-cluster to be pure if P\>=0.66 (at least 2/3 of elements of an output-cluster belong to a single group).
+An original cluster is complete if C\>=0.5 (at least half data belong to an original true group)
 
 Following code is devoted to asses the outcomes obtained with from an given output-cluster:
 
@@ -304,8 +331,16 @@ undetected_groups <- function(dataset){
     where group_id not in (SELECT distinct(group_id) AS group_id
 		FROM dataset)")
    groups_results
-} 
+}
+
+
+# Pretty print a vector preceded by a title
+pretty_print <- function (title, avector= c()){
+  paste(title, do.call(paste, c(as.list(avector), sep = " ")))  
+}
 ```
+
+## Other functions to asses globally (unused by now)
 
 Following calculation is for global clusters, once we have outcomes dataset:
 
@@ -361,39 +396,6 @@ get_global_recovery_rate <- function(outcomes_dataset, original_data_set, min_me
 	pures_and_complete / nrow(total_true_groups)
 }
 
-# Plot a couple of vector in fucntion of a sequence
-plot_purity_completeness <- function(eps_sequence, purity_l, completeness_l, pures_com,  titles = NULL ,title = ""){
-
-if (is.null(pures_com)) {
-	df <- data.frame('eps' = eps_sequence, 'Purity'= purity_l, title2= completeness_l)
-	if(length(titles)>0){
-	  setNames(df, titles)
-	}
-	head(df)
-	df %>%
-    gather(Values,perc, Purity, Completeness) %>%
-    ggplot(aes(x=eps , y=perc, colour=Values)) +
-    geom_line()+
-    ggtitle(title)
- }else{
-	df <- data.frame('eps' = eps_sequence, title1= purity_l, title2= completeness_l, title3= pures_com)
-	if(length(titles)>0){
-	  setNames(df,titles)
-	}
-	head(df)
-	df %>%
-    gather(Values,perc, Purity, Completeness, pures_com) %>%
-    ggplot(aes(x=eps , y=perc, colour=Values)) +
-    geom_line()+
-    ggtitle(title)
-    
- }  
-}
-
-# Pretty print a vector pecceed by a title
-pretty_print <- function (title, avector= c()){
-  paste(title, do.call(paste, c(as.list(avector), sep = " ")))  
-}
 ```
 
 Now we apply to our DBSCAN:
@@ -570,9 +572,9 @@ plot_purity_completeness(
 )
 ```
 
-## Normalized data processing
+# Normalized data processing
 
-It has been discovered than a scale of data improves a lot the results:
+We will perform a scale of data, according with improves a lot the results:
 
 ```{r}
 points_scaled <- scale(points)
@@ -778,29 +780,25 @@ get_matrix_of_distances <- function(matrix_coordintates) {
 }
 ```
 
+## sDistances Matrix Calculation
+
 And then we can calculate distance matrix to apply OPTICS to this new metric, following code takes a lot of time:
 
 ```{r}
 a<- mm[,c('x', 'y', 'z', 'dist', 'redshift')]
 distance_matrix <- get_matrix_of_distances(a)
 dist_object <- as.dist(distance_matrix)
+
+```
+
+## OPTICS
+
+```{r}
 sres <- optics(dist_object, minPts = min_members)
 plot(sres)
 ```
 
-```{r}
-a<- mm[,c('x', 'y', 'z', 'dist', 'redshift')]
-distance_matrix <- get_matrix_of_distances(a)
-dist_object <- as.dist(distance_matrix)
-sres <- optics(dist_object, minPts = min_members)
-plot(sres)
-```
-
-For the new data, we extract a DBSCAN:
-
-```{r}
-
-```
+## DBSCAN:
 
 ```{r}
 sblo_scan <- extractDBSCAN(sres, eps_cl = 0.00025)
@@ -869,4 +867,20 @@ plot_purity_completeness(
   0.000132
   )
 
+```
+
+# Density Peaks Clustering(DPC )
+
+Alex Rodriguez and Alessandro Laio (2014).
+
+<https://github.com/thomasp85/densityClust>
+
+```{r}
+if (!require('densityClust')) install.packages('densityClust')
+library(densityClust)
+
+galaxyDens <- densityClust(points)
+galaxyClusters <- findClusters(galaxyDens, rho=0.99, delta=0.0012)
+plot(galaxyClusters)
+plotMDS(galaxyClusters)
 ```
