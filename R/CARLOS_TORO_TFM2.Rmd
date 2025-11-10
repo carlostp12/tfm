@@ -621,6 +621,92 @@ plot_purity_completeness_trend <- function(
       g
     }
 }
+
+pplot_purity_completeness <- function(
+    eps_sequence, 
+    mi_lista, 
+    titles, 
+    title = "",
+    x=0,
+    labelx = 'X', labely = 'Y'
+    ){
+	limit <- length(mi_lista)
+    test_data <- data.frame('d1' = eps_sequence)	
+	col = c("red", "blue", "green", "gray")
+    i <- 1
+  cols <- list()
+	plot(eps_sequence, mi_lista[1]$uno, type="l", xlab = labelx, ylab = labely, main=title, col=col[1])
+	cols[1] <- "red"
+	for(i in 2:limit) {
+      lines (eps_sequence, as.numeric(mi_lista[i]$uno), type="l", 'col' = col[i])
+	    cols[i] <- col[i]
+		  i <- i+1
+	}
+	if(x != 0){
+		abline(v=x, col="yellow")
+	}
+	legend("topright", legend = titles, lty = 1, col=as.character(cols))
+}
+
+
+ppplot_purity_completeness <- function(
+    df,
+    names, 
+    title = "",
+    x=0,
+    labelx = 'X', labely = 'Y'
+    ){
+	limit <- length(names)
+	df[, names]
+	df$cat <- rep(names, each=2)
+	col = list("red", "blue", "green", "gray", "orange")
+  i <- 1
+  g <- ggplot(df, aes(x=eps))
+	
+	for(i in 1:limit) {
+      g <- g +geom_line(aes(y=!!sym(names(df)[i])), colour= col[[i]])
+      #print(names(x_stats)[i])
+		  i <- i+1
+	}
+  g <- g + scale_color_identity(name = '',
+                       breaks = c('red', 'blue'),
+                       labels = c("TempMax", "TempMin"),
+                       guide = 'legend')
+  
+  g <- g+ ggtitle(title) + labs(x = labelx, y = labely)
+  
+	if(x != 0){
+		 g <- g + geom_vline(xintercept = x, linetype="dotted",)
+	}
+	g
+}
+```
+
+```{r}
+names <- c("purity_list", "completeness_list")
+x_stats$eps <- eps_sequence_test
+ppplot_purity_completeness(x_stats, names,  "Purity and completeness", 0.00055, "eps", "perc")
+```
+
+```{r}
+plottable <- list('uno' = x_stats$purity_list,
+                  'uno' = x_stats$completeness_list,
+                  'uno' =  x_stats$fr_list,
+                  'uno' =  x_stats$fp_list
+                  )
+titles <-  c('Purity', 'Completeness', "FR" , "FPplo")
+atitle  <-  "Purity/completeness on not scaled data"
+xlab <- 'eps'
+ylab <- 'percentage'
+x <- 0.00055
+pplot_purity_completeness(
+  eps_sequence_test, 
+  plottable, 
+  titles, 
+  title=atitle, 
+  x, 
+  xlab, 
+  ylab)
 ```
 
 ```{r}
@@ -1004,58 +1090,3 @@ mm5 <- update_mm5(mm)
 ## Other functions to asses globally (unused by now)
 
 Following calculation is for global clusters, once we have outcomes dataset:
-
-```{# {r}
-# 
-# ##############################################################################
-# Get the purity rate: a cluster is said to be pure if 2/3 of his
-# elements belong to a single cluster.
-# ##############################################################################
-# get_global_purity_rate <- function(outcomes_dataset, min_members = min_members) {
-# 	current <- outcomes_dataset[outcomes_dataset$total_in_group >= min_members,]
-# 	pures <- nrow(outcomes_dataset[outcomes_dataset$purity > 0.666,])
-# 	pures / nrow(outcomes_dataset)
-# }
-
-
-###############################################################################
-#	Get the completeness rate: a cluster is said to be complete if 1/2 of his
-#	elements belong to a single cluster.
-###############################################################################
-# get_global_completeness_rate <- function(outcomes_dataset, min_members = min_members) {
-# 	current <- outcomes_dataset[outcomes_dataset$total_in_group >= min_members,]
-# 	completes <- nrow(outcomes_dataset[outcomes_dataset$completeness > 0.5,])
-# 	completes / nrow(outcomes_dataset)
-# }
-
-
-###############################################################################
-#	Get the recovery rate:  (pure+complete) / total_true_groups
-###############################################################################
-# get_global_recovery_rate <- function(outcomes_dataset, original_data_set, min_members = min_members) {
-# 	total_true_groups <-sqldf(sprintf("
-# 	    select 
-# 	      how_many, 
-# 	      group_id 
-# 	    from (
-# 						select
-# 						  count(group_id) as how_many,
-# 						  group_id 
-# 						from 
-# 						  original_data_set 
-# 						group by 
-# 						  group_id 
-# 						order by how_many desc
-# 						) a
-# 	    where 
-# 	         a.how_many>=%s 
-#       order by 
-# 	         how_many 
-# 	   desc", min_members))
-# 
-# 	current <- outcomes_dataset[outcomes_dataset$total_in_group >= min_members,]
-# 	pures_and_complete <- nrow(outcomes_dataset[outcomes_dataset$purity>0.6 & outcomes_dataset$completeness>0.5,])
-# 	pures_and_complete / nrow(total_true_groups)
-# }
-
-```
