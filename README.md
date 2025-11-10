@@ -19,4 +19,4 @@ Trabajo fin de Master DataScience UOC
 
 # Note of SDSS galaxy and group catalog
 
-For out objective there is not matter to use Model or Petro, what is important is the SDSS galaxy and the iMODELC_1. With these both you can have a galaxy clusters join.
+For our purposes, it doesn't matter whether you use Model or Petro; what's important is the SDSS galaxy and iMODELC_1. With both, you can join a galaxy cluster.
