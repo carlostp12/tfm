@@ -68,6 +68,8 @@ library(sqldf)
 if (!require('tidyr')) install.packages("tidyr")
 library(tidyr)
 
+if (!require('densityClust')) install.packages('densityClust')
+library(densityClust)
 ```
 
 # Loading data files
@@ -111,9 +113,16 @@ $$RA \in [0, 1],\, DEC \in [-29, -27],\, \,and\,\, z \lt max\_redshift$$
 ```{r}
 min_members <- 5
 max_redshift <- 0.3
-# Take a sample
-dt_sample3 <- dt[dt$Q_Z>3 & dt$RAh<=1 & dt$RAh>=0 & dt$Ded>=-29 & dt$Ded<=-27,]
-dt_sample3 <- dt_sample3[dt_sample3$Z< max_redshift,]
+ra_lim_inf <-  0
+ra_lim_sup <- 1
+dec_lim_inf <- -29
+dec_lim_sup <-  -27
+
+# Take a sample using boundaries
+dt_sample3 <- dt[dt$Q_Z>3 & dt$RAh<= ra_lim_sup & 
+              dt$RAh>=ra_lim_inf & dt$Ded>= dec_lim_inf & 
+              dt$Ded<=dec_lim_sup & dt$Z< max_redshift,]
+
 #Change column name
 names(dt_sample3)[names(dt_sample3) == 'Z'] <- 'redshift'
 
@@ -128,14 +137,58 @@ ggplot(dt_sample3, aes(x=redshift, y=redshift))+geom_violin()
 Select groups with more than min_members members
 
 ```{r}
-h<-sqldf("SELECT count(SEQNUM) as members, GROUP_ID FROM mm GROUP BY GROUP_ID order by members DESC")  
-h2<-sqldf(sprintf("SELECT mm.x, mm.y, mm.z, mm.GROUP_ID FROM mm as mm, h 
-    where mm.GROUP_ID=h.GROUP_ID and h.members >= %s", min_members))
+h<-sqldf("select 
+            count(SEQNUM) as members, 
+            GROUP_ID 
+          from mm 
+          group by GROUP_ID 
+          order by  members desc")  
+mm5<-sqldf(sprintf("
+    SELECT 
+        mm.SEQNUM,
+        mm.x, 
+        mm.y, 
+        mm.z, 
+        mm.GROUP_ID, 
+        mm.redshift, 
+        mm.dist, 
+        mm.GAL_ID 
+      FROM 
+        mm as mm, h 
+      where 
+          mm.GROUP_ID=h.GROUP_ID and 
+          h.members >= %s"
+      , min_members))
 
-true_groups <- length(unique(h2$GROUP_ID))
+update_mm5 <- function(mm){
+	mm5<-sqldf(sprintf("
+	      select
+	          mm.SEQNUM,
+	          mm.x, 
+	          mm.y, 
+	          mm.z, 
+	          mm.GROUP_ID, 
+	          mm.redshift, 
+	          mm.dist, 
+	          mm.GAL_ID, 
+	          mm.cluster_id 
+	      from 
+	          mm as mm, h 
+        where 
+            mm.GROUP_ID=h.GROUP_ID and 
+	          h.members >= %s", min_members))
+	mm5
+}
+true_groups <- length(unique(mm5$GROUP_ID))
 
-print(sprintf('Number of galaxies in groups with more than %s elements %s out of %s', min_members , dim(h2)[1], dim(mm)[1]))
-print(sprintf("Number of groups with more than %s members: %s", min_members, true_groups))
+print(
+  sprintf('Number of galaxies in groups with more than %s elements %s out of %s', 
+          min_members, 
+          dim(mm5)[1], 
+          dim(mm)[1]))
+print(sprintf("Number of groups with more than %s members: %s", 
+              min_members, 
+              true_groups))
 ```
 
 We take a look at the groups with more than min_members:
@@ -144,7 +197,14 @@ We take a look at the groups with more than min_members:
 hhh<- h[h$members>=min_members, ]
 ttable <- table(hhh$GROUP_ID, hhh$members)
 barplot(ttable, col=('red'), 
-        main=sprintf("Groups (%s) with at least %s members ", true_groups, min_members))
+        main=sprintf("Group distribution (%s) with at least %s members ", 
+                     true_groups, 
+                     min_members))
+```
+
+```{r}
+
+boxplot(hhh$members, main="Boxplot of wt")
 ```
 
 # Raw data processing
@@ -163,7 +223,10 @@ plot(res)
 DBSCAN application:
 
 ```{r}
-dpcplot(blo_scan)
+blo_scan <- extractDBSCAN(res, eps_cl = 0.00075)
+mm$cluster_id <- blo_scan$cluster
+mm5 <- update_mm5(mm)
+plot(blo_scan)
 ```
 
 ## Out-put clusters visualization
@@ -171,7 +234,7 @@ dpcplot(blo_scan)
 We have, on one hand all groups with more than min_members members (made up by a reduced amount of galaxies from catalog):
 
 ```{r}
-plot3d(h2$x, h2$y, h2$z, col = h2$GROUP_ID, 
+plot3d(mm5$x, mm5$y, mm5$z, col = mm5$GROUP_ID, 
        size = 2, xlab = "X", ylab = "Y", zlab = "Z")
 ```
 
@@ -193,8 +256,19 @@ To aseess the outcomes we will based our analysis on two basic concepts:
 
 Therefore Purity is a measure of output-clusters and Completeness is a measure in original groups.
 
-For this study we consider an output-cluster to be pure if P\>=0.66 (at least 2/3 of elements of an output-cluster belong to a single group).
-An original cluster is complete if C\>=0.5 (at least half data belong to an original true group)
+For this study we consider an output-cluster to be pure if P\>=0.66 (at least 2/3 of elements of an output-cluster belong to a single group). An original cluster is complete if C\>=0.5 (at least half data belong to an original true group)
+
+**total_in_group:** number of elements in a given group.
+
+**total_in_cluster:** number of elements in a given output-cluster.
+
+**total_in_cluster_group:** number of elements in a given output-cluster belonging to a majority-group.
+
+**undetected_groups**: original groups not detected as majority-group in output-clusters
+
+length(unique(all\$cluster_id)),
+
+length(unique(all\$group_id)),
 
 Following code is devoted to asses the outcomes obtained with from an given output-cluster:
 
@@ -204,9 +278,13 @@ Following code is devoted to asses the outcomes obtained with from an given outp
 #	Number of elements in a given output-cluster
 ###############################################################################
 calculate_count_of_cluster <- function(cluster_id, dataset){
-	ttotal<-sqldf(sprintf("select count(seqnum) as how_many
-			from dataset
-				where cluster =%s", cluster_id))
+	ttotal<-sqldf(sprintf("
+	    select 
+	      count(SEQNUM) as how_many
+			from 
+			  dataset
+			where 
+	       cluster_id =%s", cluster_id))
 }
 
 
@@ -214,10 +292,15 @@ calculate_count_of_cluster <- function(cluster_id, dataset){
 #	Number of elements in a given true-group
 ###############################################################################
 calculate_count_of_group <- function(group_id, dataset){
-	ttotal<-sqldf(sprintf("select count(seqnum) as how_many
-		from dataset
-			where group_id=%s
-			group by group_id", group_id)) 
+	ttotal<-sqldf(sprintf("
+	  select 
+	    count(SEQNUM) as how_many
+		from 
+		  dataset
+		where 
+		  group_id=%s
+		group by 
+	    group_id", group_id)) 
     list('how_many' = ttotal$how_many)
 }
 
@@ -228,12 +311,37 @@ calculate_count_of_group <- function(group_id, dataset){
 ###############################################################################
 calculate_majority_group <- function(cluster_id, dataset){
 	ttotal<-sqldf(sprintf("
-	select count(seqnum) as how_many,
+	  select 
+	    count(SEQNUM) as how_many,
 			group_id as group_id
-		from dataset
-			where cluster=%s
-			group by group_id
-			order by how_many desc
+		from 
+		  dataset
+		where 
+		  cluster_id=%s
+		  
+		group by 
+			group_id
+		order by 
+		  how_many desc 
+	    limit 1", cluster_id)) 
+    list('group_id' = ttotal$group_id,
+         'how_many' = ttotal$how_many)
+}
+
+###############################################################################
+#	The same restricted to number of members> min_members 
+###############################################################################
+calculate_real_majority_group <- function(cluster_id, dataset){
+	ttotal<-sqldf(sprintf("
+	select 
+	    count(SEQNUM) as how_many,
+			group_id as group_id
+	from mm
+			where cluster_id=%s
+	group by 
+	    group_id
+	order by 
+	    how_many desc
 			limit 1", cluster_id)) 
     list('group_id' = ttotal$group_id, 'how_many' = ttotal$how_many)
 }
@@ -248,7 +356,6 @@ calculate_majority_group <- function(cluster_id, dataset){
 calculate_stats <- function(cluster_id, dataset) {
   #print(sprintf('Calculating stats for  clusterID %s', cluster_id))
   total<-calculate_majority_group(cluster_id, dataset)
-   
   #Number of elements in the cluster_id that also belong
   #to majority group
   total_in_cluster_group <- total$how_many
@@ -289,10 +396,13 @@ calculate_stats <- function(cluster_id, dataset) {
 # delete column from dataframe: mm <- select(mm, -'cluster')
 ############################################################################
 execute_stats <- function(mm, blo_scan){
-	mm$cluster <- blo_scan$cluster
+  
 	#mm0 <- mm[mm$cluster != 0, ]
-	cluster_results <-sqldf("SELECT distinct(cluster) AS cluster
-		FROM mm")
+	cluster_results <-sqldf("
+    select 
+	    distinct(cluster_id) AS cluster
+		FROM 
+	    mm")
 	stats <- data.frame('cluster_id'=integer(),
 		'group_id'=integer(),
 		'total_in_group'=integer(),
@@ -327,9 +437,18 @@ execute_stats <- function(mm, blo_scan){
 }
 
 undetected_groups <- function(dataset){
-  groups_results <-sqldf("select distinct(GROUP_ID) FROM h2
-    where group_id not in (SELECT distinct(group_id) AS group_id
-		FROM dataset)")
+  groups_results <-sqldf("
+    select 
+        distinct(GROUP_ID)
+    from 
+        mm5
+    where 
+      group_id not in (
+        select 
+          distinct(group_id) as group_id
+		    from
+          dataset
+        )")
    groups_results
 }
 
@@ -338,64 +457,6 @@ undetected_groups <- function(dataset){
 pretty_print <- function (title, avector= c()){
   paste(title, do.call(paste, c(as.list(avector), sep = " ")))  
 }
-```
-
-## Other functions to asses globally (unused by now)
-
-Following calculation is for global clusters, once we have outcomes dataset:
-
-```{r}
-###############################################################################
-#	Get the purity rate: a cluster is said to be pure if 2/3 of his
-#	elements belong to a single cluster.
-###############################################################################
-get_global_purity_rate <- function(outcomes_dataset, min_members = min_members) {
-	current <- outcomes_dataset[outcomes_dataset$total_in_group >= min_members,]
-	pures <- nrow(outcomes_dataset[outcomes_dataset$purity > 0.666,])
-	pures / nrow(outcomes_dataset)
-}
-
-
-###############################################################################
-#	Get the completeness rate: a cluster is said to be complete if 1/2 of his
-#	elements belong to a single cluster.
-###############################################################################
-get_global_completeness_rate <- function(outcomes_dataset, min_members = min_members) {
-	current <- outcomes_dataset[outcomes_dataset$total_in_group >= min_members,]
-	completes <- nrow(outcomes_dataset[outcomes_dataset$completeness > 0.5,])
-	completes / nrow(outcomes_dataset)
-}
-
-
-###############################################################################
-#	Get the recovery rate:  (pure+complete) / total_true_groups
-###############################################################################
-get_global_recovery_rate <- function(outcomes_dataset, original_data_set, min_members = min_members) {
-	total_true_groups <-sqldf(sprintf("
-	    select 
-	      how_many, 
-	      group_id 
-	    from (
-						select
-						  count(group_id) as how_many,
-						  group_id 
-						from 
-						  original_data_set 
-						group by 
-						  group_id 
-						order by how_many desc
-						) a
-	    where 
-	         a.how_many>=%s 
-      order by 
-	         how_many 
-	   desc", min_members))
-
-	current <- outcomes_dataset[outcomes_dataset$total_in_group >= min_members,]
-	pures_and_complete <- nrow(outcomes_dataset[outcomes_dataset$purity>0.6 & outcomes_dataset$completeness>0.5,])
-	pures_and_complete / nrow(total_true_groups)
-}
-
 ```
 
 Now we apply to our DBSCAN:
@@ -412,15 +473,20 @@ print(paste("Mean purity", mean(all$purity)))
 print(paste("Mean completness", mean(all$completn)))
 s<- undetected_groups(all)
 print(paste("Undetected groups", length(s$GROUP_ID), "out of", true_groups))
+print(paste("Detected real groups", (true_groups-length(s$GROUP_ID)), "out of", true_groups))
 
 ```
 
 We can create a function which test over different values of to test our DBSCAN:
 
 ```{r}
+##
+#Note that all$cluster_id (cluster_list), and all$group_id (group_list) are all
+# refered to a complete original lluster an d
 calculate_output <- function(test_eps_cl, res_data){
   blo_scan <- extractDBSCAN(res_data, eps_cl = test_eps_cl)
   mm$cluster_id <- blo_scan$cluster
+  mm5 <- update_mm5(mm)
   predicted_groups <- length(unique(mm$cluster_id))
   all <- execute_stats(mm, blo_scan)
   number_pure_groups <- nrow(all[all$purity >= 0.666,])
@@ -564,24 +630,40 @@ plot_purity_completeness_trend(
   x_stats$completeness_list, 
   c('Purity', 'Completeness'),
   "Purity/completeness on not scaled data",
-  0.00055
+  0.00055, 'eps', 'Percentage'
 )
 ```
 
-Because of this char we know that optimal point is around $0.00055$
+This chart shows that optimal point is around $0.00055$. Is at this value where completeness is maximum and purity is still high.
 
 ```{r}
 
 plot_purity_completeness(
   eps_sequence_test, 
   x_stats$pures/true_groups, 
-  x_stats$completes/true_groups, 
+  x_stats$und_gr/true_groups, 
   x_stats$pure_complet/true_groups,
-  c('Purity', 'Completeness', 'Pur.+Com.'),
-  "Group global group purity and completness on not scaled data",
-  0.00055
+  c('Purity', 'Undetected gr.', 'Pure + Complet.'),
+  "Group global group purity and undetected stats on not scaled data",
+  0.0006, 'eps', 'Percentage'
 )
 ```
+
+According with previous chart, the optimal value is $\epsilon = 6.10^{4}$. Given that at this value is reach the maximum purity, purity+completeness and the number of undetected groups remains at minimum.
+
+```{r}
+plot_purity_completeness(
+  eps_sequence_test, 
+  x_stats$und_gr,
+  x_stats$group_list, 
+  true_groups - x_stats$und_gr,
+  c('Undetected', 'Groups', 'Detected'),
+  "Total purity and completeness on scaled data",
+   0.00055, 'eps', 'Groups number'
+)
+```
+
+Once again the optimal point is at $\epsilon = 6.10^{4}$.
 
 # Normalized data processing
 
@@ -592,6 +674,8 @@ points_scaled <- scale(points)
 ress <- optics(points_scaled, minPts = min_members)
 #optimal value obtained
 blo_scans <- extractDBSCAN(ress, eps_cl = 0.025)
+mm$cluster_id <- blo_scans$cluster
+mm5 <- update_mm5(mm)
 ```
 
 Again we can do the same for scaled data:
@@ -634,37 +718,38 @@ plot_purity_completeness_trend(
   x_stats$completeness_list, 
   c('Purity', 'Completeness'),
   "Purity and completeness on scaled data",
-  0.0237
+  0.0237, 'eps', 'Percentage'
 )
 ```
 
-For global clusters:
+Results are quite better when all variables are scaled to a mean=0, sd=1. The optimal value of eps gives more than 76% for both purity and completeness.
+
+The same plots before
 
 ```{r}
+
 plot_purity_completeness(
   eps_sequence_test, 
   x_stats$pures/true_groups, 
-  x_stats$completes/true_groups,
+  x_stats$und_gr/true_groups, 
   x_stats$pure_complet/true_groups, 
-  c('Purity', 'Completeness', 'Pur.+Comp.'),
-  "Purity and completeness on scaled data",
-  0.0237
+  c('Purity', 'Undetected groups', 'Pur.+Comp.'),
+  "Group purity and undetected stats on not scaled data",
+  0.0237, 'eps', 'Percentage'
   )
 ```
 
 ```{r}
 plot_purity_completeness(
   eps_sequence_test, 
-  x_stats$group_list,
-  x_stats$cluster_list,
-  ones(length(eps_sequence_test),1)*true_groups,
-   c('Purity', 'Completeness', 'True groups.'),
-  "Complete and pure groups out of true groups",
-  0.0237
+  x_stats$und_gr,
+  x_stats$group_list, 
+  true_groups - x_stats$und_gr,
+  c('Undetected', 'Groups', 'Detected'),
+  "Purity and completeness on scaled data",
+   0.0237, 'eps', 'Groups number'
 )
 ```
-
-Results are quite better when all variables are scaled to a mean=0, sd=1. The optimal value of eps gives more than 76% for both purity and completeness.
 
 ```{r}
 eps_sequence_test <- seq(0.02, 0.035, 0.005)
@@ -672,9 +757,9 @@ plot_purity_completeness_trend(
   eps_sequence_test, 
   x_stats$und_gr,
   x_stats$group_list, 
-  c('Undetected GR', 'Groups'),
+  c('Undetected', 'Groups'),
   "Purity and completeness on scaled data",
-  0.0237
+  0.0237, 'eps', 'Groups number'
 )
 ```
 
@@ -825,6 +910,8 @@ plot(sres)
 
 ```{r}
 sblo_scan <- extractDBSCAN(sres, eps_cl = 0.00025)
+mm$cluster_id <- sblo_scan$cluster
+mm5 <- update_mm5(mm)
 plot(sblo_scan)
 ```
 
@@ -870,7 +957,7 @@ plot_purity_completeness_trend(
   sx_stats$completeness_list,
   c('Purity', 'Completeness'),
   'Purity Completeness on Slos data',
-  0.000132
+  0.000132, 'eps', 'Percentage'
 )
 ```
 
@@ -887,7 +974,7 @@ plot_purity_completeness(
   sx_stats$completes/true_groups,  
   c('Purity', 'Completeness', 'Pur.+Comp.'),
   "Purity and completeness on scaled data",
-  0.000132
+  0.000132, 'eps', 'Percentage'
   )
 
 ```
@@ -909,4 +996,66 @@ galaxyClusters <- findClusters(galaxyDens, rho=0.99, delta=0.0026)
 plot(galaxyClusters)
 plotMDS(galaxyClusters)
 galaxyClusters$cluster # The clusters dor dataset
+
+mm$cluster_id <- galaxyClusters$cluster
+mm5 <- update_mm5(mm)
+```
+
+## Other functions to asses globally (unused by now)
+
+Following calculation is for global clusters, once we have outcomes dataset:
+
+```{# {r}
+# 
+# ##############################################################################
+# Get the purity rate: a cluster is said to be pure if 2/3 of his
+# elements belong to a single cluster.
+# ##############################################################################
+# get_global_purity_rate <- function(outcomes_dataset, min_members = min_members) {
+# 	current <- outcomes_dataset[outcomes_dataset$total_in_group >= min_members,]
+# 	pures <- nrow(outcomes_dataset[outcomes_dataset$purity > 0.666,])
+# 	pures / nrow(outcomes_dataset)
+# }
+
+
+###############################################################################
+#	Get the completeness rate: a cluster is said to be complete if 1/2 of his
+#	elements belong to a single cluster.
+###############################################################################
+# get_global_completeness_rate <- function(outcomes_dataset, min_members = min_members) {
+# 	current <- outcomes_dataset[outcomes_dataset$total_in_group >= min_members,]
+# 	completes <- nrow(outcomes_dataset[outcomes_dataset$completeness > 0.5,])
+# 	completes / nrow(outcomes_dataset)
+# }
+
+
+###############################################################################
+#	Get the recovery rate:  (pure+complete) / total_true_groups
+###############################################################################
+# get_global_recovery_rate <- function(outcomes_dataset, original_data_set, min_members = min_members) {
+# 	total_true_groups <-sqldf(sprintf("
+# 	    select 
+# 	      how_many, 
+# 	      group_id 
+# 	    from (
+# 						select
+# 						  count(group_id) as how_many,
+# 						  group_id 
+# 						from 
+# 						  original_data_set 
+# 						group by 
+# 						  group_id 
+# 						order by how_many desc
+# 						) a
+# 	    where 
+# 	         a.how_many>=%s 
+#       order by 
+# 	         how_many 
+# 	   desc", min_members))
+# 
+# 	current <- outcomes_dataset[outcomes_dataset$total_in_group >= min_members,]
+# 	pures_and_complete <- nrow(outcomes_dataset[outcomes_dataset$purity>0.6 & outcomes_dataset$completeness>0.5,])
+# 	pures_and_complete / nrow(total_true_groups)
+# }
+
 ```

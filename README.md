@@ -15,3 +15,8 @@ Trabajo fin de Master DataScience UOC
 - PEC5 la presentación y video de la defensa. 
 
  El análisis de los datos, tratamiento previo, etc también suele requerir bastante tiempo. Es aconsejable centrarse en los aspectos más directamente relacionados con Data Science, y menos relevancia a objetivos que son más puramente de cosmología matemática, siempre que sea posible.
+
+
+# Note of SDSS galaxy and group catalog
+
+For out objective there is not matter to use Model or Petro, what is important is the SDSS galaxy and the iMODELC_1. With these both you can have a galaxy clusters join.
