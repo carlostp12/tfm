@@ -1,0 +1,413 @@
+\phantomsection
+\pagestyle{fancy}
+
+\chapter{Implementation}
+\onehalfspacing
+%\addcontentsline{toc}{chapter}{State_of_art}
+%\section{Introduction}
+
+
+
+\section{Loading datasets}
+
+Galaxy groups \ref{fig:group} and clusters \ref{fig:cluster} are the largest gravitationally structures in the Universe and are crucial probes of the underlying cosmic dark matter density field. They both consist in dark matter halos containing multiple galaxies, their distinction is typically based on mass and membership:
+
+\section{Two-points correlation function estimator}
+According to \cite{Kerscher:2000} the recommended estimator is the Andy and Szalay (1993) given by the equation \ref{eq:2_1}:
+
+\begin{equation} \label{eq:2_1}
+	\widehat{\xi_{LS}} = \frac{DD-2DR+RR}{RR}
+\end{equation}.
+
+
+\begin{enumerate}
+
+	\item \textit{Galaxy Groups}: These are the most common and lowest-mass virialized systems, typically containing 3 to 50 member galaxies \cite{Hai-Xia-Ma:2025} and spanning a total mass range of $\sim 10^{13} - 10^{14} M_{\odot}$. Our own Local Group is a well-known example.
+
+	\item \textit{Galaxy Clusters}: These represent the high-mass tail of the halo distribution, typically containing hundreds to thousands of galaxies, with total masses ranging from $\sim 10^{14} - 10^{15} M_{\odot}$. They often host a dominant, massive Brightest Cluster Galaxy (BCG) at their center and are strong emitters of X-rays and which properties dictate cluster formation and evolution \cite{Hai-Xia-Ma:2025}. A paradigmatic example is the Virgo cluster with an estimate mass of $\sim 1.2×1015 M_{\odot}$ and having M87 as most massive and dynamically dominant central galaxy.
+	
+\end{enumerate}
+
+\begin{figure}
+\centering
+\begin{minipage}{.5\textwidth}
+  \centering
+  \includegraphics[width=.4\linewidth]{./figs/image_future.jpg}
+  \caption{Future group image}
+  \label{fig:group}
+\end{minipage}%
+\begin{minipage}{.5\textwidth}
+  \centering
+  \includegraphics[width=.4\linewidth]{./figs/image_future.jpg}
+  \caption{Future cluster image}
+  \label{fig:cluster}
+\end{minipage}
+\end{figure}
+
+
+Because both groups and clusters exhibit diverse morphologies and spatial shapes, the subsequent analysis —detailed in Section \ref{unsupervised_methods}— employs unsupervised density-based algorithms. These methods are the most suitable approach for the clustering analysis due to their capacity to effectively fit structures with arbitrary geometries.
+
+\section{Spectroscopic  Surveys}
+
+	\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.5\textwidth]{./figs/survey_2dmap_small.jpg}
+	\caption{2dfGRS sky coverage}{Source \cite{Colless:2001}.}
+	\label{fig:2dfGRS}
+	\end{figure}
+	
+	
+Spectroscopic surveys are fundamental projects in astronomy and cosmology that collect and analyze the spectrum of light from a large number of celestial objects over a wide area of the sky. By splitting the light into its constituent wavelengths, these surveys acquire a vast amount of detailed physical information for each object.
+
+One main purpose of this kind of studies is to obtain a highly precise redshift ($z$) of each object in order to estimate distances. Therefore it is possible to construct a three-dimensional map of the Universe.
+
+The spectrum serves as well as a unique fingerprint of the source, allowing for the determination of its physical properties. Spectral analysis provides detailed information on the object's chemical composition, temperature, density, and internal motion.
+
+We are fortunate that, nowadays, we have access to data from several major astronomical surveys, including, but not limited to, the following:
+
+\subsection{2dF Galaxy Redshift Survey (2dfGRS)}
+
+2dfGRS is a Survey leveraged the unique capabilities of the 2dF (2-degree Field) facility built by the Anglo-Australian Observatory in the southern hemisphere (see in figure \ref{fig:aao}). A view of 2dfGRS coverage is shown in figure \ref{fig:2dfGRS}. Data was collected between 1997 and 2004.
+
+
+
+	\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.5\textwidth]{./figs/SSO_2.jpg}
+	\caption{Australian Astronomical Observatory (AAO)}{Source \cite{aao:2000}.}
+	\label{fig:aao}
+	\end{figure}
+	
+The data set employed in this analysis originates from the 2003 final data release, which encompasses a total of 245,591 objects. After quality cuts, 221,414 objects were determined to be spectroscopically reliable galaxy data, thus forming the foundation for the subsequent investigation.
+	
+\subsection{Sloan Digital Sky Survey (SDSS)}
+The Sloan Digital Sky Survey (SDSS) \cite{sdss:2000} began collecting data in 2000 and is one of the largest and most influential astronomical surveys ever conducted. The primary goal is to comprehensively map the Universe to expand our understanding of its large-scale structure, the formation of stars and galaxies, and the history of the Milky Way. It uses a dedicated wide-angle optical telescope (the Sloan Foundation 2.5-m Telescope) at Apache Point Observatory in New Mexico (see figure \ref{fig:sdss}), and in later phases, also observations in the Southern Hemisphere.
+
+	\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.5\textwidth]{./figs/apo_wide.jpg}
+	\caption{SDSS Data release 7 sky coverage}{Source \cite{aao:2000}.}
+	\label{fig:sdss}
+	\end{figure}
+	
+The SDSS has progressed through several phases (SDSS-I, II, III, IV, and the current SDSS-V), with each phase introducing new scientific goals and technological advancements. For this work we will use the modelC petrosian magnitude data realease 7 (DR7) which contains 639359 galaxy entries. This release offers coverage for approximatyely one quarter of the sky sphere, predominantely in the nothern galactic cap as illustrated in figure \ref{fig:dr7}. Groups constructed are drawn up from \cite{Yang:2007}.
+
+	\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.5\textwidth]{./figs/SDSSDR7-coverage.jpg}
+	\caption{SDSS Data release 7 sky coverage}{Source \cite{Yang:2007}.}
+	\label{fig:dr7}
+	\end{figure}
+
+
+\subsection{Inherent challenges associated with survey-collected data}
+
+Beyond the substantial logistical and resource constraints associated with constructing and operating large-scale astronomical facilities, all galaxy redshift surveys are subject to a distinct set of fundamental systematic and technical challenges. They can be broadly categorized into those arising from by instrumental and observational limitations, and those derived from subsequent collecting data and analysis. Among these, we can cite the following:
+
+\begin{enumerate}
+	\item Observational and measurement errors: produced by instrumental limitations due long time exposures, observing faint objects in high redshifts where long integration times are required to achieve an adequate signal-to-noise ratio (SNR). Additional noise is introduced by environmental factors, such as atmospheric distortion (seeing) or the inherent difficulty of performing accurate sky subtraction during data processing.
+	
+	\item Systematic errors and biases, for example the already mentioned distorsion on redshifts caused by peculiar velocities of galaxies. This effect leads to the apparent elongation of clusters along the line of sight, a well-known phenomenon often referred to as the "Fingers of God" effect \cite{Longair:1996}. There is also a bias caused by the galaxy type, luminosity or epoch of the Universe can also lead to innacurate outcomes in the survey.
+	
+	\item Theoretical and modeling uncertainties represent another category of challenges, primarily stemming from the interpretation of observational data. These uncertainties arise both from limitations in the underlying theoretical models and from poorly constrained baryonic effects that impact dark matter simulations.
+\end{enumerate}
+
+\subsection{Galaxy cluster/group catalog}
+
+In order to validate and assess the performance of a constructed galaxy clustering model, it is necessary to compare the results from the target galaxy catalog (the data being clustered) against a well-established, pre-existing group/cluster catalog (the ground truth). For this work, we employ the catalog result obtained by the halo-based group finder developed by in \cite{Yang:2007}. This method is specifically optimized for grouping galaxies residing in the same dark matter halo and and utilizes an iterative approach based on an adaptive filter modeled after the general properties of dark matter halos (see \cite{Yang:2007}) for full details).
+
+The halo-based group finder was successfully applied to the galaxy catalogs from both the 2dFGRS and the SDSS (Data Release 7). This valuable group catalog is publicly accessible and can be downloaded from \cite{groups:2000}
+
+\section{The redshift–distance relation}
+
+It is well-established that the Universe is undergoing cosmic expansion. The Hubble–Lemaître Law quantifies this expansion, stipulating that the recessional velocity of a galaxy is directly proportional to its proper distance from the observer. This relationship is described by the equation:
+
+\begin{equation} \label{eq:1}
+	V=H_{0}D
+\end{equation}	
+Where $V, H_{0}, D$ are respectively, the velocity, Hubble constant and distance.
+
+ The equation \ref{eq:1} is strictly valid on small redshifts $ z \ll 1 $ \cite{Cepa:2023} (which means nearby objects). In higher redshift it is necessary to use a full cosmological model to address the redshift-distance relation. According with the most recent theories \cite{Cepa:2023}:
+
+\begin{equation} \label{eq:2}
+	D_p =  \frac{1}{H_0} \int_0^z \frac{dz}{ \sqrt{\sum_i \Omega_{r0} (1+z)^{4} + \Omega_{m0} (1+z)^{3} + \Omega_{\Lambda 0}  } }
+\end{equation}.
+
+Where $\Omega_{r0}, \_, \Omega_{m0}, \_ \Omega_{\Lambda 0}$ represents the density parameters for radiation, mass and dark energy (respectively) in the present epoch $z=0$.
+
+The specific form of equation \ref{eq:2} may vary according to the chosen cosmological model. In this work we assume the values of the $\Lambda\text{CDM}$, according to \cite{Cepa:2023}:
+
+\begin{equation} \label{eq:3}
+ \Omega_{r0} = 0.0001, \,\, \Omega_{m0} = 0.3 , \,\, \Omega_{\Lambda 0} = 0.7.
+\end{equation}.
+
+\section{Machine Learning applied to cosmology}
+
+We will present a brief description of Machine Learning algorithms emphasizing those used in this work.
+
+\subsection{Supervised methods}
+
+Supervised learning focuses on identifying patterns and relationships within labeled datasets. The primary objective of supervised methods is to extract knowledge from the given training data to enable accurate class predictions for new, unseen data. Formally, given a labeled dataset $Z = (X, Y)$, where $X = (X_1, \dots, X_n)$ are the input features and $Y = (Y_1, \dots, Y_m)$ are the corresponding labels, the goal is to find a function $F$ such that the relationship $Y = F(X)$ is approximated.
+
+A subset is taken from the original dataset, the so called training data \( Z_i = (X_i, Y_i) \). And then the problem is reduced to find the minumum of a loss function, which measures the difference between \( Y_i \) and \( F(X_i) \).
+
+The input to any supervised algorithm consists of independent variables (or features), and the output comprises the dependent variables (or target variables). Supervised algorithms leverage the information within the training data to learn the intricate relationships between these input and target variables.
+
+However, a detailed discussion of supervised methods is not the scope of this work. We are not interested in making target predictions; instead, our objective is to identify patterns and structure within the data distribution, which will subsequently inform the spatial distribution of matter within a dimensional space.
+
+\subsection{Unsupervised methods}\label{unsupervised_methods}
+
+Unsupervised learning focuses on analysis and modeling of data that lack output classes or pre-existing labels. This methodology aims to discover intrinsic structure, patterns, and relevant features within the data itself.
+
+Formally, the input consists of a set of observations (or data points) where the feature matrix $X$ is given by $X = (X_1, \dots, X_n)^T$. The primary objective is to learn the underlying distribution or to find meaningful representations from these input variables without any prior guidance.
+
+From the unsupervised methods set we have: clustering and segmentation. These methods work based on distance and similarity patterns and can be divided as follows:
+\begin{itemize}
+	\item \textit{Hierarquical}: this method creates successive partitions of data and a hierarchical tree, called a dendrogram. Examples include agglomerative clustering. 
+	\item \textit{Partitional}: an initial set of clusters must be set in advance, the set is improved on an iterative proccess. Example $k$-means.
+	\item \textit{Model-Based}: these algorithms assume that the data is generated by a mixture of underlying probability distributions (e.g., Gaussian Mixture Models, GMM).
+	\item \textit{Density-based}: this method defines clusters as contiguous regions of high density separated by regions of low density (e.g., DBSCAN).
+	
+\end{itemize}
+
+	The key advantage of density-based methods is the fundamental lack of a priori assumptions regarding the underlying data distribution. These algorithms operate by defining clusters as contiguous, dense regions of data points that are separated by sparser areas. This characteristic makes them highly suitable for exploratory data analysis, as they impose no constraints on the shape of the resultant clusters.
+	
+	A further feature of density-based methods is their intrinsic ability to detect outliers or noise points. These points typically reside in the low-density regions that naturally separate the dense clusters, allowing for robust identification of anomalous observations without a dedicated process.
+	
+	Conversely, many hierarchical and partitional algorithms rely on strong assumptions about the data's structure. For instance, the $k$-means algorithm requires the number of clusters ($k$) to be predefined and implicitly assumes that the clusters follow a globular or spherical shape (often analogous to a Gaussian probability distribution). This inherent bias makes them unsuitable for astronomical data, where the spatial distribution of matter is expected to exhibit arbitrary, non-spherical geometries—such as linear filaments, stellar-like distributions, or complex polygonal structures. Thus, these restrictive methods are not appropriate for our analysis.
+	
+	For this study, we have selected three representative density-based algorithms: OPTICS, DBSCAN, and HDBSCAN. The following section will provide a detailed overview of each method.
+	
+\subsection{OPTICS}\label{optics}
+	Namely Ordering Points to Identify Cluster Structure: is a density-based, unsupervised algorithm. Its primary mechanism involves ordering the data points based on their reachability distance relative to a specified density threshold.
+	
+	The output of OPTICS is not a finalized set of clusters but rather a visual tool called the reachability plot (or reachability-distance graph). This plot encodes the density structure of the dataset, from which clusters of varying density and hierarchy can be later extracted.
+
+	Let us define the foundational geometric concepts required to understand the OPTICS algorithm.
+	
+	\begin{itemize}
+		\item \textit{eps-neighborhood} of a point $p$ in S is \(NE_{\epsilon}(p) =\{q \in S : dist(p, q) \leq eps \} \). Then any eps-neighborhood of $p$ is said to be dense if 
+		\( |NE_{\epsilon}(p)| \geq minPts \).
+	
+		\item The \textit{core\_distance} of a given point $p$ is the minimum \(\epsilon\) such us \(NE_{\epsilon}(p)\) is dense, in other words:
+		
+		$$ core-distance(p) = min \{ \epsilon : |NE_{\epsilon}(p)| \geq minPts \} $$
+	
+		\item A point is said to be a \textit{core-point} when \(NE_{\epsilon}'(p) \) is dense and  \( \epsilon' \leq \epsilon \), finally,
+	
+	
+		\item The \textit{reachability-distance} from q regarding a core-point g is the maximum of the two: core-distance and Euclidean  distance, in other words:
+
+		$$ reachability-distance(p, q) = max \{ core-distance(p), dist(p, q) \} $$
+		
+	\end{itemize}
+	
+	\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.5\textwidth]{./figs/core-distance.jpg}
+	\caption{Core and reachability distances}{Source \cite{Rhys:2020}.}
+	\label{fig:optics_figure}
+	\end{figure}
+	
+	Note that reachability-distance is only defined with respect to a core-point. We can see an illustrative example of both core-distance and reachability-distance in the figure \ref{fig:optics_figure}.
+
+	OPTICS work by setting up two mandatory parameters: 
+	
+	\begin{enumerate}
+		\item Eps ($ \epsilon $): The maximum radius to search for neighbors.
+		\item  minPts: The minimum number of neighbors a point needs to have to be considered a core-point.
+	\end{enumerate}
+	
+	\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.5\textwidth]{./figs/reach1.png}
+	\caption{An example of data set in plane \( \mathbb{R}^2\).}
+	\label{fig:reach1}
+	\end{figure}
+	
+	For example, figure \ref{fig:reach1} shows a random-generated set of points around four fixed points within [0,1]x[0,1] square. OPTICS is then applied to this, and the resulting reachability plot is shown in figure \ref{fig:reach2}.
+	
+	\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.5\textwidth]{./figs/reach2.png}
+	\caption{Example of OPTICS reachability plot}
+	\label{fig:reach2}
+	\end{figure}
+
+\subsection{DBSCAN}
+
+DBSCAN (Density-based Spatial Clustering of Applications with Noise) is another density-based clustering algorithm that leverages several concepts from OPTICS to efficiently extract clusters. However, DBSCAN introduces specific, additional definitions for identifying points and cluster boundaries, which are summarized below.
+
+Given a dataset $S$, a minimum number of points $\text{MinPts}$, and a neighborhood radius $\text{Eps}$, let $p$ be a core-point of $S$. Then:
+
+\begin{itemize}
+		\item A point $q$ is defined as \textit{directly density-reachable} from a core-point $p$ if $q$ is within the $\epsilon$-neighborhood of $p$ (i.e., $q \in NE_{\epsilon}(p)$). This definition is valid only when $p$ satisfies the core-point condition: $|NE_{\epsilon}(p)| \geq \text{MinPts}$
+		
+		\item A point q is said to be \textit{density-reachable} with respect to Eps and MinPts if there exists an ordered sequence of points $p_1, ..., p_n$ such that:
+		
+		\begin{enumerate}
+			\item $p_1 = p$ and $p_n = q$.
+			\item $p_{i+1}$ is directly density-reachable from $p_i$ for all $1 \leq i \leq n$.
+		\end{enumerate}
+		
+		\item The point $p$ is \textit{density-connected} to a point $q$ with respect to Eps and MinPts if there exists third point o such that both $p$ and $q$ are density-reachable from o.
+\end{itemize}
+
+The figure \ref{fig:density} illustrates both concepts: density-connectivity and density-reachablability.
+
+Then a cluster $C$ is a subset of S satisfying:
+
+	\begin{itemize}
+		\item \(\forall p, q, \in C\)  $p$ is density-connected from $q$ with respect to Eps and MinPts.
+		\item \(\forall p, q, \in C\) if $q$ is density reachable from $p$ with respect to Eps and MinPts then \(q \in C \). This property is called sometimes as \textit{Maximallity}.
+	\end{itemize}
+
+	\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.5\textwidth]{./figs/density.jpg}
+	\caption{Left: density reachablability. Right: density connectivity}{Source \cite{Rhys:2020}.}
+	\label{fig:density}
+	\end{figure}
+	
+DBSCAN creates then a set of clusters $C_1, ..., C_k$ and all points in $S$ are classified as:
+
+\begin{enumerate}
+		\item \textit{Core-point}: points with a dense neighborhood.
+		\item \textit{Border-point}: points belonging to a cluster but without a dense neighborhood.
+		\item \textit{Noise-point}: points do not belonging to any cluster.
+\end{enumerate}
+
+The DBSCAN algorithm initiates cluster discovery by selecting an arbitrary, unvisited database point $p$ and retrieving its density-reachable neighborhood (relative to $\epsilon$ and $\text{MinPts}$). The subsequent action depends on the nature of $p$:
+
+\begin{enumerate}
+		\item If $p$ is a core-point: A new cluster is formed containing $p$ and all points density-reachable from $p$. This process is then iteratively expanded.
+		\item If $p$ is not a core point: No points are density-reachable from $p$. DBSCAN assigns $p$ to the noise-point category and proceeds to the next unvisited point.
+\end{enumerate}
+		
+It is important to note that if $p$ is a border-point of a cluster $C$, it will eventually be reached during the expansion phase from a core point of $C$ and correctly assigned to the cluster. The algorithm concludes once every point has been processed and assigned either to a cluster or to the noise-point set.
+
+We will present a DBSCAN implementation in following pseudo-code:
+
+\begin{algorithm}[H]
+\SetKwInOut{Input}{Input}
+\SetKwInOut{Output}{Output}
+\SetKwFunction{RegionQuery}{RegionQuery}
+\SetKwFunction{ExpandCluster}{ExpandCluster}
+
+\Input{Dataset $D$, $\epsilon$ (epsilon), $\text{MinPts}$ (minimum points)}
+\Output{Set of clusters $C$, with noise points unassigned}
+
+\BlankLine
+
+$C \leftarrow 0$ \tcp{Cluster counter}
+\For{each point $P$ in $D$}{
+    \If{$P$ is unvisited}{
+        mark $P$ as visited\;
+        $NE \leftarrow \RegionQuery(D, P, \epsilon)$\;
+        \If{$|NE| < \text{MinPts}$}{
+            mark $P$ as \textbf{Noise}\;
+        }
+        \Else{
+            $C \leftarrow C + 1$\;
+            $\ExpandCluster(D, P, NE, C, \epsilon, \text{MinPts})$\;
+        }
+    }
+}
+\caption{The DBSCAN Algorithm}
+\end{algorithm}
+% \BlankLine
+\begin{algorithm}[H]
+\SetKwProg{Fn}{Function}{}{end}
+\Fn{\ExpandCluster{$D, P, NE, C, \epsilon, \text{MinPts}$}}{
+    assign $P$ to cluster $C$\;
+    \For{each point $P'$ in $NE$}{
+        \If{$P'$ is unvisited}{
+            mark $P'$ as visited\;
+            $NE' \leftarrow \RegionQuery(D, P', \epsilon)$\;
+            \If{$|NE'| \geq \text{MinPts}$}{
+                $NE \leftarrow NE \cup NE'$\;
+            }
+        }
+        \If{$P'$ is not yet assigned to a cluster}{
+            assign $P'$ to cluster $C$\;
+        }
+    }
+}
+
+\BlankLine
+
+\Fn{\RegionQuery{$D, P, \epsilon$}}{
+    \KwRet{all points $P' \in D$ such that $\text{distance}(P, P') \leq \epsilon$}
+}
+
+\caption{ExpandCluster and RegionQuery functions from DBSCAN Algorithm}
+\label{alg:dbscan}
+\end{algorithm}
+
+As mentioned, the algorithm takes an unvisited point $p$ and evaluates its eps-neighborhood througth the function \textit{RegionQuery}, if it contains fewer than MinPts points $p$ is labeled as noise. Otherwise $p$ is labeled as core point algorithm expand the cluster througth the \textit{ExpandCluster} function.
+
+\subsection{sLOS: Modifying the distance}
+
+To be included if have time.
+There is a direct application from \cite{Hai-Xia-Ma:2025} which works by modifing the distance along de line of sight.
+
+\subsection{HDBSCAN}
+
+This is other option to perform unsupervised density-based clustering.
+
+HDBSCAN (Hierarchical Density-Based Spatial Clustering of Applications with Noise) is an extension of DBSCAN that transforms the density-based approach into a hierarchical clustering algorithm. It requires only one mandatory parameter: $min\_cluster\_size$ (which is equivalent to $minPts$ or the minimum size of a dense region).
+
+HDBSCAN introduces a concept of hierarchy of clusters, first it works by estimate the new concept of \textit{mutual reachability distance} between two gien points, $p$ and $q$:
+
+$$ mreach(p,\,q) = max{core-dist(p), \, core-dist(q), \, dist(p, q)}$$
+
+
+	\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.5\textwidth]{./figs/MST.jpg}
+	\caption{Minimium Spanning Tree ($MSP$}{Source \cite{hdbscan:2000}.}
+	\label{fig:mst}
+	\end{figure}
+	
+Remember from the \ref{optics} that within $core-dist$ concept depends directly on the minPts parameter. HDBSCAN uses this new concept of distance to guess dense areas in order to find clusters. First HDBSCAN calculates all mutual reachability distances, then points are placed as nodes in a graph called \textit{Minimum Spanning Tree}, $MST$ \cite{Campello:2013}, and joined by edges representing weights of their mutual reachability distances. This $MST$ is the minimum set of edges that connect points and minimizes the sum of edge weights (in fact the reachability distances). A $MST$ is shown at \ref{fig:mst}.
+
+
+	
+The Minimum Spanning Tree (MST), constructed using the mutual reachability distance, forms the basis for the hierarchical cluster tree (dendrogram). This hierarchy is generated by iteratively grouping points based on increasing edge weights (mutual reachability distances),
+where each edge weight represents the density level at which two components become connected. The merged sets at each step constitute the cluster structure across all possible density thresholds ($\epsilon$). The final hierarchy is then simplified through a condensation process based on the user-defined parameter, $minPts$ (or $min\_cluster\_size$). The algorithm traverses  then the complete hierarchy. If a cluster splits into two new clusters, and one of the resulting clusters contains fewer than $minPts$ data points, that split is deemed insignificant. 
+
+Thus clusters with less than minPts are treated as single clusters, the process is one of re-labeling and pruning to simplify the tree based on persistence:, turning the hierarchy less complex and more interpretable.
+
+The final clusters are extracted from this condensed dendrogram \ref{fig:tree} by identifying the more stable clusters (most persistent) across varying density thresholds, the clusters are selected by longest lifetime $\lambda$, is the inverse of the distance (or density) at which a cluster merges or splits.
+
+	\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.5\textwidth]{./figs/hbclusters.jpg}
+	\caption{Condensed tree from HDBSCAN} {Source \cite{hdbscan:2000}.}
+	\label{fig:tree}
+	\end{figure}
+	
+Employs Stability for Final Selection: Instead of relying on a cutoff distance, HDBSCAN calculates the cluster persistence (often called "Excess of Mass")\cite{Campello:2013} for every potential cluster in the hierarchy. It then extracts the clusters that are the most stable (exist over the largest range of density thresholds), which allows it to naturally identify and separate clusters of different local densities."
+
+The strength of HDBSCAN is its adaptability, this can result in a defect because the ability to identify sparse areas as distinct clusters might lead to the spurious detection of minor over-densities that might be categorized as noise in our galaxy catalogs. Despite this potential ambiguity, HDBSCAN is employed in this study because its fundamental mechanism is precisely aligned with the requirements of an unsupervised density-based approach.
+
+\subsection{Previous machine learning applications in galaxy clustering}
+
+This section briefly reviews several Machine Learning (ML) applications in cosmology, with particular emphasis on clustering techniques, but first we will introduce some historical research in globally galaxy custering.
+
+In 18th centuty Charles Messier and William Herschel noted a concentration of nebulae (we know today that are large galaxies) in Virgo and Coma constellations \cite{ostriker:2014}.
+
+In the 1920s Edwin Hubble proved that spiral and elliptical nebulae were extragalactic systems (galaxies) far outside the Milky Way \cite{ostriker:2014}.
+
+In 1937 Friz Zwicky published the article \textit{On the Masses of Nebulae and of Clusters of Nebulae}. This was a study about the velocity dispersion of galaxies in the Coma cluster. In this work he showed that the galaxies were moving too fast to be held together by the visible matter, leading to the first evidence and postulation of dark matter to explain the cluster's stability \cite{zwicky:1937}.
+
+The first systematic, statistically complete catalog compiled by George Abell in 1958 became the foundation for modern cluster studies, allowing for a rigorous, statistical analysis of galaxy clustering across large volumes.
+
+Severeal works in the literature use supervised methods, for example, Thomas et al. \cite{Thomas:2025} generate predictive regression models based on the MACSIS simulation to predict cluster features from specific observables. On the other hand, Sadikov et al. \cite{Sadikov:2025} present an analysis of the X-ray properties of the galaxy cluster population in the $z=0$ snapshot of the IllustrisTNG simulations, utilizing machine learning to perform clustering and regression tasks.
+
+In contrast, other studies applying Machine Learning (ML) to the galactic Universe directly address the intrinsic properties of galaxies rather than focus on the clustering problem. For example, Dvorkin et al. \cite{Dvorkin:2022} note that "it has been shown that unknown relations between galaxy properties and parameters describing the composition of the Universe can be easily identified by employing machine learning techniques on top of state-of-the-art hydrodynamic simulations" \cite{Villaescusa-Navarro:2022}.
+
+The most significant application of density-based algorithms to galaxy distribution is a recent article (dated 2025) by Hai-Xia-Ma et al.\cite{Hai-Xia-Ma:2025}. The authors successfully applied density-based algorithms, including a modified version called sOPTICS, to several galaxy catalogs, achieving a notable success in cluster detection. They created the modified version of OPTICS called sOPTICS and used it to mitigate the redshift space distortion along line-of-sight caused by galaxies' peculiar velocities.
+
+
+As the reader can observe, a gap currently persists in the astronomical literature regarding the widespread application of unsupervised density-based algorithms for the systematic detection of galaxy groups and clusters. This limited exploration of density-based techniques, particularly in validating existing catalogs, underscores the novelty of this work. Furthermore, the large-scale distribution of matter across the Universe presents several fundamental problems that lie at the frontier of modern physics, such as understanding the nature of dark matter and dark energy. By providing robust, objective characterizations of cosmic structures across all scales, this study contributes essential input for constraining cosmological models and addressing these profound mysteries.

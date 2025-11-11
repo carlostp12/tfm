@@ -81,7 +81,7 @@ library(densityClust)
 #     Galaxy 2dFGRS loading # 
 ######################
 
-setwd('C:/Users/Carlos/OneDrive/data-science/TFM/tfm/data')
+setwd('C:/Carlos/OneDrive/data-science/TFM/tfm/data')
 dt <- read.csv('../data/2dfgrs-title-dist.csv')
 str(dt)
 ```
@@ -92,7 +92,7 @@ str(dt)
 ######################
 #     GROUPS loading #    
 ###################### 
-setwd('C:/Users/Carlos/OneDrive/data-science/TFM/tfm/data')
+setwd('C:/Carlos/OneDrive/data-science/TFM/tfm/data')
 dt_groups <- read.csv('../data/groups/group_members.csv', sep = ',')       
 
 
@@ -750,6 +750,26 @@ plot_purity_completeness(
 ```
 
 Once again the optimal point is at $\epsilon = 6.10^{4}$.
+
+HDBSCAN processing:
+
+```{r}
+cl <- hdbscan(points, minPts = 5)
+length(unique( cl$cluster))
+plot3d(points$x, points$y, points$z, 
+        col = cl$cluster + 1, size = 2, 
+        xlab = "X", ylab = "Y", zlab = "Z")
+```
+
+As said from theory, HDBSCAN does not fit a great model because it ability to detect clusters in sparser areas
+
+FROM <https://www.geeksforgeeks.org/r-language/how-to-plot-3d-scatter-diagram-using-ggplot-in-r/>
+
+points$cluster <- as.factor(cl$cluster)
+
+points$cluster[points$cluster == "0"] \<- "Outlier"
+
+plot_ly(points, x = \~x, y = \~y, z=\~z, color = \~cluster, type = "scatter3d", mode = "markers")
 
 # Normalized data processing
 
