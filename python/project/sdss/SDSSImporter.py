@@ -1,8 +1,7 @@
 import csv
 import pandas as pd
 
-from project.sdss.load_dss_galaxy_group import calculate_distance, changeCoordsSpericalX, \
-    changeCoordsSpericalY, changeCoordsSpericalZ
+from project.utils.utils import calculate_distance, changeCoordsSpericalY, changeCoordsSpericalX, changeCoordsSpericalZ
 
 
 class SDSSImporter:
