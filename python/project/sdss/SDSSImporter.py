@@ -1,9 +1,7 @@
 import csv
-import math
-from scipy.integrate import quad
 import pandas as pd
 
-from project.load_dss_galaxy_group import to_radians, lambda_cdm, calculate_distance, changeCoordsSpericalX, \
+from project.sdss.load_dss_galaxy_group import calculate_distance, changeCoordsSpericalX, \
     changeCoordsSpericalY, changeCoordsSpericalZ
 
 
@@ -24,7 +22,7 @@ class SDSSImporter:
                 adict = line[0].split()
                 df.loc[i] = [adict[2], adict[3], adict[4], adict[5]]
                 print(i)
-            df.to_csv(self.destiny_file)
+            df.to_csv(self.destiny_file, index=False)
         print("End")
 
     def import_group_file(self):
@@ -37,8 +35,9 @@ class SDSSImporter:
             for i, line in enumerate(reader):
                 adict = line[0].split()
                 df.loc[i] = [adict[2], adict[3]]
-                print(i)
-            df.to_csv(self.destiny_file)
+                if i %10000== 1:
+                    print(i)
+            df.to_csv(self.destiny_file, index=False)
         print("End")
 
     def transform_final_dss(self, galaxy_file, groups_file):
@@ -54,7 +53,7 @@ class SDSSImporter:
         galaxy_df = pd.read_csv(galaxy_file)
         groups_df = pd.read_csv(groups_file)
         galaxy_df.merge(groups_df[['GROUP_ID']], on = 'GAL_ID')
-        final_df = pd.DataFrame(columns=['GAL_ID', 'x', 'y', 'z', 'redshift', 'dist', 'GROUP_ID'])
+        final_df = pd.DataFrame(columns=['GAL_ID', 'ra', 'dec','x', 'y', 'z', 'redshift', 'dist', 'GROUP_ID'])
 
         for index, row in galaxy_df.iterrows():
             dist = calculate_distance(row[z])
@@ -62,6 +61,7 @@ class SDSSImporter:
             y = changeCoordsSpericalY(dist, row['ra'], row['dec'])
             z = changeCoordsSpericalZ(dist, row['ra'], row['dec'])
 
-            final_df.loc[index] = [row['GAL_ID'], x, y, z, row['z'], dist, row['GROUP_ID']]
+            final_df.loc[index] = [int(row['GAL_ID']), float(row['ra']), float(row['dec']),
+                                   x, y, z, float(row['z']), dist, int(row['GROUP_ID'])]
 
-        final_df.to_csv('C:/carlos/oneDrive/data-science/TFM/tfm/data/groups/sdss/SDSS7_galaxy_group.csv')
+        final_df.to_csv('C:/carlos/oneDrive/data-science/TFM/tfm/data/groups/sdss/SDSS7_galaxy_group.csv', index=False)

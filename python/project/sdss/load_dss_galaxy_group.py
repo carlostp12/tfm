@@ -1,11 +1,5 @@
-import csv
 import math
-import re
 from scipy.integrate import quad
-
-import pandas as pd
-
-from project.SDSSImporter import SDSSImporter
 
 
 def lambda_cdm(x, OMr, OMm, OMv):
@@ -36,8 +30,8 @@ def changeCoordsSpericalZ(r, ra_longitude, dec_latitude):
     return r * math.sin(to_radians(dec_latitude))
 
 
-if __name__ == "__main__":
-    galaxy_file = 'C:/carlos/oneDrive/data-science/TFM/tfm/data/groups/sdss_real/SDSS7_galaxy.csv'
-    groups_file = 'C:/carlos/oneDrive/data-science/TFM/tfm/data/groups/sdss/SDSS7_galaxy_group.csv'
-    sdss_real = SDSSImporter()
-    sdss_real.transform_final_dss(galaxy_file, groups_file)
+#if __name__ == "__main__":
+#    galaxy_file = 'C:/carlos/oneDrive/data-science/TFM/tfm/data/groups/sdss_real/SDSS7_galaxy.csv'
+    #    groups_file = 'C:/carlos/oneDrive/data-science/TFM/tfm/data/groups/sdss/SDSS7_galaxy_group.csv'
+    #    sdss_real = SDSSImporter.SDSSImporter()
+#    sdss_real.transform_final_dss(galaxy_file, groups_file)
