@@ -1,9 +1,11 @@
 import csv
 import math
+
+import numpy as np
 from scipy.integrate import quad
 import pandas as pd
 
-from project.load_dss_galaxy_group import to_radians, lambda_cdm, calculate_distance, changeCoordsSpericalX, \
+from project.utils.utils import parseRANumeric, parseDECNumeric, calculate_distance, changeCoordsSpericalX, \
     changeCoordsSpericalY, changeCoordsSpericalZ
 
 
@@ -12,18 +14,6 @@ class dFGRSImporter:
     def __init__(self, sdss_file, destiny_file):
         self.destiny_file = destiny_file
         self.sdss_File = sdss_file
-
-    def parseRANumeric(hour, min=0, sec=0):
-        number = hour * 360 /24
-        number = number + (360 /24) * (min/60)
-        number = number + (360 /24) * (sec/3600)
-        return (number)
-
-    def parseDECNumeric(degree, min=0, sec=0):
-        suma = 1
-        if degree < 0:
-            suma = -1
-        return (suma)*sec/3600 + (suma)*min/60 + degree
 
     def import_file(self):
         '''
@@ -46,15 +36,16 @@ class dFGRSImporter:
             df = pd.DataFrame(columns=['GAL_ID', 'ra', 'dec', 'z'])
             for i, line in enumerate(reader):
                 adict = line[0].split()
-                if adict[26] >= 3: # If quality greater than 3
-                    df.loc[i] = [adict[0],
-                                 self.parseRANumeric(adict[10], adict[11], adict[12]),
-                                 self.parseDECNumeric(adict[13], adict[14], adict[15]),
-                                 adict[23]]
-                print(i)
-            df.to_csv(self.destiny_file)
-        print("End")
+                if int(adict[26]) > 2:  # If quality greater than 2
+                   df.loc[i] = [int(adict[0]),
+                        parseRANumeric(float(adict[10]), float(adict[11]), float(adict[12])),
+                        parseDECNumeric(float(adict[13]), float(adict[14]), float(adict[15])),
+                        float(adict[23])]
 
+                if i % 10000 == 1:
+                    print(i)
+            df.to_csv(self.destiny_file, index=False)
+        print("End")
 
     def import_group_file(self):
         '''
@@ -66,8 +57,9 @@ class dFGRSImporter:
             for i, line in enumerate(reader):
                 adict = line[0].split()
                 df.loc[i] = [adict[2], adict[0]]
-                print(i)
-            df.to_csv(self.destiny_file)
+                if i % 10000 == 1:
+                    print(i)
+            df.to_csv(self.destiny_file, index=False)
         print("End")
 
     def transform_final_dss(self, galaxy_file, groups_file):
@@ -78,19 +70,26 @@ class dFGRSImporter:
         :param groups_file: Groups dataset
         :return:
         '''
-       # galaxy_file = 'C:/carlos/oneDrive/data-science/TFM/tfm/data/groups/sdss_real/SDSS7_galaxy.csv'
-       # groups_file = 'C:/carlos/oneDrive/data-science/TFM/tfm/data/groups/sdss/SDSS7_galaxy_group.csv'
+        # galaxy_file = 'C:/carlos/oneDrive/data-science/TFM/tfm/data/groups/sdss_real/SDSS7_galaxy.csv'
+        # groups_file = 'C:/carlos/oneDrive/data-science/TFM/tfm/data/groups/sdss/SDSS7_galaxy_group.csv'
         galaxy_df = pd.read_csv(galaxy_file)
+        galaxy_df['GAL_ID'] = galaxy_df['GAL_ID'].astype(int)
         groups_df = pd.read_csv(groups_file)
-        galaxy_df.merge(groups_df[['GROUP_ID']], on = 'GAL_ID')
-        final_df = pd.DataFrame(columns=['GAL_ID', 'x', 'y', 'z', 'redshift', 'dist', 'GROUP_ID'])
+        groups_df['GAL_ID'] = groups_df['GAL_ID'].astype(int)
+        galaxy_df_merge = galaxy_df.merge(groups_df, on='GAL_ID')
+        final_df = pd.DataFrame(columns=['GAL_ID', 'ra', 'dec' , 'x', 'y', 'z', 'redshift', 'dist', 'GROUP_ID'])
 
-        for index, row in galaxy_df.iterrows():
-            dist = calculate_distance(row[z])
+        for index, row in galaxy_df_merge.iterrows():
+            dist = calculate_distance(row['z'])
+
             x = changeCoordsSpericalX(dist, row['ra'], row['dec'])
             y = changeCoordsSpericalY(dist, row['ra'], row['dec'])
             z = changeCoordsSpericalZ(dist, row['ra'], row['dec'])
+            if index % 10000 == 1:
+                print(index)
+            final_df.loc[index] = [int(row['GAL_ID']), float(row['ra']), float(row['dec']),
+                                   x, y, z, row['z'], dist, int(row['GROUP_ID'])]
+        final_df.to_csv(self.destiny_file, index=False)
 
-            final_df.loc[index] = [row['GAL_ID'], x, y, z, row['z'], dist, row['GROUP_ID']]
 
-        final_df.to_csv('C:/carlos/oneDrive/data-science/TFM/tfm/data/groups/sdss/SDSS7_galaxy_group.csv')
+
