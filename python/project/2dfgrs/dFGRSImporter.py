@@ -77,7 +77,7 @@ class dFGRSImporter:
         groups_df = pd.read_csv(groups_file)
         groups_df['GAL_ID'] = groups_df['GAL_ID'].astype(int)
         galaxy_df_merge = galaxy_df.merge(groups_df, on='GAL_ID')
-        final_df = pd.DataFrame(columns=['GAL_ID', 'ra', 'dec' , 'x', 'y', 'z', 'redshift', 'dist', 'GROUP_ID'])
+        final_df = pd.DataFrame(columns=['GAL_ID', 'ra', 'dec', 'x', 'y', 'z', 'redshift', 'dist', 'GROUP_ID'])
 
         for index, row in galaxy_df_merge.iterrows():
             dist = calculate_distance(row['z'])
