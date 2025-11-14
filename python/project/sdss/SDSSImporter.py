@@ -16,13 +16,15 @@ class SDSSImporter:
         '''
         with open(self.sdss_File, "r") as f:
             reader = csv.reader(f, delimiter="\t")
-            df = pd.DataFrame(columns=['GAL_ID', 'ra', 'dec', 'z'])
-            for i, line in enumerate(reader):
-                adict = line[0].split()
-                df.loc[i] = [int(adict[1]), float(adict[2]), float(adict[3]), float(adict[4])]
-                if i % 10000 == 1:
-                    print(i)
-            df.to_csv(self.destiny_file, index=False)
+            with open(self.destiny_file, "w") as fw:
+                fw.write('GAL_ID,ra,dec,z\n')
+                for i, line in enumerate(reader):
+                    adict = line[0].split()
+                    fw.write('{},{},{},{}\n'.format(int(adict[1]), float(adict[2]), float(adict[3]), float(adict[4])))
+                    if i % 10000 == 1:
+                        print(i)
+            fw.close()
+        f.close()
         print("End")
 
     def import_group_file(self):
@@ -31,13 +33,15 @@ class SDSSImporter:
         '''
         with open(self.sdss_File, "r") as f:
             reader = csv.reader(f, delimiter="\t")
-            df = pd.DataFrame(columns=['GAL_ID', 'GROUP_ID'])
-            for i, line in enumerate(reader):
-                adict = line[0].split()
-                df.loc[i] = [adict[2], adict[3]]
-                if i %10000== 1:
-                    print(i)
-            df.to_csv(self.destiny_file, index=False)
+            with open(self.destiny_file, "w") as fw:
+                fw.write('GAL_ID,GROUP_ID\n')
+                for i, line in enumerate(reader):
+                    adict = line[0].split()
+                    fw.write('{},{}\n'.format(adict[1], adict[3]))
+                    if i % 10000 == 1:
+                        print(i)
+            fw.close()
+        f.close()
         print("End")
 
     def transform_final_dss(self, galaxy_file, groups_file):
@@ -48,25 +52,25 @@ class SDSSImporter:
         :param groups_file: Groups dataset
         :return:
         '''
-       # galaxy_file = 'C:/carlos/oneDrive/data-science/TFM/tfm/data/groups/sdss_real/SDSS7_galaxy.csv'
-       # groups_file = 'C:/carlos/oneDrive/data-science/TFM/tfm/data/groups/sdss/SDSS7_galaxy_group.csv'
+        # galaxy_file = 'C:/carlos/oneDrive/data-science/TFM/tfm/data/groups/sdss_real/SDSS7_galaxy.csv'
+        # groups_file = 'C:/carlos/oneDrive/data-science/TFM/tfm/data/groups/sdss/SDSS7_galaxy_group.csv'
         galaxy_df = pd.read_csv(galaxy_file)
         galaxy_df['GAL_ID'] = galaxy_df['GAL_ID'].astype(int)
         groups_df = pd.read_csv(groups_file)
         groups_df['GAL_ID'] = groups_df['GAL_ID'].astype(int)
-        galaxy_df_merge = galaxy_df.merge(groups_df, left_on='GAL_ID', right_on='GAL_ID')
-        final_df = pd.DataFrame(columns=['GAL_ID', 'ra', 'dec', 'x', 'y', 'z', 'redshift', 'dist', 'GROUP_ID'])
+        galaxy_df_merge = galaxy_df.merge(groups_df, on='GAL_ID')
 
-        for index, row in galaxy_df_merge.iterrows():
-            dist = calculate_distance(row['z'])
-            x = changeCoordsSpericalX(dist, row['ra'], row['dec'])
-            y = changeCoordsSpericalY(dist, row['ra'], row['dec'])
-            z = changeCoordsSpericalZ(dist, row['ra'], row['dec'])
-            if index == 10:
-                break
-            if index % 10000 == 1:
-                print(index)
-            final_df.loc[index] = [int(row['GAL_ID']), float(row['ra']), float(row['dec']),
-                                   x, y, z, float(row['z']), dist, int(row['GROUP_ID'])]
+        with open(self.destiny_file, "w") as f:
+            f.write('GAL_ID,ra,dec,x,y,z,redshift,dist,GROUP_ID\n')
 
-        final_df.to_csv(self.destiny_file, index=False)
+            for index, row in galaxy_df_merge.iterrows():
+                dist = calculate_distance(row['z'])
+                x = changeCoordsSpericalX(dist, row['ra'], row['dec'])
+                y = changeCoordsSpericalY(dist, row['ra'], row['dec'])
+                z = changeCoordsSpericalZ(dist, row['ra'], row['dec'])
+                if index % 10000 == 1:
+                    print(index)
+                f.write('{},{},{},{},{},{},{},{},{}\n'.format(
+                    int(row['GAL_ID']),float(row['ra']), float(row['dec']),
+                     x, y, z, float(row['z']), dist, int(row['GROUP_ID'])))
+        f.close()

@@ -33,18 +33,21 @@ class dFGRSImporter:
         '''
         with open(self.sdss_File, "r") as f:
             reader = csv.reader(f, delimiter="\t")
-            df = pd.DataFrame(columns=['GAL_ID', 'ra', 'dec', 'z'])
-            for i, line in enumerate(reader):
-                adict = line[0].split()
-                if int(adict[26]) > 2:  # If quality greater than 2
-                   df.loc[i] = [int(adict[0]),
-                        parseRANumeric(float(adict[10]), float(adict[11]), float(adict[12])),
-                        parseDECNumeric(float(adict[13]), float(adict[14]), float(adict[15])),
-                        float(adict[23])]
+            with open(self.destiny_file, "w") as fw:
+                fw.write('GAL_ID,ra,dec,z\n')
+                for i, line in enumerate(reader):
+                    adict = line[0].split()
+                    if int(adict[26]) > 2:  # If quality greater than 2
+                        fw.write(
+                            '{},{},{},{}\n'.format(int(adict[0]),
+                            parseRANumeric(float(adict[10]), float(adict[11]), float(adict[12])),
+                            parseDECNumeric(float(adict[13]), float(adict[14]), float(adict[15])),
+                            float(adict[23])))
 
-                if i % 10000 == 1:
-                    print(i)
-            df.to_csv(self.destiny_file, index=False)
+                    if i % 10000 == 1:
+                        print(i)
+            fw.close()
+        f.close()
         print("End")
 
     def import_group_file(self):
@@ -53,13 +56,15 @@ class dFGRSImporter:
         '''
         with open(self.sdss_File, "r") as f:
             reader = csv.reader(f, delimiter="\t")
-            df = pd.DataFrame(columns=['GAL_ID', 'GROUP_ID'])
-            for i, line in enumerate(reader):
-                adict = line[0].split()
-                df.loc[i] = [adict[2], adict[0]]
-                if i % 10000 == 1:
-                    print(i)
-            df.to_csv(self.destiny_file, index=False)
+            with open(self.destiny_file, "w") as fw:
+                fw.write('GAL_ID,GROUP_ID\n')
+                for i, line in enumerate(reader):
+                    adict = line[0].split()
+                    fw.write('{},{}\n'.format(adict[2], adict[0]))
+                    if i % 10000 == 1:
+                        print(i)
+            fw.close()
+        f.close()
         print("End")
 
     def transform_final_dss(self, galaxy_file, groups_file):
@@ -77,7 +82,9 @@ class dFGRSImporter:
         groups_df = pd.read_csv(groups_file)
         groups_df['GAL_ID'] = groups_df['GAL_ID'].astype(int)
         galaxy_df_merge = galaxy_df.merge(groups_df, on='GAL_ID')
-        final_df = pd.DataFrame(columns=['GAL_ID', 'ra', 'dec', 'x', 'y', 'z', 'redshift', 'dist', 'GROUP_ID'])
+
+        with open(self.destiny_file, "w") as f:
+            f.write('GAL_ID,ra,dec,x,y,z,redshift,dist,GROUP_ID\n')
 
         for index, row in galaxy_df_merge.iterrows():
             dist = calculate_distance(row['z'])
@@ -87,9 +94,10 @@ class dFGRSImporter:
             z = changeCoordsSpericalZ(dist, row['ra'], row['dec'])
             if index % 10000 == 1:
                 print(index)
-            final_df.loc[index] = [int(row['GAL_ID']), float(row['ra']), float(row['dec']),
-                                   x, y, z, row['z'], dist, int(row['GROUP_ID'])]
-        final_df.to_csv(self.destiny_file, index=False)
+            f.write('{},{},{},{},{},{},{},{},{}\n'.format(
+                int(row['GAL_ID']), float(row['ra']), float(row['dec']),
+                x, y, z, float(row['z']), dist, int(row['GROUP_ID'])))
 
+    f.close
 
 
