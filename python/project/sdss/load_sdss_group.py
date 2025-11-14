@@ -1,8 +1,4 @@
-import csv
-import re
-
 from SDSSImporter import SDSSImporter
-import pandas as pd
 
 
 '''
