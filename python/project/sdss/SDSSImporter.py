@@ -37,7 +37,7 @@ class SDSSImporter:
                 fw.write('GAL_ID,GROUP_ID\n')
                 for i, line in enumerate(reader):
                     adict = line[0].split()
-                    fw.write('{},{}\n'.format(adict[1], adict[3]))
+                    fw.write('{},{}\n'.format(adict[1], adict[2]))
                     if i % 10000 == 1:
                         print(i)
             fw.close()
@@ -62,7 +62,6 @@ class SDSSImporter:
 
         with open(self.destiny_file, "w") as f:
             f.write('GAL_ID,ra,dec,x,y,z,redshift,dist,GROUP_ID\n')
-
             for index, row in galaxy_df_merge.iterrows():
                 dist = calculate_distance(row['z'])
                 x = changeCoordsSpericalX(dist, row['ra'], row['dec'])
