@@ -80,7 +80,8 @@ library(densityClust)
 ######################
 #     Galaxy 2dFGRS loading # 
 ######################
-folder <- 'C:/Carlos/OneDrive/data-science/TFM/tfm/data/2dfgrs/'
+folder <- Sys.getenv('PROJECT_TFM')
+folder <- sprintf('%s/data/2dfgrs/', folder)
 file <- '2dfgrs-valid.csv'
 setwd(folder)
 dt <- read.csv(file)
