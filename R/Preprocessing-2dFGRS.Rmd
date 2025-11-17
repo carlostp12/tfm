@@ -127,7 +127,7 @@ h<-sqldf("select
             GROUP_ID 
           from mm 
           group by GROUP_ID 
-          order by  members desc")  
+          order by  members desc")
 mm5<-sqldf(sprintf("
     SELECT 
         mm.GAL_ID,
@@ -144,7 +144,7 @@ mm5<-sqldf(sprintf("
           h.members >= %s"
       , min_members))
 
-update_mm5 <- function(mm){
+get_elements_in_m5_groups <- function(mm){
 	mm5<-sqldf(sprintf("
 	      select
 	          mm.GAL_ID,
@@ -161,6 +161,44 @@ update_mm5 <- function(mm){
             mm.GROUP_ID=h.GROUP_ID and 
 	          h.members >= %s", min_members))
 	mm5
+}
+get_elements_not_in <- function(dataset_mm, dataset_all){
+  groups_results <- sqldf("select 
+	  	  GAL_ID,
+	      x, 
+	      y, 
+	      z, 
+	      GROUP_ID, 
+	      redshift, 
+	      dist,  
+	      cluster_id
+	  from 
+		    dataset_mm d
+	  where 
+		  d.GROUP_ID 
+		not in (select 
+		  			group_id 
+			    from 
+					  dataset_all)")
+}
+get_elements_in <- function(dataset_mm, dataset_all){
+  groups_results <- sqldf("select 
+	  	  GAL_ID,
+	      x, 
+	      y, 
+	      z, 
+	      GROUP_ID, 
+	      redshift, 
+	      dist,  
+	      cluster_id
+	  from 
+		    dataset_mm d
+	  where 
+		  d.GROUP_ID 
+		  in (select 
+		  			group_id 
+			    from 
+					  dataset_all)")
 }
 true_groups <- length(unique(mm5$GROUP_ID))
 
@@ -208,7 +246,7 @@ DBSCAN application:
 ```{r}
 blo_scan <- extractDBSCAN(res, eps_cl = 0.00075)
 mm$cluster_id <- blo_scan$cluster
-mm5 <- update_mm5(mm)
+mm5 <- get_elements_in_m5_groups(mm)
 plot(blo_scan)
 ```
 
@@ -233,11 +271,9 @@ plot3d(points$x, points$y, points$z,
 
 To aseess the outcomes we will based our analysis on two basic concepts:
 
-**Purity(P)**: measure of an output-cluster: proportion of members are exclusively from a single true group, providing confidence that the algorithm correctly groups members together. A high purity rate indicates the algorithm's effectiveness in identifying true groupings.
+**Purity(P)**: measure of output-cluster: proportion of members coming exclusively from a single true group, providing confidence that the algorithm correctly groups members together. A high purity rate indicates the algorithm's effectiveness in identifying true groupings.
 
-**Completeness (C)**: measure of original cluster: proportion of data true-group included in an output-cluster. A original group is considered "complete" if all data points are assigned to the same cluster.
-
-Therefore Purity is a measure of output-clusters and Completeness is a measure in original groups.
+**Completeness (C)**: measure of an output-cluster: proportion of data true-group elements included in an output-cluster. A cluster is considered "complete" if contains all points of the original true group.
 
 For this study we consider an output-cluster to be pure if P\>=0.66 (at least 2/3 of elements of an output-cluster belong to a single group). An original cluster is complete if C\>=0.5 (at least half data belong to an original true group)
 
@@ -289,7 +325,7 @@ calculate_count_of_group <- function(group_id, dataset){
 
 
 ###############################################################################
-#	The most common group of a given cluster and count elements in the
+#	The most common true-group of a given output-cluster and count elements in the
 #	intersection group and cluster.
 ###############################################################################
 calculate_majority_group <- function(cluster_id, dataset){
@@ -312,29 +348,11 @@ calculate_majority_group <- function(cluster_id, dataset){
 }
 
 ###############################################################################
-#	The same restricted to number of members> min_members 
-###############################################################################
-calculate_real_majority_group <- function(cluster_id, dataset){
-	ttotal<-sqldf(sprintf("
-	select 
-	    count(GAL_ID) as how_many,
-			group_id as group_id
-	from mm
-			where cluster_id=%s
-	group by 
-	    group_id
-	order by 
-	    how_many desc
-			limit 1", cluster_id)) 
-    list('group_id' = ttotal$group_id, 'how_many' = ttotal$how_many)
-}
-
-###############################################################################
 #	Purity and Completeness: 
-#		1- how many per cluster are present in a group.
-#		2- how many in the majority group.
-#	A cluster is said to be pure if 2-/1- >= 0.666 
-#	A cluster is said to be complete if 1-/2- >= 0.5 
+#		1- (P) how many in an output-cluster coming from a true-group.
+#		2- (C) how many in the majority true-group are present in output-cluster.
+#	An output-cluster is said to be pure if P- >= 0.666 
+#	An output-cluster is said to be complete if C >= 0.5 
 ###############################################################################
 calculate_stats <- function(cluster_id, dataset) {
   #print(sprintf('Calculating stats for  clusterID %s', cluster_id))
@@ -469,7 +487,7 @@ We can create a function which test over different values of to test our DBSCAN:
 calculate_output <- function(test_eps_cl, res_data){
   blo_scan <- extractDBSCAN(res_data, eps_cl = test_eps_cl)
   mm$cluster_id <- blo_scan$cluster
-  mm5 <- update_mm5(mm)
+  mm5 <- get_elements_in_m5_groups(mm)
   predicted_groups <- length(unique(mm$cluster_id))
   all <- execute_stats(mm, blo_scan)
   number_pure_groups <- nrow(all[all$purity >= 0.666,])
@@ -518,7 +536,10 @@ extract_stats <- function (eps_sequence_values, local_res) {
 			  alli[7],  alli[8],alli[9], 
 			  alli[10], alli[11], alli[12])
 	}
-	(stats)
+	#data$stats <- stats
+	#data$undetected_groups<-alli[10]
+	#(data$stats)
+	stats
 }
 ```
 
@@ -761,7 +782,7 @@ ress <- optics(points_scaled, minPts = min_members)
 #optimal value obtained
 blo_scans <- extractDBSCAN(ress, eps_cl = 0.025)
 mm$cluster_id <- blo_scans$cluster
-mm5 <- update_mm5(mm)
+mm5 <- get_elements_in_m5_groups(mm)
 ```
 
 Again we can do the same for scaled data:
@@ -866,6 +887,86 @@ In addition are data belonging to actual clusters with more than min_members mem
 
 We can infer that optimal value is content within the interval (0.0023, 0.0033).
 
+## Undetected original groups
+
+The element whose groups were not detected are:
+
+```{r}
+get_elements_not_in_groups <- function(mm5, dataset_all){
+  groups_results <- sqldf("select 
+	  	  mm5.GAL_ID,
+	      mm5.x, 
+	      mm5.y, 
+	      mm5.z, 
+	      mm5.GROUP_ID, 
+	      mm5.redshift, 
+	      mm5.dist,  
+	      0 as cluster_id
+	  from 
+		    mm5, dataset_all
+	  where 
+		  mm5.GROUP_ID 
+		not in (select 
+		  			group_id 
+			    from dataset_all) group by mm5.GAL_ID,
+	      mm5.x, 
+	      mm5.y, 
+	      mm5.z, 
+	      mm5.GROUP_ID, 
+	      mm5.redshift, 
+	      mm5.dist")
+  groups_results
+}
+
+get_elements_in_groups <- function(dataset_mm, dataset_all){
+	mm5<-sqldf(sprintf("
+	      select
+	          d.GAL_ID,
+	          d.x, 
+	          d.y, 
+	          d.z, 
+	          d.GROUP_ID, 
+	          d.redshift, 
+	          d.dist,  
+	          d.cluster_id 
+	      from 
+	          dataset_mm as d, dataset_all a 
+        where 
+            d.GROUP_ID=a.GROUP_ID and 
+	          d.cluster_id>0"))
+	mm5
+}
+
+```
+
+```{r}
+eps <- 0.025
+blo_scans <- extractDBSCAN(ress, eps_cl = eps)
+mm$cluster_id <- blo_scans$cluster
+
+all <- execute_stats(mm, blo_scans)
+
+undetected <- get_elements_not_in_groups(mm5, all)
+
+length(unique(undetected$GROUP_ID))
+```
+
+Plot detected clusters
+
+```{r}
+plot3d(detected$x, detected$y, detected$z, 
+       col = detected$cluster_id +1, size = 2, 
+       xlab = "X", ylab = "Y", zlab = "Z")
+```
+
+Plot undetected clusters
+
+```{r}
+plot3d(undetected$x, undetected$y, undetected$z, 
+       col = undetected$GROUP_ID, size = 2, 
+       xlab = "X", ylab = "Y", zlab = "Z")
+```
+
 # s-Distances (SLos application)
 
 Following coder allow to calculate the sdistance: It consists in make a elongation along the line of sight
@@ -933,7 +1034,6 @@ d_LOS <- function(v1, v2, redshift) {
 	}else {
 		sfactor <- 0.2
 	}
-	
 	sfactor * sum((v1-v2)*v1) / sqrt(sum(v1^2))
 }
 
@@ -947,12 +1047,12 @@ d_LOS <- function(v1, v2, redshift) {
 s_distance <- function(v1, v2){
 	vector1 <- v1[1:3]
 	vector2 <- v2[1:3]
-	proper_distance <- v1[4]
+	proper_distance <- (v1[4] + v2[4])/2
 	redshift1 <- v1[5]
 	redshift2 <- v2[5]
-	
+  
     sqrt (traverse_distance(vector1, vector2, proper_distance)^2 + 
-              d_LOS_scaled_symmetric(vector1, vector2, redshift1, redshift2)^2
+          d_LOS_scaled_symmetric(vector1, vector2, redshift1, redshift2)^2
 		)
 }
 
@@ -998,7 +1098,7 @@ plot(sres)
 ```{r}
 sblo_scan <- extractDBSCAN(sres, eps_cl = 0.00025)
 mm$cluster_id <- sblo_scan$cluster
-mm5 <- update_mm5(mm)
+#mm5 <- get_elements_in_groups(mm)
 plot(sblo_scan)
 ```
 
@@ -1086,9 +1186,42 @@ plotMDS(galaxyClusters)
 galaxyClusters$cluster # The clusters dor dataset
 
 mm$cluster_id <- galaxyClusters$cluster
-mm5 <- update_mm5(mm)
+mm5 <- get_elements_in_groups(mm)
+
+plot3d(mm5$x, mm5$y, mm5$z, col = mm5$GROUP_ID, 
+        size = 2, xlab = "X", ylab = "Y", zlab = "Z")
+ 
+plot3d(points$x, points$y, points$z, 
+        col = blo_scan$cluster + 1, size = 2, 
+        xlab = "X", ylab = "Y", zlab = "Z")
 ```
 
 ## Other functions to asses globally (unused by now)
 
 Following calculation is for global clusters, once we have outcomes dataset:
+
+```{r}
+
+# Assume a symmetric function f(x)
+f <- function(x, y) x*y
+
+# Create a vector of numbers
+x <- 1:5
+
+# Compute outer() with outer() function
+outer_result <- outer(x, x, f)
+
+# Create a symmetric matrix using the faster method
+n <- length(x)
+lower_tri_indices <- which(outer(1:n, 1:n, function(i, j) i >= j), arr.ind = TRUE)
+lower_tri_values <- f(x[lower_tri_indices[,1]], x[lower_tri_indices[,1]])
+symmetric_result <- matrix(0, n, n)
+symmetric_result[lower_tri_indices] <- lower_tri_values
+#symmetric_result <- symmetric_result + t(symmetric_result) - diag(diag(symmetric_result))
+
+# Compare the two results
+print(outer_result)
+print(symmetric_result)
+
+
+```
