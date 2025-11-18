@@ -1214,7 +1214,7 @@ outer_result <- outer(x, x, f)
 # Create a symmetric matrix using the faster method
 n <- length(x)
 lower_tri_indices <- which(outer(1:n, 1:n, function(i, j) i >= j), arr.ind = TRUE)
-lower_tri_values <- f(x[lower_tri_indices[,1]], x[lower_tri_indices[,1]])
+lower_tri_values <- f(x[lower_tri_indices[,1]], x[lower_tri_indices[,2]])
 symmetric_result <- matrix(0, n, n)
 symmetric_result[lower_tri_indices] <- lower_tri_values
 #symmetric_result <- symmetric_result + t(symmetric_result) - diag(diag(symmetric_result))
@@ -1224,4 +1224,29 @@ print(outer_result)
 print(symmetric_result)
 
 
+```
+
+Seria
+
+```{r}
+# Assume a symmetric function f(x)
+f <- function(x, y) x*y
+
+# Create a vector of numbers
+x <- 1:5
+
+# Compute outer() with outer() function
+outer_result <- outer(x, x, f)
+
+# Create a symmetric matrix using the faster method
+n <- length(x)
+lower_tri_indices <- which(outer(1:n, 1:n, function(i, j) i >= j), arr.ind = TRUE)
+lower_tri_values <- f(x[lower_tri_indices[,1]], x[lower_tri_indices[,2]])
+symmetric_result <- matrix(0, n, n)
+symmetric_result[lower_tri_indices] <- lower_tri_values
+#symmetric_result <- symmetric_result + t(symmetric_result) - diag(diag(symmetric_result))
+symmetric <- as.dist(symmetric_result)
+# Compare the two results
+print(outer_result)
+print(symmetric)
 ```
