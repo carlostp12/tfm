@@ -86,18 +86,18 @@ class dFGRSImporter:
         with open(self.destiny_file, "w") as f:
             f.write('GAL_ID,ra,dec,x,y,z,redshift,dist,GROUP_ID\n')
 
-        for index, row in galaxy_df_merge.iterrows():
-            dist = calculate_distance(row['z'])
+            for index, row in galaxy_df_merge.iterrows():
+                dist = calculate_distance(row['z'])
 
-            x = changeCoordsSpericalX(dist, row['ra'], row['dec'])
-            y = changeCoordsSpericalY(dist, row['ra'], row['dec'])
-            z = changeCoordsSpericalZ(dist, row['ra'], row['dec'])
-            if index % 10000 == 1:
-                print(index)
-            f.write('{},{},{},{},{},{},{},{},{}\n'.format(
-                int(row['GAL_ID']), float(row['ra']), float(row['dec']),
-                x, y, z, float(row['z']), dist, int(row['GROUP_ID'])))
+                x = changeCoordsSpericalX(dist, row['ra'], row['dec'])
+                y = changeCoordsSpericalY(dist, row['ra'], row['dec'])
+                z = changeCoordsSpericalZ(dist, row['ra'], row['dec'])
+                if index % 10000 == 1:
+                    print(index)
+                f.write('{},{},{},{},{},{},{},{},{}\n'.format(
+                    int(row['GAL_ID']), float(row['ra']), float(row['dec']),
+                    x, y, z, float(row['z']), dist, int(row['GROUP_ID'])))
 
-    f.close
+        f.close()
 
 
