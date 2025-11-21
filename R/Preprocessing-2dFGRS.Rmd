@@ -70,6 +70,9 @@ library(tidyr)
 
 if (!require('densityClust')) install.packages('densityClust')
 library(densityClust)
+
+if (!require('densityClust')) install.packages('densityClust')
+library(densityClust)
 ```
 
 # Loading data files
@@ -101,18 +104,19 @@ $$RA \in [0, 2],\, DEC \in [-29, -27],\, \,and\,\, z \lt max\_redshift$$
 Then we take the initial values:
 
 ```{r}
-
+SLOS <- 0 #Here the slos is not fixed beforehand
 min_members <- 5
 max_redshift <- 0.3
+min_redshift <- 0.0
 ra_lim_inf <-  0
 ra_lim_sup <- 30
 dec_lim_inf <- -30
 dec_lim_sup <-  -27
 
 # Take a sample using boundaries
-mm <- dt[ dt$ra<= ra_lim_sup & 
-              dt$ra>=ra_lim_inf & dt$dec>= dec_lim_inf & 
-              dt$dec<=dec_lim_sup & dt$redshif< max_redshift,]
+mm <- dt[ dt$ra<= ra_lim_sup & dt$ra>=ra_lim_inf & 
+            dt$dec>= dec_lim_inf & dt$dec<=dec_lim_sup &
+            dt$redshift< max_redshift & dt$redshift> min_redshift,]
 
 
 # mm is an object containing both groups and galaxy identification
@@ -201,12 +205,14 @@ get_elements_in <- function(dataset_mm, dataset_all){
 					  dataset_all)")
 }
 true_groups <- length(unique(mm5$GROUP_ID))
-
+number_non_isolated_galaxies <- dim(mm5)[1]
+number_isolated_galaxies <- dim(mm)[1] - dim(mm5)[1]
 print(
-  sprintf('Number of galaxies in groups with more than %s elements %s out of %s', 
+  sprintf('Number of galaxies in groups with more than %s elements %s out of %s, aprox %s ', 
           min_members, 
-          dim(mm5)[1], 
-          dim(mm)[1]))
+          number_non_isolated_galaxies, 
+          dim(mm)[1], format(number_non_isolated_galaxies * 100
+                                /dim(mm)[1], digits=4)))
 print(sprintf("Number of groups with more than %s members: %s", 
               min_members, 
               true_groups))
@@ -228,44 +234,37 @@ barplot(ttable, col=('red'),
 boxplot(hhh$members, main="Boxplot of wt")
 ```
 
-# Raw data processing
-
-Optics clustering:
+Lets take a look at the complete target sample:
 
 ```{r}
-points<- mm[,c('x', 'y', 'z')]
-
-#clustering
-res <- optics(points, minPts = min_members)
-plot(res)
-
+plot3d(mm$x, mm$y, mm$z, col = 'black', 
+       size = 1, xlab = "X", ylab = "Y", zlab = "Z")
 ```
-
-DBSCAN application:
 
 ```{r}
-blo_scan <- extractDBSCAN(res, eps_cl = 0.00075)
-mm$cluster_id <- blo_scan$cluster
-mm5 <- get_elements_in_m5_groups(mm)
-plot(blo_scan)
+aa <- sqldf("select 
+	  	  GAL_ID,
+	      x, 
+	      y, 
+	      z, 
+		    case 
+  			  when group_id IN (Select GROUP_ID from mm5) then group_id
+	      else 0
+		    end as group_id, 
+	      redshift, 
+	      dist
+	  from 
+		    mm")
 ```
 
-## Out-put clusters visualization
-
-We have, on one hand all groups with more than min_members members (made up by a reduced amount of galaxies from catalog):
+And the groups with more than min_members:
 
 ```{r}
 plot3d(mm5$x, mm5$y, mm5$z, col = mm5$GROUP_ID, 
        size = 2, xlab = "X", ylab = "Y", zlab = "Z")
 ```
 
-in the other hand the output-clusters from DBSCAN:
-
-```{r}
-plot3d(points$x, points$y, points$z, 
-       col = blo_scan$cluster + 1, size = 2, 
-       xlab = "X", ylab = "Y", zlab = "Z")
-```
+# Generic functions for assessments
 
 ## Functions to asses outcomes
 
@@ -414,7 +413,8 @@ execute_stats <- function(mm, blo_scan){
 		'spurious'=numeric(),
 		'bad_class'=numeric(),
 		'is_pur'=integer(),
-		'is_comp'=integer()		
+		'is_comp'=integer(),
+		'recovery'=numeric()
 		)
 	for(r in cluster_results$cluster){
 	  if(r != 0) {
@@ -430,7 +430,10 @@ execute_stats <- function(mm, blo_scan){
 				bb$spurious,
 				bb$bad_classified,
 				bb$is_pure,  
-				bb$is_complete)
+				bb$is_complete,
+				ifelse(bb$is_pure & bb$is_complete,
+				       bb$total_in_group/number_non_isolated_galaxies,
+				       0 ))
 		}
 		#print(r)
 	}
@@ -453,41 +456,58 @@ undetected_groups <- function(dataset){
    groups_results
 }
 
-
+print_stats <- function(all_data) {
+  print(paste("Mean purity", mean(all_data$purity)))
+  print(paste("Mean completness", mean(all_data$completn)))
+  s<- undetected_groups(all_data)
+  print(paste("Undetected groups", length(s$GROUP_ID), "out of", true_groups))
+  print(paste("Detected real groups", (true_groups-length(s$GROUP_ID)), "out of", true_groups))
+}
 # Pretty print a vector preceded by a title
 pretty_print <- function (title, avector= c()){
   paste(title, do.call(paste, c(as.list(avector), sep = " ")))  
 }
+
+print_global_stats <- function(global_stats, sequence_values) {
+  pretty_print(pretty_print("Completeness", global_stats$completeness_list))
+  pretty_print(pretty_print("Purity", global_stats$purity_list))
+  pretty_print(pretty_print("Groups", global_stats$group_list))
+  pretty_print(pretty_print("Clusters", global_stats$cluster_list))
+  pretty_print(pretty_print("EPS", sequence_values))
+  pretty_print(paste("True Groups", true_groups))
+  pretty_print(pretty_print("Und. Groups", global_stats$und_gr))
+  pretty_print(pretty_print("Complete gr.:", global_stats$completes))
+  pretty_print(pretty_print("Pure gr.:", global_stats$pures))
+  pretty_print(pretty_print("Fr:", global_stats$fr_list))
+  pretty_print(pretty_print("Fp:", global_stats$fp_list))
+  pretty_print(pretty_print("Spurious:", global_stats$spurious))
+  pretty_print(pretty_print("Bad class:", global_stats$bad_class))
+  pretty_print(pretty_print("Recovery:", global_stats$recovery))
+}
 ```
 
-Now we apply to our DBSCAN:
-
-```{r R.options=list(max.print=10)}
-all <- execute_stats(mm, blo_scan)
-head(all, 5)
-```
-
-We have
+Following is intended to calculate stats
 
 ```{r}
-print(paste("Mean purity", mean(all$purity)))
-print(paste("Mean completness", mean(all$completn)))
-s<- undetected_groups(all)
-print(paste("Undetected groups", length(s$GROUP_ID), "out of", true_groups))
-print(paste("Detected real groups", (true_groups-length(s$GROUP_ID)), "out of", true_groups))
-
-```
-
-We can create a function which test over different values of to test our DBSCAN:
-
-```{r}
-##
-#Note that all$cluster_id (cluster_list), and all$group_id (group_list) are all
-# refered to a complete original lluster an d
-calculate_output <- function(test_eps_cl, res_data){
-  blo_scan <- extractDBSCAN(res_data, eps_cl = test_eps_cl)
-  mm$cluster_id <- blo_scan$cluster
-  mm5 <- get_elements_in_m5_groups(mm)
+get_initial_stats_frame <- function(){
+  stats <- data.frame(
+		'purity_list'=integer(),
+		'completeness_list'=integer(),
+		'cluster_list'=integer(),
+		'group_list'=integer(),
+		'pures'=integer(),
+		'completes'=integer(),
+		'pure_complet'=integer(),
+		'fp_list'=numeric(),
+		'fr_list'=numeric(),
+		'und_gr'=numeric(),
+		'spurious'=numeric(),
+		'bad_class'=numeric(),
+		'recovery'=numeric()
+		)
+  stats
+}
+calculate_output <- function(mm){
   predicted_groups <- length(unique(mm$cluster_id))
   all <- execute_stats(mm, blo_scan)
   number_pure_groups <- nrow(all[all$purity >= 0.666,])
@@ -506,79 +526,114 @@ calculate_output <- function(test_eps_cl, res_data){
     fp, fr, 
     length(s$GROUP_ID), 
     mean(all$spurious), 
-    mean(all$bad_class)
+    mean(all$bad_class),
+    sum(all$recovery)
   )
 }
 
 
-extract_stats <- function (eps_sequence_values, local_res) {
-	stats <- data.frame(
-		'purity_list'=integer(),
-		'completeness_list'=integer(),
-		'cluster_list'=integer(),
-		'group_list'=integer(),
-		'pures'=integer(),
-		'completes'=integer(),
-		'pure_complet'=integer(),
-		'fp_list'=numeric(),
-		'fr_list'=numeric(),
-		'und_gr'=numeric(),
-		'spurious'=numeric(),
-		'bad_class'=numeric()
-		
-		)
+#Function to get clusters-stats from DBSCAN clustering
+extract_stats_dbscan <- function (eps_sequence_values, local_res) {
+	stats <- get_initial_stats_frame()
+	for (eps_test in eps_sequence_values) {
+	  print(sprintf("Extracting DBSCAN stats for epsI=%s", eps_test))
+	  blo_scan <- extractDBSCAN(local_res, eps_test)
+    mm$cluster_id <- blo_scan$cluster
+    mm5 <- get_elements_in_m5_groups(mm)
+    alli <- calculate_output(mm)
+    
+    stats[nrow(stats) +1,] <- 
+		  c(alli[1], alli[2], alli[3], 
+		    alli[4], alli[5], alli[6], 
+		    alli[7],  alli[8], alli[9], 
+		    alli[10], alli[11], alli[12], 
+		    alli[13])
+	}
+	stats
+}
+
+#Function to get clusters-stats from OPTICS clustering
+extract_stats_XI <- function (eps_sequence_values, local_res) {
+  stats <- get_initial_stats_frame()
 		
 	for (eps_test in eps_sequence_values) {
-		alli <- calculate_output(eps_test, local_res)
+	  print(sprintf("Extracting XI stats for XI=%s", eps_test))
+	  blo_scan <- extractXi(local_res, eps_test)
+    mm$cluster_id <- blo_scan$cluster
+    #mm5 <- get_elements_in_m5_groups(mm)
+    alli <- calculate_output(mm)
+    
 		stats[nrow(stats) +1,] <- 
-			c(alli[1], alli[2], alli[3], 
-			  alli[4], alli[5], alli[6], 
-			  alli[7],  alli[8],alli[9], 
-			  alli[10], alli[11], alli[12])
+		  c(alli[1], alli[2], alli[3], 
+		    alli[4], alli[5], alli[6], 
+		    alli[7],  alli[8],alli[9], 
+		    alli[10], alli[11], alli[12], 
+		    alli[13])
 	}
-	#data$stats <- stats
-	#data$undetected_groups<-alli[10]
-	#(data$stats)
+	stats
+}
+
+#Function to get clusters-stats from HDBSCAN clustering
+extract_stats_hdbscan <- function (eps_sequence_values, points) {
+  stats <- get_initial_stats_frame()
+		
+	for (eps_test in eps_sequence_values) {
+	  print(sprintf("Extracting HDBSCAN stats for EPS= %s", eps_test))
+	  blo_scan <- hdbscan(points, 
+	                      minPts = min_members, 
+	                      cluster_selection_epsilon  = eps_test)
+    mm$cluster_id <- blo_scan$cluster
+    #mm5 <- get_elements_in_m5_groups(mm)
+    alli <- calculate_output(mm)
+    
+		stats[nrow(stats) +1,] <- 
+		  c(alli[1], alli[2], alli[3], 
+		    alli[4], alli[5], alli[6], 
+		    alli[7],  alli[8],alli[9], 
+		    alli[10], alli[11], alli[12], 
+		    alli[13])
+	}
+	stats
+}
+
+#Function to get clusters-stats from DPC clustering
+# rho can go fixed to 0.992
+extract_stats_hdbscan <- function (delta_sequence_values, galaxyDens,
+                                   rho=0.992, delta=0.0012) {
+  
+  stats <- get_initial_stats_frame()
+		
+	for (delta_test in delta_sequence_values) {
+	  print(sprintf("Extracting DPC stats for EPS= %s", delta_test))
+	  galaxyClusters <- findClusters(galaxyClusters, rho, delta_test)
+	  
+	  mm$cluster_id <- galaxyClusters$cluster
+    #mm5 <- get_elements_in_m5_groups(mm)
+    alli <- calculate_output(mm)
+    
+		stats[nrow(stats) +1,] <- 
+		  c(alli[1], alli[2], alli[3], 
+		    alli[4], alli[5], alli[6], 
+		    alli[7],  alli[8],alli[9], 
+		    alli[10], alli[11], alli[12], 
+		    alli[13])
+	}
 	stats
 }
 ```
 
-We can now test over different values in order to obtain optimal eps_cl hyper-parameter:
+## Functions for plotting results
 
 ```{r}
-#It is easy to transform onto a function which admits a sequence and a res set.
-eps_sequence_test <- seq(0.0004, 0.001, 0.0002)
-x_stats <- extract_stats(eps_sequence_test, res)
-```
+########################################################################
+# 3D function plotting
+########################################################################
+plot3D_cluster <- function(objectClustering, setPoints){
+  plot3d(setPoints$x, setPoints$y, setPoints$z, 
+       col = objectClustering$cluster + 1, size = 2, 
+       xlab = "X", ylab = "Y", zlab = "Z")
+}
 
-Show the results obtained:
-
-```{r}
-print ('############### DATA FOR eps values ############################')
-pretty_print(pretty_print("EPS", eps_sequence_test))
-print ('############### DATA FOR ############################')
-
-print ('')
-print ('')
-
-pretty_print(pretty_print("Completeness", x_stats$completeness_list))
-pretty_print(pretty_print("Purity", x_stats$purity_list))
-pretty_print(pretty_print("Groups", x_stats$group_list))
-pretty_print(pretty_print("Clusters", x_stats$cluster_list))
-pretty_print(paste("True Groups", true_groups))
-pretty_print(pretty_print("Und. Groups", x_stats$und_gr))
-pretty_print(pretty_print("Complete gr.:", x_stats$completes))
-pretty_print(pretty_print("C + P gr.:", x_stats$pure_complet))
-pretty_print(pretty_print("Pure gr.:", x_stats$pures))
-pretty_print(pretty_print("Fr:", x_stats$fr_list))
-pretty_print(pretty_print("Fp:", x_stats$fp_list))
-pretty_print(pretty_print("Spurious:", x_stats$spurious))
-pretty_print(pretty_print("Bad class:", x_stats$bad_class))
-```
-
-Lets get a plots for completeness and purity:
-
-```{r}
 plot_purity_completeness <- function(
     eps_sequence, 
     purity_l, 
@@ -686,10 +741,87 @@ ppplot_purity_completeness <- function(
 }
 ```
 
+# Raw data processing
+
+## OPTICS
+
+Optics clustering:
+
 ```{r}
-names <- c("purity_list", "completeness_list")
-x_stats$eps <- eps_sequence_test
-ppplot_purity_completeness(x_stats, names,  "Purity and completeness", 0.000525, "eps", "perc")
+points<- mm[,c('x', 'y', 'z')]
+
+#clustering
+res <- optics(points, minPts = min_members)
+plot(res)
+
+```
+
+Execute with $\xi=0.3$:
+
+```{r}
+optics <- extractXi(res, xi=0.15)
+plot(optics)
+```
+
+## Output-clusters visualization
+
+Take a plot of the clustering obtained:
+
+```{r}
+plot3D_cluster(optics, mm)
+```
+
+Stats with different values
+
+```{r}
+all <- execute_stats(mm, optics)
+print_stats(all)
+```
+
+## DBSCAN
+
+```{r}
+blo_scan <- extractDBSCAN(res, eps_cl = 0.00075)
+mm$cluster_id <- blo_scan$cluster
+mm5 <- get_elements_in_m5_groups(mm)
+plot(blo_scan)
+```
+
+## Output-clusters visualization
+
+We have, on one hand all groups with more than min_members members (made up by a reduced amount of galaxies from catalog)
+
+in the other hand the output-clusters from DBSCAN:
+
+```{r}
+plot3D_cluster(blo_scan, points)
+```
+
+```{r}
+all <- execute_stats(mm, blo_scan)
+head(all, 5)
+print_stats(all)
+```
+
+We can now test over different values in order to obtain optimal eps_cl hyper-parameter:
+
+```{r}
+#It is easy to transform onto a function which admits a sequence and a res set.
+eps_sequence_test <- seq(0.0004, 0.001, 0.0002)
+x_stats <- extract_stats_dbscan(eps_sequence_test, res)
+```
+
+Show the results obtained:
+
+```{r}
+print_global_stats(x_stats, eps_sequence_test)
+
+```
+
+Lets get a plots for completeness and purity:
+
+```{r}
+
 ```
 
 ```{r}
@@ -714,13 +846,14 @@ pplot_purity_completeness(
 ```
 
 ```{r}
-plot_purity_completeness_trend(
+plot_purity_completeness(
   eps_sequence_test, 
   x_stats$purity_list, 
   x_stats$completeness_list, 
-  c('Purity', 'Completeness'),
+  x_stats$recovery,
+  c('Purity', 'Completeness', 'Recovery'),
   "Purity/completeness on not scaled data",
-  0.000525, 'eps', 'Percentage'
+  0.0006, 'eps', 'Percentage'
 )
 ```
 
@@ -762,14 +895,48 @@ As said from theory, HDBSCAN does not generate a great model because it ability 
 ```{r}
 cl <- hdbscan(points, minPts = 5)
 length(unique( cl$cluster))
-plot3d(points$x, points$y, points$z, 
-        col = cl$cluster + 1, size = 2, 
-        xlab = "X", ylab = "Y", zlab = "Z")
-#points$cluster <- as.factor(cl$cluster)
+```
 
-#points$cluster[points$cluster == "0"] <- "Outlier"
+## Output-clusters visualization
 
-#plot_ly(points, x = ~x, y = ~y, z=~z, color = ~cluster, type = "scatter3d", mode = "markers")
+```{r}
+plot3D_cluster(cl, mm)
+```
+
+# Density Peaks Clustering(DPC )
+
+Alex Rodriguez and Alessandro Laio (2014).
+
+<https://github.com/thomasp85/densityClust>
+
+By making this way it appears some clusters:
+
+```{r}
+
+
+galaxyDens <- densityClust(points)
+galaxyClusters <- findClusters(galaxyDens, rho=0.995, delta=0.001)
+plot(galaxyClusters)
+
+# do not use this takes a lot!!:
+#plotMDS(galaxyClusters)
+
+mm$cluster_id <- galaxyClusters$cluster
+mm5 <- get_elements_in_groups(mm)
+
+
+```
+
+```{r}
+all <- execute_stats(mm, galaxyClusters)
+print_stats(all)
+
+```
+
+## Output-clusters visualization
+
+```{r}
+plot3D_cluster(galaxyClusters, mm)
 ```
 
 # Normalized data processing
@@ -789,7 +956,7 @@ Again we can do the same for scaled data:
 
 ```{r}
 eps_sequence_test <- seq(0.02, 0.035, 0.005)
-x_stats <- extract_stats(eps_sequence_test, ress)
+x_stats <- extract_stats_dbscan(eps_sequence_test, ress)
 ```
 
 ```{r}
@@ -814,36 +981,25 @@ pretty_print(pretty_print("Fr:", x_stats$fr_list))
 pretty_print(pretty_print("Fp:", x_stats$fp_list))
 pretty_print(pretty_print("Spurious:", x_stats$spurious))
 pretty_print(pretty_print("Bad class:", x_stats$bad_class))
+pretty_print(pretty_print("Recovery:", x_stats$recovery))
 
 ```
 
-```{r}
-eps_sequence_test <- seq(0.02, 0.035, 0.005)
-plot_purity_completeness_trend(
-  eps_sequence_test, 
-  x_stats$purity_list,
-  x_stats$completeness_list, 
-  c('Purity', 'Completeness'),
-  "Purity and completeness on scaled data",
-  0.0230, 'eps', 'Percentage'
-)
-```
-
-Results are quite better when all variables are scaled to a mean=0, sd=1. The optimal value of eps gives more than 76% for both purity and completeness.
+Results look quite better when all variables are scaled to a mean=0, sd=1. The optimal value of eps gives more than 76% for both purity and completeness.
 
 The same plots before
 
 ```{r}
-
 plot_purity_completeness(
-  eps_sequence_test, 
-  x_stats$pures/true_groups, 
-  x_stats$und_gr/true_groups, 
-  x_stats$pure_complet/true_groups, 
-  c('Purity', 'Undetected groups', 'Pur.+Comp.'),
-  "Group purity and undetected stats on not scaled data",
-  0.0230, 'eps', 'Percentage'
-  )
+    eps_sequence_test, 
+    x_stats$purity_list,
+    x_stats$completeness_list,
+    x_stats$recovery, 
+    c('Purity', 'Undetected groups', 'Recovery'),
+    "Group purity and undetected stats on not scaled data",
+    0.0230, 'eps', 'Percentage'
+)
+
 ```
 
 ```{r}
@@ -855,18 +1011,6 @@ plot_purity_completeness(
   c('Undetected', 'Groups', 'Detected'),
   "Purity and completeness on scaled data",
    0.0237, 'eps', 'Groups number'
-)
-```
-
-```{r}
-eps_sequence_test <- seq(0.02, 0.035, 0.005)
-plot_purity_completeness_trend(
-  eps_sequence_test, 
-  x_stats$und_gr,
-  x_stats$group_list, 
-  c('Undetected', 'Groups'),
-  "Purity and completeness on scaled data",
-  0.0237, 'eps', 'Groups number'
 )
 ```
 
@@ -1017,26 +1161,29 @@ d_LOS_scaled_symmetric <- function(v1, v2, redshift1, redshift2) {
 # https://arxiv.org/abs/2405.09855
 #######################################
 d_LOS <- function(v1, v2, redshift) {
-  print(sprintf(' rrrr %s ', redshift))
-	if(redshift< 0.01){
-		sfactor <- 0.6
-	} else if(redshift< 0.04){
-		sfactor <- 0.5
-	} else if(redshift< 0.06){
-		sfactor <- 0.4
-	} else if(redshift< 0.08){
-		sfactor <- 0.35
-	}else if(redshift< 0.1){
-		sfactor <- 0.3
-	}else if(redshift< 0.12){
-		sfactor <- 0.19
-	}else if(redshift< 0.15){
-		sfactor <- 0.08
-	}else if(redshift< 0.2){
-		sfactor <- 0.01
-	}else {
-		sfactor <- 0.2
-	}
+  if (SLOS>0){
+    sfactor <- SLOS
+  }else{
+    if(redshift< 0.01){
+		  sfactor <- 0.6
+	  } else if(redshift< 0.04){
+  		sfactor <- 0.5
+	  } else if(redshift< 0.06){
+		  sfactor <- 0.4
+	  } else if(redshift< 0.08){
+		  sfactor <- 0.35
+	  }else if(redshift< 0.1){
+		  sfactor <- 0.3
+	  }else if(redshift< 0.12){
+		  sfactor <- 0.19
+	  }else if(redshift< 0.15){
+		  sfactor <- 0.08
+	  }else if(redshift< 0.2){
+		  sfactor <- 0.01
+	  }else {
+		  sfactor <- 0.2
+	  }
+  }
 	sfactor * sum((v1-v2)*v1) / sqrt(sum(v1^2))
 }
 
@@ -1048,10 +1195,10 @@ d_LOS <- function(v1, v2, redshift) {
 # sfactor must be a global variable
 #######################################
 s_distance <- function(v1, v2){
-  print(v1)
-	vector1 <- v1[1:3]
+  vector1 <- v1[1:3]
 	vector2 <- v2[1:3]
-	proper_distance <- (v1[4] + v2[4])/2
+	proper_distance <- v1[4]
+	#proper_distance <- (v1[4] + v2[4])/2
 	redshift1 <- v1[5]
 	redshift2 <- v2[5]
   
@@ -1110,8 +1257,7 @@ We obtain a notable improvement:
 
 ```{r}
 sall <- execute_stats(mm, sblo_scan)
-print(paste("Mean purity", mean(sall$purity)))
-print(paste("Mean completness", mean(sall$completn)))
+print_stats(sall)
 ```
 
 Test several hyper-parameters:
@@ -1119,34 +1265,23 @@ Test several hyper-parameters:
 ```{r}
 #optimal value found at 0.00015
 eps_sequence_test <- seq(0.00010, 0.00035, 0.00005)
-sx_stats <- extract_stats(eps_sequence_test, sres)
-
-```
-
-```{r}
-pretty_print(pretty_print("Completeness", sx_stats$completeness_list))
-pretty_print(pretty_print("Purity", sx_stats$purity_list))
-pretty_print(pretty_print("Groups", sx_stats$group_list))
-pretty_print(pretty_print("Clusters", sx_stats$cluster_list))
-pretty_print(pretty_print("EPS", eps_sequence_test))
-pretty_print(paste("True Groups", true_groups))
-pretty_print(pretty_print("Und. Groups", sx_stats$und_gr))
-pretty_print(pretty_print("Complete gr.:", sx_stats$completes))
-pretty_print(pretty_print("Pure gr.:", sx_stats$pures))
-pretty_print(pretty_print("Fr:", sx_stats$fr_list))
-pretty_print(pretty_print("Fp:", sx_stats$fp_list))
-pretty_print(pretty_print("Spurious:", sx_stats$spurious))
-pretty_print(pretty_print("Bad class:", sx_stats$bad_class))
+sx_stats <- extract_stats_dbscan(eps_sequence_test, sres)
 
 ```
 
 ```{r}
 
-plot_purity_completeness_trend(
+
+```
+
+```{r}
+
+plot_purity_completeness(
   eps_sequence_test, 
   sx_stats$purity_list, 
   sx_stats$completeness_list,
-  c('Purity', 'Completeness'),
+  sx_stats$recovery,
+  c('Purity', 'Completeness', 'Recovery'),
   'Purity Completeness on Slos data',
   0.000132, 'eps', 'Percentage'
 )
@@ -1179,25 +1314,27 @@ Alex Rodriguez and Alessandro Laio (2014).
 By making this way it appears some clusters:
 
 ```{r}
-if (!require('densityClust')) install.packages('densityClust')
-library(densityClust)
+
 
 galaxyDens <- densityClust(points)
-galaxyClusters <- findClusters(galaxyDens, rho=0.99, delta=0.0026)
+galaxyClusters <- findClusters(galaxyDens, rho=0.995, delta=0.001)
 plot(galaxyClusters)
+
+#use this instead
+plot3D_cluster(galaxyClusters, points)
+
 # do not use this takes a lot!!:
-plotMDS(galaxyClusters)
-galaxyClusters$cluster # The clusters dor dataset
+#plotMDS(galaxyClusters)
 
 mm$cluster_id <- galaxyClusters$cluster
 mm5 <- get_elements_in_groups(mm)
 
-plot3d(mm5$x, mm5$y, mm5$z, col = mm5$GROUP_ID, 
-        size = 2, xlab = "X", ylab = "Y", zlab = "Z")
- 
-plot3d(points$x, points$y, points$z, 
-        col = blo_scan$cluster + 1, size = 2, 
-        xlab = "X", ylab = "Y", zlab = "Z")
+
+```
+
+```{r}
+all <- execute_stats(mm, galaxyClusters)
+print_stats(all)
 ```
 
 ## Other functions to asses globally (unused by now)
@@ -1254,3 +1391,45 @@ symmetric <- as.dist(symmetric_result)
 print(outer_result)
 print(symmetric)
 ```
+
+# Summary and conclussions
+
+The bests results obtained with each method:
+
++-----------+------------+-----------+-------------+
+| Method    | DataSample | Outcomes  | Conclussion |
++===========+============+===========+=============+
+| OPTICS    | Non-scaled | P: 0.72   |             |
+|           |            |           |             |
+|           |            | C: 0.72   |             |
+|           |            |           |             |
+|           |            | R         |             |
++-----------+------------+-----------+-------------+
+| DBSCAN    | Non-scaled | P: 0.72   |             |
+|           |            |           |             |
+|           |            | C: 0.72   |             |
+|           |            |           |             |
+|           |            | R: 0.45   |             |
++-----------+------------+-----------+-------------+
+| HDBSCAN   | Non-scaled | P         |             |
+|           |            |           |             |
+|           |            | C         |             |
+|           |            |           |             |
+|           |            | R         |             |
++-----------+------------+-----------+-------------+
+| DPC       | Non-scaled | P         |             |
+|           |            |           |             |
+|           |            | C         |             |
+|           |            |           |             |
+|           |            | R         |             |
++-----------+------------+-----------+-------------+
+| sOPTICS   | Scaled     |           |             |
++-----------+------------+-----------+-------------+
+| OPTICS    | Scaled     |           |             |
++-----------+------------+-----------+-------------+
+| DBSCAN    | Scaled     |           |             |
++-----------+------------+-----------+-------------+
+| HDBSCAN   | Scaled     |           |             |
++-----------+------------+-----------+-------------+
+
+# Executive summary
