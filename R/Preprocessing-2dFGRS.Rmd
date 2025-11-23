@@ -255,6 +255,9 @@ aa <- sqldf("select
 	      dist
 	  from 
 		    mm")
+
+plot3d(aa$x, aa$y, aa$z, col = aa$group_id+1, 
+       size = 2, xlab = "X", ylab = "Y", zlab = "Z")
 ```
 
 And the groups with more than min_members:
@@ -465,24 +468,30 @@ print_stats <- function(all_data) {
 }
 # Pretty print a vector preceded by a title
 pretty_print <- function (title, avector= c()){
-  paste(title, do.call(paste, c(as.list(avector), sep = " ")))  
+  paste(title, do.call(paste, c(as.list(avector), sep = " ")))
 }
 
 print_global_stats <- function(global_stats, sequence_values) {
-  pretty_print(pretty_print("Completeness", global_stats$completeness_list))
-  pretty_print(pretty_print("Purity", global_stats$purity_list))
-  pretty_print(pretty_print("Groups", global_stats$group_list))
-  pretty_print(pretty_print("Clusters", global_stats$cluster_list))
-  pretty_print(pretty_print("EPS", sequence_values))
-  pretty_print(paste("True Groups", true_groups))
-  pretty_print(pretty_print("Und. Groups", global_stats$und_gr))
-  pretty_print(pretty_print("Complete gr.:", global_stats$completes))
-  pretty_print(pretty_print("Pure gr.:", global_stats$pures))
-  pretty_print(pretty_print("Fr:", global_stats$fr_list))
-  pretty_print(pretty_print("Fp:", global_stats$fp_list))
-  pretty_print(pretty_print("Spurious:", global_stats$spurious))
-  pretty_print(pretty_print("Bad class:", global_stats$bad_class))
-  pretty_print(pretty_print("Recovery:", global_stats$recovery))
+  print ('############### DATA FOR eps values ############')
+  pretty_print(pretty_print("EPS", eps_sequence_test))
+  print ('#############################################')
+  
+  print ('')
+  print ('')  
+  print(pretty_print("Completeness", global_stats$completeness_list))
+  print(pretty_print("Purity", global_stats$purity_list))
+  print(pretty_print("Groups", global_stats$group_list))
+  print(pretty_print("Clusters", global_stats$cluster_list))
+  print(pretty_print("EPS", sequence_values))
+  print(paste("True Groups", true_groups))
+  print(pretty_print("Und. Groups", global_stats$und_gr))
+  print(pretty_print("Complete gr.:", global_stats$completes))
+  print(pretty_print("Pure gr.:", global_stats$pures))
+  print(pretty_print("Fr:", global_stats$fr_list))
+  print(pretty_print("Fp:", global_stats$fp_list))
+  print(pretty_print("Spurious:", global_stats$spurious))
+  print(pretty_print("Bad class:", global_stats$bad_class))
+  print(pretty_print("Recovery:", global_stats$recovery))
 }
 ```
 
@@ -741,6 +750,15 @@ ppplot_purity_completeness <- function(
 }
 ```
 
+# Clustering problem on dataset
+
+We want, in this work apply some clustering algorithms, and the compare the obtained results with the
+halo-based group finder optimized for grouping galaxies that reside in the same dark matter halo.
+
+In other words: this is not a normal clustering problem where we want to find a model where most of the samples belong to a group in an hypotetical method maximixed by the "Elbow method".
+
+We want to see whether any clustering algorithm with some hyperparameters configuration is able to modelize the data given by the halo-based finder.
+
 # Raw data processing
 
 ## OPTICS
@@ -756,6 +774,8 @@ plot(res)
 
 ```
 
+In the previous plot we can see how OPTICS modelize in valleys (clusters) and the peaks (clusters separation).
+
 Execute with $\xi=0.3$:
 
 ```{r}
@@ -763,7 +783,7 @@ optics <- extractXi(res, xi=0.15)
 plot(optics)
 ```
 
-## Output-clusters visualization
+### Output-clusters visualization
 
 Take a plot of the clustering obtained:
 
@@ -780,6 +800,8 @@ print_stats(all)
 
 ## DBSCAN
 
+We can directly apply extractDBSCAN on the OPTICS model.
+
 ```{r}
 blo_scan <- extractDBSCAN(res, eps_cl = 0.00075)
 mm$cluster_id <- blo_scan$cluster
@@ -787,7 +809,7 @@ mm5 <- get_elements_in_m5_groups(mm)
 plot(blo_scan)
 ```
 
-## Output-clusters visualization
+### Output-clusters visualization
 
 We have, on one hand all groups with more than min_members members (made up by a reduced amount of galaxies from catalog)
 
@@ -960,29 +982,7 @@ x_stats <- extract_stats_dbscan(eps_sequence_test, ress)
 ```
 
 ```{r}
-
-print ('############### DATA FOR eps values ############################')
-pretty_print(pretty_print("EPS", eps_sequence_test))
-print ('############### DATA FOR ############################')
-
-print ('')
-print ('')
-pretty_print(pretty_print("Completeness", x_stats$completeness_list))
-pretty_print(pretty_print("Purity", x_stats$purity_list))
-pretty_print(pretty_print("Groups", x_stats$group_list))
-pretty_print(pretty_print("Clusters", x_stats$cluster_list))
-pretty_print(pretty_print("EPS", eps_sequence_test))
-pretty_print(paste("True Groups", true_groups))
-pretty_print(pretty_print("Und. Groups", x_stats$und_gr))
-pretty_print(pretty_print("Complete gr.:", x_stats$completes))
-pretty_print(pretty_print("Pure gr.:", x_stats$pures))
-pretty_print(pretty_print("C + P gr.:", x_stats$pure_complet))
-pretty_print(pretty_print("Fr:", x_stats$fr_list))
-pretty_print(pretty_print("Fp:", x_stats$fp_list))
-pretty_print(pretty_print("Spurious:", x_stats$spurious))
-pretty_print(pretty_print("Bad class:", x_stats$bad_class))
-pretty_print(pretty_print("Recovery:", x_stats$recovery))
-
+print_global_stats(x_stats, eps_sequence_test)
 ```
 
 Results look quite better when all variables are scaled to a mean=0, sd=1. The optimal value of eps gives more than 76% for both purity and completeness.
@@ -1270,8 +1270,7 @@ sx_stats <- extract_stats_dbscan(eps_sequence_test, sres)
 ```
 
 ```{r}
-
-
+print_global_stats(x_stats, eps_sequence_test)
 ```
 
 ```{r}
