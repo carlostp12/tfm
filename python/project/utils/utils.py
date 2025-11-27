@@ -11,8 +11,10 @@ def lambda_cdm(x):
 
 
 def calculate_distance(z):
-    I = quad(lambda_cdm, 0, z, args=())
-    return I[0]
+    if z >= 0:
+        I = quad(lambda_cdm, 0, z, args=())
+        return I[0]
+    return 0
 
 
 def to_radians(angle):

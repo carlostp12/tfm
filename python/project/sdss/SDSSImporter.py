@@ -6,21 +6,30 @@ from project.utils.utils import calculate_distance, changeCoordsSpericalY, chang
 
 class SDSSImporter:
 
-    def __init__(self, sdss_file, destiny_file):
+    real_importer = False
+
+    def __init__(self, sdss_file, destiny_file, r):
         self.destiny_file = destiny_file
         self.sdss_File = sdss_file
+        self.real_importer = r
 
     def import_file(self):
-        '''
+        """
         transform a dss original galaxy file in a CSV file
-        '''
+        """
+        z_index = 4
+        if self.real_importer is True:
+            z_index = 16
         with open(self.sdss_File, "r") as f:
             reader = csv.reader(f, delimiter="\t")
             with open(self.destiny_file, "w") as fw:
                 fw.write('GAL_ID,ra,dec,z\n')
                 for i, line in enumerate(reader):
                     adict = line[0].split()
-                    fw.write('{},{},{},{}\n'.format(int(adict[1]), float(adict[2]), float(adict[3]), float(adict[4])))
+                    if self.real_importer is False:
+                        fw.write('{},{},{},{}\n'.format(int(adict[1]), float(adict[2]), float(adict[3]), float(adict[z_index])))
+                    else:
+                        fw.write('{},{},{},{}\n'.format(int(adict[2]), float(adict[3]), float(adict[4]), float(adict[z_index])))
                     if i % 10000 == 1:
                         print(i)
             fw.close()
