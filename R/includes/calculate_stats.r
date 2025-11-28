@@ -1,0 +1,177 @@
+get_initial_stats_frame <- function(){
+  stats <- data.frame(
+		'purity_list'=integer(),
+		'completeness_list'=integer(),
+		'cluster_list'=integer(),
+		'group_list'=integer(),
+		'pures'=integer(),
+		'completes'=integer(),
+		'pure_complet'=integer(),
+		'fp_list'=numeric(),
+		'fr_list'=numeric(),
+		'und_gr'=numeric(),
+		'spurious'=numeric(),
+		'bad_class'=numeric(),
+		'recovery'=numeric()
+		)
+  stats
+}
+calculate_output <- function(mm){
+  predicted_groups <- length(unique(mm$cluster_id))
+  all <- execute_stats(mm, blo_scan)
+  number_pure_groups <- nrow(all[all$purity >= 0.666,])
+  number_complete_groups <- nrow(all[all$completn>=0.5,])
+  number_pure_complete_groups <- nrow(all[all$purity >= 0.666 & all$completn >= 0.5,])
+  fp <- number_pure_groups/predicted_groups
+  fr <- number_pure_complete_groups / true_groups
+  s <- undetected_groups(all)
+  c(mean(all$purity), 
+    mean(all$completn), 
+    length(unique(all$cluster_id)), 
+    length(unique(all$group_id)), 
+    number_pure_groups, 
+    number_complete_groups, 
+    number_pure_complete_groups, 
+    fp, fr, 
+    length(s$GROUP_ID), 
+    mean(all$spurious), 
+    mean(all$bad_class),
+    sum(all$recovery)
+  )
+}
+
+
+#Function to get clusters-stats from DBSCAN clustering
+extract_stats_dbscan <- function (eps_sequence_values, local_res) {
+	stats <- get_initial_stats_frame()
+	for (eps_test in eps_sequence_values) {
+	  print(sprintf("Extracting DBSCAN stats for epsI=%s", eps_test))
+	  blo_scan <- extractDBSCAN(local_res, eps_test)
+    mm$cluster_id <- blo_scan$cluster
+    mm5 <- get_elements_in_m5_groups(mm)
+    alli <- calculate_output(mm)
+    
+    stats[nrow(stats) +1,] <- 
+		  c(alli[1], alli[2], alli[3], 
+		    alli[4], alli[5], alli[6], 
+		    alli[7],  alli[8], alli[9], 
+		    alli[10], alli[11], alli[12], 
+		    alli[13])
+	}
+	stats
+}
+
+#Function to get clusters-stats from OPTICS clustering
+extract_stats_XI <- function (eps_sequence_values, local_res) {
+  stats <- get_initial_stats_frame()
+		
+	for (eps_test in eps_sequence_values) {
+	  print(sprintf("Extracting XI stats for XI=%s", eps_test))
+	  blo_scan <- extractXi(local_res, eps_test)
+    mm$cluster_id <- blo_scan$cluster
+    #mm5 <- get_elements_in_m5_groups(mm)
+    alli <- calculate_output(mm)
+    
+		stats[nrow(stats) +1,] <- 
+		  c(alli[1], alli[2], alli[3], 
+		    alli[4], alli[5], alli[6], 
+		    alli[7],  alli[8],alli[9], 
+		    alli[10], alli[11], alli[12], 
+		    alli[13])
+	}
+	stats
+}
+
+#Function to get clusters-stats from HDBSCAN clustering
+extract_stats_hdbscan <- function (eps_sequence_values, points) {
+  stats <- get_initial_stats_frame()
+		
+	for (eps_test in eps_sequence_values) {
+	  print(sprintf("Extracting HDBSCAN stats for EPS= %s", eps_test))
+	  blo_scan <- hdbscan(points, 
+	                      minPts = min_members, 
+	                      cluster_selection_epsilon  = eps_test)
+    mm$cluster_id <- blo_scan$cluster
+    #mm5 <- get_elements_in_m5_groups(mm)
+    alli <- calculate_output(mm)
+    
+		stats[nrow(stats) +1,] <- 
+		  c(alli[1], alli[2], alli[3], 
+		    alli[4], alli[5], alli[6], 
+		    alli[7],  alli[8],alli[9], 
+		    alli[10], alli[11], alli[12], 
+		    alli[13])
+	}
+	stats
+}
+
+#Function to get clusters-stats from DPC clustering
+# rho can go fixed to 0.992
+extract_stats_hdbscan <- function (delta_sequence_values, galaxyDens,
+                                   rho=0.992, delta=0.0012) {
+  
+  stats <- get_initial_stats_frame()
+		
+	for (delta_test in delta_sequence_values) {
+	  print(sprintf("Extracting DPC stats for EPS= %s", delta_test))
+	  galaxyClusters <- findClusters(galaxyClusters, rho, delta_test)
+	  
+	  mm$cluster_id <- galaxyClusters$cluster
+    #mm5 <- get_elements_in_m5_groups(mm)
+    alli <- calculate_output(mm)
+    
+		stats[nrow(stats) +1,] <- 
+		  c(alli[1], alli[2], alli[3], 
+		    alli[4], alli[5], alli[6], 
+		    alli[7],  alli[8],alli[9], 
+		    alli[10], alli[11], alli[12], 
+		    alli[13])
+	}
+	stats
+}
+
+get_elements_not_in_groups <- function(mm5, dataset_all){
+  groups_results <- sqldf("select 
+	  	  mm5.GAL_ID,
+	      mm5.x, 
+	      mm5.y, 
+	      mm5.z, 
+	      mm5.GROUP_ID, 
+	      mm5.redshift, 
+	      mm5.dist,  
+	      0 as cluster_id
+	  from 
+		    mm5, dataset_all
+	  where 
+		  mm5.GROUP_ID 
+		not in (select 
+		  			group_id 
+			    from dataset_all) 
+			      group by mm5.GAL_ID,
+	          mm5.x, 
+	          mm5.y, 
+	          mm5.z, 
+	          mm5.GROUP_ID, 
+	          mm5.redshift, 
+	          mm5.dist")
+  groups_results
+}
+
+get_elements_in_groups <- function(dataset_mm, dataset_all){
+	tt<-sqldf(sprintf("
+	      select
+	          d.GAL_ID,
+	          d.x, 
+	          d.y, 
+	          d.z, 
+	          d.GROUP_ID, 
+	          d.redshift, 
+	          d.dist,  
+	          d.cluster_id 
+	      from 
+	          dataset_mm as d, dataset_all a 
+        where 
+            d.GROUP_ID=a.GROUP_ID and 
+	          d.cluster_id>0"))
+	tt
+}
