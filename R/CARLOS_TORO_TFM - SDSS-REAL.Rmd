@@ -484,6 +484,16 @@ print_stats(all)
 
 DPC is analogous to HDBCAN: the model do not fit well for the same reason: detecting clusters in noise regions.
 
+May be DPC is not good in finding cluster but it can be useful in finding the centers by finding the peaks of density, as we show bellow:
+
+```{r}
+galaxyClusters <- findClusters(galaxyDens, rho=0.999, delta=0.0025)
+density_points <- points[galaxyClusters$peaks,]
+length(galaxyClusters$peaks)
+plot3d(density_points$x, density_points$y, density_points$z, col = 'BLACK', 
+        size = 4, xlab = "X", ylab = "Y", zlab = "Z")
+```
+
 ## Output-clusters visualization
 
 ```{r}

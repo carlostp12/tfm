@@ -133,7 +133,6 @@ ggplot(mm, aes(x=redshift, y=redshift))+geom_violin()
 
 ```{r}
 dim(mm)
-
 ```
 
 Select groups with more than min_members members queries:
@@ -142,9 +141,12 @@ Select groups with more than min_members members queries:
 h<-sqldf("select 
             count(GAL_ID) as members, 
             GROUP_ID 
-          from mm 
-          group by GROUP_ID 
-          order by  members desc")
+          from 
+            mm 
+          group by 
+            GROUP_ID 
+          order by  
+            members desc")
 mm5<-sqldf(sprintf("
     SELECT 
         mm.GAL_ID,
@@ -179,44 +181,6 @@ get_elements_in_m5_groups <- function(mm){
 	          h.members >= %s", min_members))
 	groups_in_mm5
 }
-get_elements_not_in <- function(dataset_mm, dataset_all){
-  groups_results <- sqldf("select 
-	  	  GAL_ID,
-	      x, 
-	      y, 
-	      z, 
-	      GROUP_ID, 
-	      redshift, 
-	      dist,  
-	      cluster_id
-	  from 
-		    dataset_mm d
-	  where 
-		  d.GROUP_ID 
-		not in (select 
-		  			group_id 
-			    from 
-					  dataset_all)")
-}
-get_elements_in <- function(dataset_mm, dataset_all){
-  groups_results <- sqldf("select 
-	  	  GAL_ID,
-	      x, 
-	      y, 
-	      z, 
-	      GROUP_ID, 
-	      redshift, 
-	      dist,  
-	      cluster_id
-	  from 
-		    dataset_mm d
-	  where 
-		  d.GROUP_ID 
-		  in (select 
-		  			group_id 
-			    from 
-					  dataset_all)")
-}
 ```
 
 Then use it to find the target data:
@@ -226,8 +190,8 @@ Then use it to find the target data:
 true_groups <- length(unique(mm5$GROUP_ID))
 number_non_isolated_galaxies <- dim(mm5)[1]
 number_isolated_galaxies <- dim(mm)[1] - dim(mm5)[1]
-print(
-  sprintf('Number of galaxies in groups with more than %s elements %s out of %s, aprox %s percent', 
+print(sprintf('Number of galaxies in groups with 
+              more than %s elements %s out of %s, aprox %s percent', 
           min_members, 
           number_non_isolated_galaxies, 
           dim(mm)[1], format(number_non_isolated_galaxies * 100
@@ -1448,40 +1412,40 @@ print(symmetric)
 
 The bests results obtained with each method:
 
-+---------+-------------+----------+------------+
-| Method  | Data Sample | Outcomes | Conclusion |
-+=========+=============+==========+============+
-| OPTICS  | Non-scaled  | P: 0.72  |            |
-|         |             |          |            |
-|         |             | C: 0.72  |            |
-|         |             |          |            |
-|         |             | R        |            |
-+---------+-------------+----------+------------+
-| DBSCAN  | Non-scaled  | P: 0.72  |            |
-|         |             |          |            |
-|         |             | C: 0.72  |            |
-|         |             |          |            |
-|         |             | R: 0.45  |            |
-+---------+-------------+----------+------------+
-| HDBSCAN | Non-scaled  | P        |            |
-|         |             |          |            |
-|         |             | C        |            |
-|         |             |          |            |
-|         |             | R        |            |
-+---------+-------------+----------+------------+
-| DPC     | Non-scaled  | P        |            |
-|         |             |          |            |
-|         |             | C        |            |
-|         |             |          |            |
-|         |             | R        |            |
-+---------+-------------+----------+------------+
-| sOPTICS | Scaled      |          |            |
-+---------+-------------+----------+------------+
-| OPTICS  | Scaled      |          |            |
-+---------+-------------+----------+------------+
-| DBSCAN  | Scaled      |          |            |
-+---------+-------------+----------+------------+
-| HDBSCAN | Scaled      |          |            |
-+---------+-------------+----------+------------+
++----------+-------------+----------+------------+
+| Method   | Data Sample | Outcomes | Conclusion |
++==========+=============+==========+============+
+| OPTICS   | Non-scaled  | P: 0.72  |            |
+|          |             |          |            |
+|          |             | C: 0.72  |            |
+|          |             |          |            |
+|          |             | R        |            |
++----------+-------------+----------+------------+
+| DBSCAN   | Non-scaled  | P: 0.72  |            |
+|          |             |          |            |
+|          |             | C: 0.72  |            |
+|          |             |          |            |
+|          |             | R: 0.45  |            |
++----------+-------------+----------+------------+
+| HDBSCAN  | Non-scaled  | P        |            |
+|          |             |          |            |
+|          |             | C        |            |
+|          |             |          |            |
+|          |             | R        |            |
++----------+-------------+----------+------------+
+| DPC      | Non-scaled  | P        |            |
+|          |             |          |            |
+|          |             | C        |            |
+|          |             |          |            |
+|          |             | R        |            |
++----------+-------------+----------+------------+
+| sOPTICS  | Scaled      |          |            |
++----------+-------------+----------+------------+
+| OPTICS   | Scaled      |          |            |
++----------+-------------+----------+------------+
+| DBSCAN   | Scaled      |          |            |
++----------+-------------+----------+------------+
+| HDBSCAN  | Scaled      |          |            |
++----------+-------------+----------+------------+
 
 # Executive summary
