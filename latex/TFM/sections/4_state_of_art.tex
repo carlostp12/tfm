@@ -387,6 +387,26 @@ The strength of HDBSCAN is its adaptability, this can result in a defect because
 
 Density Peaks Clustering (DPC) is a newer (proposed in 2014) density-based algorithm, it works by quickly search of cluster centers through the so called decision diagram
 
+DPC realies on the assumption that cluster centers are points of clusters where density reaches local maximum, and then each one is surrounded by points with lower local densisty with relatively large distance away from other centers. Therefore two quantites are computed for each point $p_i$ in the dataset:
+	- $\ro_i$ local density. which is calculated as $\rho_i=\sum_{j}\chi(d_{ij}-d_c) $, where $d_c$ is a cutoff distances and $\chi(x)=1 $ if $x<0$ and  $\chi(x)=0 $ if $x \geq 0$. In other words, $\rho_i$ is the number of points that are closer than $d_c$ to the point $i$.
+	- $\delta_i$: distance from  next point with higher density. this is measured by computing:
+	$\delta_i = min_{j:\rho_j>\rho_i}(d_{ij})$. and for the point with highest density $\delta_i = max_{j}(d_{ij})$. Therefore $\delta_i$ is much larger than other typical values for those points where density reachs its local or global maximum.
+	
+	\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.5\textwidth]{./figs/dpc_1.jpg.jpg}
+	\caption{ DPC in two dimensions}{(A) Point distribution. Data points are ranked in order of decreasing density.} {(B) Decision graph for the data in
+(A). Different colors correspond to different clusters.}{Source \cite{DPC:2014}.}
+	\label{fig:mst}
+	\end{figure}
+	
+	
+The algorithm has its basis in the assumptions that cluster centers are surrounded by neighbors with lower local density and that they are at a relatively large distance from any points with a higher local density. For each data point i, we compute two quantities: its local density ri and its distance di from points of higher density. Both
+these quantities depend only on the distances dij
+between data points, which are assumed to satisfy
+the triangular inequality. The local density ri
+of data point i is defined as
+
 \subsection{Previous machine learning applications in galaxy clustering}
 
 This section briefly reviews several Machine Learning (ML) applications in cosmology, with particular emphasis on clustering techniques, but first we will introduce some historical research in globally galaxy custering.

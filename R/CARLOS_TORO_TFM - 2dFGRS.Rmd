@@ -73,6 +73,11 @@ library(densityClust)
 
 if (!require('densityClust')) install.packages('densityClust')
 library(densityClust)
+
+#Heat map in DPC
+if (!require('RColorBrewer')) install.packages('RColorBrewer')
+library(RColorBrewer)
+
 ```
 
 # The clustering problem on galaxy dataset
@@ -91,6 +96,9 @@ We want find some hyperparameters configuration makes possible to modelize the d
 ######################
 #     Galaxy 2dFGRS loading # 
 ######################
+
+folder <- Sys.getenv('PROJECT_TFM')
+includes_folder  <- sprintf('%s\\R\\includes\\', folder)
 folder <- Sys.getenv('PROJECT_TFM')
 folder <- sprintf('%s/data/2dfgrs/', folder)
 file <- '2dfgrs-valid.csv'
@@ -272,462 +280,23 @@ For this study we consider an output-cluster to be pure if P\>=0.66 (at least 2/
 Following code is aimed to asses the outcomes obtained with from an given output-cluster:
 
 ```{r}
-
-###############################################################################
-#	Number of elements in a given output-cluster
-###############################################################################
-calculate_count_of_cluster <- function(cluster_id, dataset){
-	ttotal<-sqldf(sprintf("
-	    select 
-	      count(GAL_ID) as how_many
-			from 
-			  dataset
-			where 
-	       cluster_id =%s", cluster_id))
-}
-
-
-###############################################################################
-#	Number of elements in a given true-group
-###############################################################################
-calculate_count_of_group <- function(group_id, dataset){
-	ttotal<-sqldf(sprintf("
-	  select 
-	    count(GAL_ID) as how_many
-		from 
-		  dataset
-		where 
-		  group_id=%s
-		group by 
-	    group_id", group_id)) 
-    list('how_many' = ttotal$how_many)
-}
-
-
-###############################################################################
-#	The most common true-group of a given output-cluster and count elements in the
-#	intersection group and cluster.
-###############################################################################
-calculate_majority_group <- function(cluster_id, dataset){
-	ttotal<-sqldf(sprintf("
-	  select 
-	    count(GAL_ID) as how_many,
-			group_id as group_id
-		from 
-		  dataset
-		where 
-		  cluster_id=%s
-		  
-		group by 
-			group_id
-		order by 
-		  how_many desc 
-	    limit 1", cluster_id)) 
-    list('group_id' = ttotal$group_id,
-         'how_many' = ttotal$how_many)
-}
-
-###############################################################################
-#	Purity and Completeness: 
-#		1- (P) how many in an output-cluster coming from a true-group.
-#		2- (C) how many in the majority true-group are present in output-cluster.
-#	An output-cluster is said to be pure if P- >= 0.666 
-#	An output-cluster is said to be complete if C >= 0.5 
-###############################################################################
-calculate_stats <- function(cluster_id, dataset) {
-  #print(sprintf('Calculating stats for  clusterID %s', cluster_id))
-  total<-calculate_majority_group(cluster_id, dataset)
-  #Number of elements in the cluster_id that also belong
-  #to majority group
-  total_in_cluster_group <- total$how_many
-  group_id <- total$group_id
-  
-  #Total number of elements in a group
-  total_in_group <- calculate_count_of_group(group_id, dataset)
-  total_in_group <- total_in_group$how_many
-  
-  #Total number of elements in a cluster
-  total_in_cluster<-calculate_count_of_cluster(cluster_id, dataset)
-  total_in_cluster <- total_in_cluster$how_many
-  
-  #Purity: all of group in cluster/total un cluster
-  purity <- ifelse(total_in_cluster > 0, total_in_cluster_group/total_in_cluster, 0)
-  #completeness: all of group in cluster/total un group
-  completeness <- ifelse(total_in_group > 0, total_in_cluster_group/total_in_group, 0)	
-  
-  bad_classified <- total_in_group - total_in_cluster_group # belowing to group but classified outside
-  spurious <- total_in_cluster - total_in_cluster_group # Outside of the group classified inside
-  list('cluster_id' = cluster_id, 
-		'group_id' = group_id , 
-		'total_in_group' = total_in_group, 
-		'total_in_cluster' = total_in_cluster, 
-		'total_in_cluster_group' = total_in_cluster_group,
-		'purity' = purity,
-		'completeness' = completeness,
-		'spurious' = spurious,
-		'bad_classified' = bad_classified,
-		'is_pure' = ifelse(purity>=0.666, 1, 0),
-		'is_complete' = ifelse(completeness >= 0.5, 1, 0)
-	   )
-}
-
-
-############################################################################
-# Execute stats from a given mm dataset and a db_scan execution result
-# delete column from dataframe: mm <- select(mm, -'cluster')
-############################################################################
-execute_stats <- function(mm, blo_scan){
-  
-	#mm0 <- mm[mm$cluster != 0, ]
-	cluster_results <-sqldf("
-    select 
-	    distinct(cluster_id) AS cluster
-		FROM 
-	    mm")
-	stats <- data.frame('cluster_id'=integer(),
-		'group_id'=integer(),
-		'total_in_group'=integer(),
-		'total_in_cluster'=integer(),
-		'total_in_cluster_group'=integer(),
-		'purity'=numeric(),
-		'completn'=numeric(),
-		'spurious'=numeric(),
-		'bad_class'=numeric(),
-		'is_pur'=integer(),
-		'is_comp'=integer(),
-		'recovery'=numeric()
-		)
-	for(r in cluster_results$cluster){
-	  if(r != 0) {
-		bb <- calculate_stats(r, mm)
-		stats[nrow(stats) +1,] <- 
-			c(  bb$cluster_id, 
-				bb$group_id, 
-				bb$total_in_group, 
-				bb$total_in_cluster, 
-				bb$total_in_cluster_group, 
-				bb$purity, 
-				bb$completeness, 
-				bb$spurious,
-				bb$bad_classified,
-				bb$is_pure,  
-				bb$is_complete,
-				ifelse(bb$is_pure & bb$is_complete,
-				       bb$total_in_group/number_non_isolated_galaxies,
-				       0 ))
-		}
-		#print(r)
-	}
-	return (stats)
-}
-
-undetected_groups <- function(dataset){
-  groups_results <-sqldf("
-    select 
-        distinct(GROUP_ID)
-    from 
-        mm5
-    where 
-      group_id not in (
-        select 
-          distinct(group_id) as group_id
-		    from
-          dataset
-        )")
-   groups_results
-}
-
-print_stats <- function(all_data) {
-  print(paste("Mean purity", mean(all_data$purity)))
-  print(paste("Mean completness", mean(all_data$completn)))
-  s<- undetected_groups(all_data)
-  print(paste("Undetected groups", length(s$GROUP_ID), "out of", true_groups))
-  print(paste("Detected real groups", (true_groups-length(s$GROUP_ID)), "out of", true_groups))
-}
-# Pretty print a vector preceded by a title
-pretty_print <- function (title, avector= c()){
-  paste(title, do.call(paste, c(as.list(avector), sep = " ")))
-}
-
-print_global_stats <- function(global_stats, sequence_values) {
-  print ('############### DATA FOR eps values ############')
-  pretty_print(pretty_print("EPS", eps_sequence_test))
-  print ('#############################################')
-  
-  print ('')
-  print ('')  
-  print(pretty_print("Completeness", global_stats$completeness_list))
-  print(pretty_print("Purity", global_stats$purity_list))
-  print(pretty_print("Groups", global_stats$group_list))
-  print(pretty_print("Clusters", global_stats$cluster_list))
-  print(pretty_print("EPS", sequence_values))
-  print(paste("True Groups", true_groups))
-  print(pretty_print("Und. Groups", global_stats$und_gr))
-  print(pretty_print("Complete gr.:", global_stats$completes))
-  print(pretty_print("Pure gr.:", global_stats$pures))
-  print(pretty_print("Fr:", global_stats$fr_list))
-  print(pretty_print("Fp:", global_stats$fp_list))
-  print(pretty_print("Spurious:", global_stats$spurious))
-  print(pretty_print("Bad class:", global_stats$bad_class))
-  print(pretty_print("Recovery:", global_stats$recovery))
-}
+sys.source(sprintf("%s\\assess.r", includes_folder), envir = knitr::knit_global())
 ```
 
 Following code is intended to calculate stats
 
 ```{r}
-get_initial_stats_frame <- function(){
-  stats <- data.frame(
-		'purity_list'=integer(),
-		'completeness_list'=integer(),
-		'cluster_list'=integer(),
-		'group_list'=integer(),
-		'pures'=integer(),
-		'completes'=integer(),
-		'pure_complet'=integer(),
-		'fp_list'=numeric(),
-		'fr_list'=numeric(),
-		'und_gr'=numeric(),
-		'spurious'=numeric(),
-		'bad_class'=numeric(),
-		'recovery'=numeric()
-		)
-  stats
-}
-calculate_output <- function(mm){
-  predicted_groups <- length(unique(mm$cluster_id))
-  all <- execute_stats(mm, blo_scan)
-  number_pure_groups <- nrow(all[all$purity >= 0.666,])
-  number_complete_groups <- nrow(all[all$completn>=0.5,])
-  number_pure_complete_groups <- nrow(all[all$purity >= 0.666 & all$completn >= 0.5,])
-  fp <- number_pure_groups/predicted_groups
-  fr <- number_pure_complete_groups / true_groups
-  s <- undetected_groups(all)
-  c(mean(all$purity), 
-    mean(all$completn), 
-    length(unique(all$cluster_id)), 
-    length(unique(all$group_id)), 
-    number_pure_groups, 
-    number_complete_groups, 
-    number_pure_complete_groups, 
-    fp, fr, 
-    length(s$GROUP_ID), 
-    mean(all$spurious), 
-    mean(all$bad_class),
-    sum(all$recovery)
-  )
-}
-
-
-#Function to get clusters-stats from DBSCAN clustering
-extract_stats_dbscan <- function (eps_sequence_values, local_res) {
-	stats <- get_initial_stats_frame()
-	for (eps_test in eps_sequence_values) {
-	  print(sprintf("Extracting DBSCAN stats for epsI=%s", eps_test))
-	  blo_scan <- extractDBSCAN(local_res, eps_test)
-    mm$cluster_id <- blo_scan$cluster
-    mm5 <- get_elements_in_m5_groups(mm)
-    alli <- calculate_output(mm)
-    
-    stats[nrow(stats) +1,] <- 
-		  c(alli[1], alli[2], alli[3], 
-		    alli[4], alli[5], alli[6], 
-		    alli[7],  alli[8], alli[9], 
-		    alli[10], alli[11], alli[12], 
-		    alli[13])
-	}
-	stats
-}
-
-#Function to get clusters-stats from OPTICS clustering
-extract_stats_XI <- function (eps_sequence_values, local_res) {
-  stats <- get_initial_stats_frame()
-		
-	for (eps_test in eps_sequence_values) {
-	  print(sprintf("Extracting XI stats for XI=%s", eps_test))
-	  blo_scan <- extractXi(local_res, eps_test)
-    mm$cluster_id <- blo_scan$cluster
-    #mm5 <- get_elements_in_m5_groups(mm)
-    alli <- calculate_output(mm)
-    
-		stats[nrow(stats) +1,] <- 
-		  c(alli[1], alli[2], alli[3], 
-		    alli[4], alli[5], alli[6], 
-		    alli[7],  alli[8],alli[9], 
-		    alli[10], alli[11], alli[12], 
-		    alli[13])
-	}
-	stats
-}
-
-#Function to get clusters-stats from HDBSCAN clustering
-extract_stats_hdbscan <- function (eps_sequence_values, points) {
-  stats <- get_initial_stats_frame()
-		
-	for (eps_test in eps_sequence_values) {
-	  print(sprintf("Extracting HDBSCAN stats for EPS= %s", eps_test))
-	  blo_scan <- hdbscan(points, 
-	                      minPts = min_members, 
-	                      cluster_selection_epsilon  = eps_test)
-    mm$cluster_id <- blo_scan$cluster
-    #mm5 <- get_elements_in_m5_groups(mm)
-    alli <- calculate_output(mm)
-    
-		stats[nrow(stats) +1,] <- 
-		  c(alli[1], alli[2], alli[3], 
-		    alli[4], alli[5], alli[6], 
-		    alli[7],  alli[8],alli[9], 
-		    alli[10], alli[11], alli[12], 
-		    alli[13])
-	}
-	stats
-}
-
-#Function to get clusters-stats from DPC clustering
-# rho can go fixed to 0.992
-extract_stats_hdbscan <- function (delta_sequence_values, galaxyDens,
-                                   rho=0.992, delta=0.0012) {
-  
-  stats <- get_initial_stats_frame()
-		
-	for (delta_test in delta_sequence_values) {
-	  print(sprintf("Extracting DPC stats for EPS= %s", delta_test))
-	  galaxyClusters <- findClusters(galaxyClusters, rho, delta_test)
-	  
-	  mm$cluster_id <- galaxyClusters$cluster
-    #mm5 <- get_elements_in_m5_groups(mm)
-    alli <- calculate_output(mm)
-    
-		stats[nrow(stats) +1,] <- 
-		  c(alli[1], alli[2], alli[3], 
-		    alli[4], alli[5], alli[6], 
-		    alli[7],  alli[8],alli[9], 
-		    alli[10], alli[11], alli[12], 
-		    alli[13])
-	}
-	stats
-}
+sys.source(sprintf("%s\\calculate_stats.r", includes_folder), envir = knitr::knit_global())
 ```
+
+## 
 
 ## Functions for plotting results
 
 We generated some functions to help us visualize the results graphically:
 
 ```{r}
-########################################################################
-# 3D function plotting
-########################################################################
-plot3D_cluster <- function(objectClustering, setPoints){
-  plot3d(setPoints$x, setPoints$y, setPoints$z, 
-       col = objectClustering$cluster + 1, size = 2, 
-       xlab = "X", ylab = "Y", zlab = "Z")
-}
-
-plot_purity_completeness <- function(
-    eps_sequence, 
-    purity_l, 
-    completeness_l, 
-    pures_com, 
-    titles, 
-    title = "",
-    x=0,
-    labelx = 'X', labely = 'Y'
-    ){
-    test_data <- data.frame('d1' = eps_sequence)	
-    g<- ggplot(test_data, aes(eps_sequence)) +
-        geom_line(aes(y = purity_l, colour = titles[1])) + 
-        geom_line(aes(y = completeness_l, colour = titles[2]))+  
-        geom_line(aes(y = pures_com, colour = titles[3]))+
-    ggtitle(title) +
-      labs(x = labelx, y = labely)
-    
-    if (x>0){  
-     g+ geom_vline(xintercept = x, linetype="dotted",)
-    }else{
-      g
-    }
-}
-
-plot_purity_completeness_trend <- function(
-    eps_sequence, 
-    purity_l, 
-    completeness_l, 
-    titles, 
-    title = "",
-    x = 0,
-    labelx = 'X', labely = 'Y')
-  {
-    test_data <- data.frame('d1' = eps_sequence)	
-    g <- ggplot(test_data, aes(eps_sequence)) +
-        geom_line(aes(y = purity_l, colour = titles[1])) + 
-        geom_line(aes(y = completeness_l, colour = titles[2]))+
-    ggtitle(title) +
-    labs(x = labelx, y = labely)
-    if (x>0){  
-      g + geom_vline(xintercept = x, linetype="dotted",)
-    }else{
-      g
-    }
-}
-
-pplot_purity_completeness <- function(
-    eps_sequence, 
-    mi_lista, 
-    titles, 
-    title = "",
-    x=0,
-    labelx = 'X', labely = 'Y'
-    ){
-	limit <- length(mi_lista)
-    test_data <- data.frame('d1' = eps_sequence)	
-	col = c("red", "blue", "green", "gray")
-    i <- 1
-  cols <- list()
-	plot(eps_sequence, mi_lista[1]$uno, type="l", xlab = labelx, ylab = labely, main=title, col=col[1])
-	cols[1] <- "red"
-	for(i in 2:limit) {
-      lines (eps_sequence, as.numeric(mi_lista[i]$uno), type="l", 'col' = col[i])
-	    cols[i] <- col[i]
-		  i <- i+1
-	}
-	if(x != 0){
-		abline(v=x, col="yellow")
-	}
-	legend("topright", legend = titles, lty = 1, col=as.character(cols))
-}
-
-
-ppplot_purity_completeness <- function(
-    df,
-    names, 
-    title = "",
-    x=0,
-    labelx = 'X', labely = 'Y'
-    ){
-	limit <- length(names)
-	df[, names]
-	df$cat <- rep(names, each=2)
-	col = list("red", "blue", "green", "gray", "orange")
-  i <- 1
-  g <- ggplot(df, aes(x=eps))
-	
-	for(i in 1:limit) {
-      g <- g +geom_line(aes(y=!!sym(names(df)[i])), colour= col[[i]])
-      #print(names(x_stats)[i])
-		  i <- i+1
-	}
-  g <- g + scale_color_identity(name = '',
-                       breaks = c('red', 'blue'),
-                       labels = c("TempMax", "TempMin"),
-                       guide = 'legend')
-  
-  g <- g+ ggtitle(title) + labs(x = labelx, y = labely)
-  
-	if(x != 0){
-		 g <- g + geom_vline(xintercept = x, linetype="dotted",)
-	}
-	g
-}
+sys.source(sprintf("%s\\plotting_functions.r", includes_folder),  envir = knitr::knit_global())
 ```
 
 # Raw data processing
@@ -767,6 +336,8 @@ plot3D_cluster(optics, mm)
 Stats with different values
 
 ```{r}
+mm$cluster_id <- as.numeric(optics$cluster)
+mm5 <- get_elements_in_m5_groups(mm)
 all <- execute_stats(mm, optics)
 print_stats(all)
 ```
@@ -795,6 +366,10 @@ plot3D_cluster(blo_scan, points)
 ```{r}
 all <- execute_stats(mm, blo_scan)
 head(all, 5)
+
+```
+
+```{r}
 print_stats(all)
 ```
 
@@ -895,7 +470,6 @@ plot(galaxyClusters)
 #plotMDS(galaxyClusters)
 
 mm$cluster_id <- galaxyClusters$cluster
-mm5 <- get_elements_in_groups(mm)
 ```
 
 ```{r}
@@ -906,13 +480,57 @@ print_stats(all)
 
 DPC is analogous to HDBCAN: the model do not fit well for the same reason: detecting clusters in noise regions.
 
+May be DPC is not good in finding cluster but it can be useful in finding the centers by finding the peaks of density, as we show bellow:
+
+```{r}
+galaxyClusters <- findClusters(galaxyDens, rho=0.9985, delta=0.00084)
+peaks <- mm[galaxyClusters$peaks,]
+print(sprintf("DPC detected %s out of %s clusters", length(unique(peaks$GROUP_ID)), true_groups))
+```
+
+In fact we can create a heatmap for $\rho$ and $\delta$ hyperparameters:
+
+```{r}
+
+rhos <- seq(0.9980, 0.999, 0.0001)
+deltas <- seq(0.0008, 0.0009, 0.00001)
+
+j<-1
+i<-1
+matrix_data=matrix(ncol=length(rhos), nrow = length(deltas)) 
+for (rho in rhos){
+	for (delta in deltas){
+        galaxyClusters <- findClusters(galaxyDens, rho=rho, delta=delta)
+        peaks <- mm[galaxyClusters$peaks,]
+        l <- length(unique(peaks$GROUP_ID))
+        #print(min(l/true_groups, true_groups/l))
+        matrix_data[i, j] <- min(l/true_groups, true_groups/l)
+        i <- i+1
+    }
+    j <- j+1
+    i<-1
+}
+
+
+custom_heatmap(matrix_data, deltas, rhos, xTitle = "delta", yTitle = "rho", numColors = 11)
+```
+
+In which case, we can see that \$\\rho=0.00084,\\,\\, \\delta=0.9985 \$ produce the best chosen with a 97% of cluster detection.
+
 ## Output-clusters visualization
 
 ```{r}
-plot3D_cluster(galaxyClusters, mm)
+plot3d(peaks$x, peaks$y, peaks$z, col = peaks$GROUP_ID+1, 
+         size = 3, xlab = "X", ylab = "Y", zlab = "Z")
 ```
 
-It is true that lot of groups are detected but mixed within in clusters
+And decision graph remains finally:
+
+```{r}
+plot(galaxyClusters)
+abline(h =0.00084, lty = 5)
+abline(v=0.9985, col="blue")
+```
 
 # Normalized data processing
 
@@ -989,53 +607,7 @@ We can infer that optimal value is content within the interval (0.0023, 0.0033).
 
 The element whose groups were not detected are:
 
-```{r}
-get_elements_not_in_groups <- function(mm5, dataset_all){
-  groups_results <- sqldf("select 
-	  	  mm5.GAL_ID,
-	      mm5.x, 
-	      mm5.y, 
-	      mm5.z, 
-	      mm5.GROUP_ID, 
-	      mm5.redshift, 
-	      mm5.dist,  
-	      0 as cluster_id
-	  from 
-		    mm5, dataset_all
-	  where 
-		  mm5.GROUP_ID 
-		not in (select 
-		  			group_id 
-			    from dataset_all) 
-			      group by mm5.GAL_ID,
-	          mm5.x, 
-	          mm5.y, 
-	          mm5.z, 
-	          mm5.GROUP_ID, 
-	          mm5.redshift, 
-	          mm5.dist")
-  groups_results
-}
-
-get_elements_in_groups <- function(dataset_mm, dataset_all){
-	tt<-sqldf(sprintf("
-	      select
-	          d.GAL_ID,
-	          d.x, 
-	          d.y, 
-	          d.z, 
-	          d.GROUP_ID, 
-	          d.redshift, 
-	          d.dist,  
-	          d.cluster_id 
-	      from 
-	          dataset_mm as d, dataset_all a 
-        where 
-            d.GROUP_ID=a.GROUP_ID and 
-	          d.cluster_id>0"))
-	tt
-}
-
+```{}
 ```
 
 ```{r}
@@ -1048,10 +620,8 @@ undetected <- get_elements_not_in_groups(mm5, all)
 detected <- get_elements_in_groups(mm, all)
 
 print(sprintf('Undetected groups: %s', length(unique(undetected$GROUP_ID))))
-print(sprintf('Detected groups: %s', length(unique(detected$GROUP_ID))))
+print(sprintf('Detected groups: %s', length(unique(detected$GROUP_ID)))
 ```
-
-*NOTE* FOR THIS WORK MM5 and MM has to be reseted
 
 Plot detected clusters
 
@@ -1275,52 +845,7 @@ plot_purity_completeness(
 
 Undetected groups
 
-```{r}
-get_elements_not_in_groups <- function(mm5, dataset_all){
-  groups_results <- sqldf("select 
-	  	  mm5.GAL_ID,
-	      mm5.x, 
-	      mm5.y, 
-	      mm5.z, 
-	      mm5.GROUP_ID, 
-	      mm5.redshift, 
-	      mm5.dist,  
-	      0 as cluster_id
-	  from 
-		    mm5, dataset_all
-	  where 
-		  mm5.GROUP_ID 
-		not in (select 
-		  			group_id 
-			    from dataset_all) 
-			      group by mm5.GAL_ID,
-	          mm5.x, 
-	          mm5.y, 
-	          mm5.z, 
-	          mm5.GROUP_ID, 
-	          mm5.redshift, 
-	          mm5.dist")
-  groups_results
-}
-
-get_elements_in_groups <- function(dataset_mm, dataset_all){
-	tt<-sqldf(sprintf("
-	      select
-	          d.GAL_ID,
-	          d.x, 
-	          d.y, 
-	          d.z, 
-	          d.GROUP_ID, 
-	          d.redshift, 
-	          d.dist,  
-	          d.cluster_id 
-	      from 
-	          dataset_mm as d, dataset_all a 
-        where 
-            d.GROUP_ID=a.GROUP_ID and 
-	          d.cluster_id>0"))
-	tt
-}
+```{}
 ```
 
 ```{r}
@@ -1412,40 +937,38 @@ print(symmetric)
 
 The bests results obtained with each method:
 
-+----------+-------------+----------+------------+
-| Method   | Data Sample | Outcomes | Conclusion |
-+==========+=============+==========+============+
-| OPTICS   | Non-scaled  | P: 0.72  |            |
-|          |             |          |            |
-|          |             | C: 0.72  |            |
-|          |             |          |            |
-|          |             | R        |            |
-+----------+-------------+----------+------------+
-| DBSCAN   | Non-scaled  | P: 0.72  |            |
-|          |             |          |            |
-|          |             | C: 0.72  |            |
-|          |             |          |            |
-|          |             | R: 0.45  |            |
-+----------+-------------+----------+------------+
-| HDBSCAN  | Non-scaled  | P        |            |
-|          |             |          |            |
-|          |             | C        |            |
-|          |             |          |            |
-|          |             | R        |            |
-+----------+-------------+----------+------------+
-| DPC      | Non-scaled  | P        |            |
-|          |             |          |            |
-|          |             | C        |            |
-|          |             |          |            |
-|          |             | R        |            |
-+----------+-------------+----------+------------+
-| sOPTICS  | Scaled      |          |            |
-+----------+-------------+----------+------------+
-| OPTICS   | Scaled      |          |            |
-+----------+-------------+----------+------------+
-| DBSCAN   | Scaled      |          |            |
-+----------+-------------+----------+------------+
-| HDBSCAN  | Scaled      |          |            |
-+----------+-------------+----------+------------+
++-----------+-------------+----------------------------+----------------------------------------------------+
+| Method    | Data Sample | Outcomes                   | Conclusion                                         |
++===========+=============+============================+====================================================+
+| OPTICS    | Non-scaled  | P: 0.72                    | Good in cluster reachability plot                  |
+|           |             |                            |                                                    |
+|           |             | C: 0.72                    |                                                    |
+|           |             |                            |                                                    |
+|           |             | R                          |                                                    |
++-----------+-------------+----------------------------+----------------------------------------------------+
+| DBSCAN    | Non-scaled  | P: 0.72                    | Good in cluster detection                          |
+|           |             |                            |                                                    |
+|           |             | C: 0.72                    |                                                    |
+|           |             |                            |                                                    |
+|           |             | R: 0.45                    |                                                    |
++-----------+-------------+----------------------------+----------------------------------------------------+
+| HDBSCAN   | Non-scaled  | P                          | Not good in cluster detection.                     |
+|           |             |                            |                                                    |
+|           |             | C                          |                                                    |
+|           |             |                            |                                                    |
+|           |             | R                          |                                                    |
++-----------+-------------+----------------------------+----------------------------------------------------+
+| DPC       | Non-scaled  | 97% nuclei-group detecion. | Good in group nuclei detection, but not in cluster |
+|           |             |                            |                                                    |
+|           |             |                            | rho=0.00084 delta=0.9985                           |
++-----------+-------------+----------------------------+----------------------------------------------------+
+| sOPTICS   | Scaled      |                            |                                                    |
++-----------+-------------+----------------------------+----------------------------------------------------+
+| OPTICS    | Scaled      |                            |                                                    |
++-----------+-------------+----------------------------+----------------------------------------------------+
+| DBSCAN    | Scaled      |                            |                                                    |
++-----------+-------------+----------------------------+----------------------------------------------------+
+| HDBSCAN   | Scaled      |                            |                                                    |
++-----------+-------------+----------------------------+----------------------------------------------------+
 
 # Executive summary

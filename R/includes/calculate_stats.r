@@ -175,3 +175,18 @@ get_elements_in_groups <- function(dataset_mm, dataset_all){
 	          d.cluster_id>0"))
 	tt
 }
+
+custom_heatmap <- function(data, rowN, colN, xTitle = "", yTitle = "", numColors)
+{
+    # transpose and rotate matrix clockswise 90 degrees 
+    dataAdjusted <- t(apply(data,2,rev))
+
+    image(1:ncol(data), 1:nrow(data), xlab = xTitle, ylab = yTitle, dataAdjusted, col = rev(brewer.pal(numColors,"RdYlBu")), axes = FALSE)
+    axis(1, 1:ncol(data), colN)
+    axis(2, 1:nrow(data), rowN)
+
+    for (x in 1:ncol(data))
+        for (y in 1:nrow(data))
+            # add text values into matrix based on transposed/rotated indices + round values to two digits
+            text(x, y, round(dataAdjusted[x,y],2))
+}
