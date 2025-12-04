@@ -5,7 +5,9 @@ from dFGRSImporter import dFGRSImporter
 '''
 Load and transform original 2dfGRS data file on to a CSV file
 '''
-if __name__ == "__main__":
+
+
+def execute():
     base_folder = os.getenv('PROJECT_TFM')
     if base_folder is None:
         print("You have to set up your $PROJECT_TFM env variable")
@@ -13,3 +15,7 @@ if __name__ == "__main__":
     destiny = '{}\\data\\2dfgrs\\2dfgrs.csv'.format(base_folder)
     sdss_real = dFGRSImporter(orig, destiny)
     sdss_real.import_file()
+
+
+if __name__ == "__main__":
+    execute()

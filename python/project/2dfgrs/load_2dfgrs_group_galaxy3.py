@@ -5,7 +5,7 @@ from dFGRSImporter import dFGRSImporter
     Take the group and the galaxy files and merge them into a single file
 '''
 
-if __name__ == "__main__":
+def execute():
     base_folder = os.getenv('PROJECT_TFM')
     if base_folder is None:
         print("You have to set up your $PROJECT_TFM env variable")
@@ -15,3 +15,7 @@ if __name__ == "__main__":
     destiny = '{}\\data\\2dfgrs/2dfgrs-valid.csv'.format(base_folder)
     sdss_real = dFGRSImporter(destiny, destiny)
     sdss_real.transform_final_dss(galaxy, groups)
+
+
+if __name__ == "__main__":
+    execute()
