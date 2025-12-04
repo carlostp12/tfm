@@ -9,7 +9,7 @@ if __name__ == "__main__":
     base_folder = os.getenv('PROJECT_TFM')
     if base_folder is None:
         print("You have to set up your $PROJECT_TFM env variable")
-    orig = "{}\\data\\2dfgrs\\2dfgrs.dat".format(base_folder)
+    orig = "https://www.guidetothesky.com/uoc/data/2dfgrs/2dfgrs.dat"
     destiny = '{}\\data\\2dfgrs\\2dfgrs.csv'.format(base_folder)
     sdss_real = dFGRSImporter(orig, destiny)
     sdss_real.import_file()

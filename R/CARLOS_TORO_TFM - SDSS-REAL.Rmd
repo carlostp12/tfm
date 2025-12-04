@@ -73,6 +73,11 @@ library(densityClust)
 
 if (!require('densityClust')) install.packages('densityClust')
 library(densityClust)
+
+#Heat map in DPC
+if (!require('RColorBrewer')) install.packages('RColorBrewer')
+library(RColorBrewer)
+
 ```
 
 # The clustering problem on galaxy dataset
@@ -101,9 +106,59 @@ dt <- read.csv(file)
 str(dt)
 ```
 
+# Generic functions for assessments
+
+## Functions to asses outcomes
+
+To assess the outcomes we will based our analysis on tree basic concepts:
+
+**Purity(P)**: measure of output-cluster: proportion of members coming exclusively from a single true group, providing confidence that the algorithm correctly groups members together. A high purity rate indicates the algorithm's effectiveness in identifying true groups.
+
+**Completeness (C)**: measure of an output-cluster: proportion of data true-group elements included in an output-cluster. A cluster is "complete" if contains all points of the original true group.
+
+**Recovery (R)**: measure of an output-cluster (much more restrictive): proportion of output-clusters which are both pure and complete. For this study we consider an output-cluster to be pure if P\>=0.66 (at least 2/3 of elements of an output-cluster belong to a single group). An original cluster is complete if C\>=0.5 (at least half data belong to an original true group).
+
+Some other stats are:
+
+**total_in_group:** number of elements in a given group.
+
+**total_in_cluster:** number of elements in a given output-cluster.
+
+**total_in_cluster_group:** number of elements in a given output-cluster belonging to a majority-group.
+
+**undetected_groups**: original groups not detected as majority-group in output-clusters.
+
+**detected_groups**: original groups detected as majority-group in output-clusters.
+
+Following code is aimed to asses the outcomes obtained with from an given output-cluster:
+
+```{r}
+sys.source(sprintf("%s\\assess.r", includes_folder), envir = knitr::knit_global())
+```
+
+Following code is intended to calculate stats
+
+```{r}
+sys.source(sprintf("%s\\calculate_stats.r", includes_folder), envir = knitr::knit_global())
+```
+
+We generated some functions to help us visualize the results graphically:
+
+```{r}
+sys.source(sprintf("%s\\plotting_functions.r", includes_folder),  envir = knitr::knit_global())
+```
+
+Last file to include content function to compute slos distance:
+
+```{r}
+sys.source(sprintf("%s\\slos.r", includes_folder),  envir = knitr::knit_global())
+```
+
 # Data Preprocessing
 
-## Descriptive analysis. **Data selection and visualization**
+## Descriptive analysis.
+
+### **Data selection and visualization**
 
 There is an initial preprocessing of data-file in order to obtain proper distances and cartesian coordinates x,y,z, by now it is omitted here.
 
@@ -256,46 +311,6 @@ plot3d(mm5$x, mm5$y, mm5$z, col = mm5$GROUP_ID,
 ```
 
 ![](images/paste-BC9FEB7D.png)
-
-# Generic functions for assessments
-
-## Functions to asses outcomes
-
-To aseess the outcomes we will based our analysis on two basic concepts:
-
-**Purity(P)**: measure of output-cluster: proportion of members coming exclusively from a single true group, providing confidence that the algorithm correctly groups members together. A high purity rate indicates the algorithm's effectiveness in identifying true groups.
-
-**Completeness (C)**: measure of an output-cluster: proportion of data true-group elements included in an output-cluster. A cluster is considered "complete" if contains all points of the original true group.
-
-For this study we consider an output-cluster to be pure if P\>=0.66 (at least 2/3 of elements of an output-cluster belong to a single group). An original cluster is complete if C\>=0.5 (at least half data belong to an original true group)
-
-**total_in_group:** number of elements in a given group.
-
-**total_in_cluster:** number of elements in a given output-cluster.
-
-**total_in_cluster_group:** number of elements in a given output-cluster belonging to a majority-group.
-
-**undetected_groups**: original groups not detected as majority-group in output-clusters
-
-Following code is aimed to asses the outcomes obtained with from an given output-cluster:
-
-```{r}
-sys.source(sprintf("%s\\assess.r", includes_folder), envir = knitr::knit_global())
-```
-
-Following code is intended to calculate stats
-
-```{r}
-sys.source(sprintf("%s\\calculate_stats.r", includes_folder), envir = knitr::knit_global())
-```
-
-## Functions for plotting results
-
-We generated some functions to help us visualize the results graphically:
-
-```{r}
-sys.source(sprintf("%s\\plotting_functions.r", includes_folder),  envir = knitr::knit_global())
-```
 
 # Raw data processing
 
@@ -466,14 +481,12 @@ By making this way it appears some clusters:
 
 ```{r}
 galaxyDens <- densityClust(points)
-galaxyClusters <- findClusters(galaxyDens, rho=0.995, delta=0.001)
+galaxyClusters <- findClusters(galaxyDens, rho=0.997, delta=0.00086)
 plot(galaxyClusters)
 
 # do not use this takes a lot!!:
 #plotMDS(galaxyClusters)
-
 mm$cluster_id <- galaxyClusters$cluster
-mm5 <- get_elements_in_m5_groups(mm)
 ```
 
 ```{r}
@@ -487,11 +500,9 @@ DPC is analogous to HDBCAN: the model do not fit well for the same reason: detec
 May be DPC is not good in finding cluster but it can be useful in finding the centers by finding the peaks of density, as we show bellow:
 
 ```{r}
-galaxyClusters <- findClusters(galaxyDens, rho=0.999, delta=0.0025)
-density_points <- points[galaxyClusters$peaks,]
-length(galaxyClusters$peaks)
-plot3d(density_points$x, density_points$y, density_points$z, col = 'BLACK', 
-        size = 4, xlab = "X", ylab = "Y", zlab = "Z")
+galaxyClusters <- findClusters(galaxyDens, rho=0.9985, delta=0.00084)
+peaks <- mm[galaxyClusters$peaks,]
+print(sprintf("DPC detected %s out of %s clusters", length(unique(peaks$GROUP_ID)), true_groups))
 ```
 
 ## Output-clusters visualization
@@ -501,6 +512,34 @@ plot3D_cluster(galaxyClusters, mm)
 ```
 
 ![](images/paste-34E0ECD3.png)
+
+we create a heat-map for $\rho$ and $\delta$ hyper-parameters:
+
+```{r}
+rhos <- seq(0.9980, 0.999, 0.0001)
+deltas <- seq(0.0008, 0.0009, 0.00001)
+
+j<-1
+i<-1
+matrix_data=matrix(ncol=length(rhos), nrow = length(deltas)) 
+for (rho in rhos){
+	for (delta in deltas){
+        galaxyClusters <- findClusters(galaxyDens, rho=rho, delta=delta)
+        peaks <- mm[galaxyClusters$peaks,]
+        l <- length(unique(peaks$GROUP_ID))
+        #print(min(l/true_groups, true_groups/l))
+        matrix_data[i, j] <- min(l/true_groups, true_groups/l)
+        i <- i+1
+    }
+    j <- j+1
+    i<-1
+}
+
+
+custom_heatmap(matrix_data, deltas, rhos, xTitle = "rho", yTitle = "delta", numColors = 11)
+```
+
+As we can see , all groups-center are detected with DPC for values $\delta=0.00085$ and $\rho=0.9986$.
 
 # Normalized data processing
 
@@ -616,40 +655,54 @@ plot3d(undetected$x, undetected$y, undetected$z,
 
 The bests results obtained with each method:
 
-+-----------+-------------+-----------+------------+
-| Method    | Data Sample | Outcomes  | Conclusion |
-+===========+=============+===========+============+
-| OPTICS    | Non-scaled  | P: 0.72   |            |
-|           |             |           |            |
-|           |             | C: 0.72   |            |
-|           |             |           |            |
-|           |             | R         |            |
-+-----------+-------------+-----------+------------+
-| DBSCAN    | Non-scaled  | P: 0.72   |            |
-|           |             |           |            |
-|           |             | C: 0.72   |            |
-|           |             |           |            |
-|           |             | R: 0.45   |            |
-+-----------+-------------+-----------+------------+
-| HDBSCAN   | Non-scaled  | P         |            |
-|           |             |           |            |
-|           |             | C         |            |
-|           |             |           |            |
-|           |             | R         |            |
-+-----------+-------------+-----------+------------+
-| DPC       | Non-scaled  | P         |            |
-|           |             |           |            |
-|           |             | C         |            |
-|           |             |           |            |
-|           |             | R         |            |
-+-----------+-------------+-----------+------------+
-| sOPTICS   | Scaled      |           |            |
-+-----------+-------------+-----------+------------+
-| OPTICS    | Scaled      |           |            |
-+-----------+-------------+-----------+------------+
-| DBSCAN    | Scaled      |           |            |
-+-----------+-------------+-----------+------------+
-| HDBSCAN   | Scaled      |           |            |
-+-----------+-------------+-----------+------------+
++-------------------------------+-------------+---------------------------------+--------------------------------------------------------------------------+
+| Method                        | Data Sample | Outcomes                        | Conclusion                                                               |
++===============================+=============+=================================+==========================================================================+
+| OPTICS                        | Non-scaled  | \-                              | Good in cluster reachability plot                                        |
++-------------------------------+-------------+---------------------------------+--------------------------------------------------------------------------+
+| OPTICS Xi hierarchical method | Non-scaled  | Not applicable                  | Not valuable result were found.                                          |
++-------------------------------+-------------+---------------------------------+--------------------------------------------------------------------------+
+| DBSCAN                        | Non-scaled  | P: 0.83                         | Optimal point for                                                        |
+|                               |             |                                 |                                                                          |
+|                               |             | C: 0.92                         | eps= 0.0003                                                              |
+|                               |             |                                 |                                                                          |
+|                               |             | R: 99                           |                                                                          |
+|                               |             |                                 |                                                                          |
+|                               |             | U: 6                            |                                                                          |
++-------------------------------+-------------+---------------------------------+--------------------------------------------------------------------------+
+| HDBSCAN                       | Non-scaled  | Not valuable results.           | Not good in cluster detection.                                           |
++-------------------------------+-------------+---------------------------------+--------------------------------------------------------------------------+
+| DPC                           | Non-scaled  | 100% in groups-center detection | Good in group center detection, but not in clustering the whole dataset. |
+|                               |             |                                 |                                                                          |
+|                               |             |                                 | $\delta=0.00085$ and $\rho=0.9986$                                       |
++-------------------------------+-------------+---------------------------------+--------------------------------------------------------------------------+
+| OPTICS                        | Scaled      | \-                              | Good in cluster reachability plot                                        |
++-------------------------------+-------------+---------------------------------+--------------------------------------------------------------------------+
+| DBSCAN                        | Scaled      | P: 0.88                         | eps=0.026                                                                |
+|                               |             |                                 |                                                                          |
+|                               |             | C: 0.88                         |                                                                          |
+|                               |             |                                 |                                                                          |
+|                               |             | R: 0.97                         |                                                                          |
+|                               |             |                                 |                                                                          |
+|                               |             | U: 7                            |                                                                          |
++-------------------------------+-------------+---------------------------------+--------------------------------------------------------------------------+
 
 # Executive summary
+
+In conclusion. We took for this study a sample from the SDSS-DR7 Re-Real Spacecatalog and selected 7328objects within an area between 90 and 150h in RA and 15 and 25º in DEC. We tried several methods in groups detecting selecting groups with a minimum of 5 elements (galaxies), we got 95 groups.
+
+We can stand out the following points:
+
+-   The method sOPTICS with DBSCAN reached the highest values in completeness, purity and recovery and also in detecting groups.
+
+-   The DPC algorithm worked perfect in group-center detection (reached 100%), but did not worked in separate the groups in the whole dataset.
+
+-   A normalization or scaled of data data did not improve results, this is because all data are in fact in approx. in same scale, given that all coordinates: x, y, z and dist are all of them expressed under same units and in same range of values.
+
+Finally we compare the original with the best clustering obtained in this study:
+
++---------------------------------------------+-------------------------------------+
+| Actual groups distribution in Re-Real Space | Best cluster detection with DBSCAN. |
++=============================================+=====================================+
+| ![](images/paste-BC9FEB7D.png)              | ![](images/paste-D7228FBB.png)      |
++---------------------------------------------+-------------------------------------+

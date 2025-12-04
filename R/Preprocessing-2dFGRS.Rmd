@@ -75,6 +75,15 @@ if (!require('densityClust')) install.packages('densityClust')
 library(densityClust)
 ```
 
+# The clustering problem on galaxy dataset
+
+We want, in this work apply some clustering algorithms, and the compare the obtained models with the
+halo-based group finder optimized for grouping galaxies that reside in the same dark matter halo.
+
+In other words: this is not a normal clustering problem where we want to find a model where most of the samples belong to a group in an hypotetical method maximixed by the "Elbow method".
+
+We want find some hyperparameters configuration makes possible to modelize the data-groups given by the halo-based finder.
+
 # Loading data files
 
 ## Galaxy catalog for 2dFGRS
@@ -106,12 +115,12 @@ Then we take the initial values:
 ```{r}
 SLOS <- 0 #Here the slos is not fixed beforehand
 min_members <- 5
-max_redshift <- 0.3
+max_redshift <- 0.1
 min_redshift <- 0.0
 ra_lim_inf <-  0
 ra_lim_sup <- 30
-dec_lim_inf <- -30
-dec_lim_sup <-  -27
+dec_lim_inf <- -36
+dec_lim_sup <-  -25
 
 # Take a sample using boundaries
 mm <- dt[ dt$ra<= ra_lim_sup & dt$ra>=ra_lim_inf & 
@@ -123,7 +132,12 @@ mm <- dt[ dt$ra<= ra_lim_sup & dt$ra>=ra_lim_inf &
 ggplot(mm, aes(x=redshift, y=redshift))+geom_violin()
 ```
 
-Select groups with more than min_members members
+```{r}
+dim(mm)
+
+```
+
+Select groups with more than min_members members queries:
 
 ```{r}
 h<-sqldf("select 
@@ -149,7 +163,7 @@ mm5<-sqldf(sprintf("
       , min_members))
 
 get_elements_in_m5_groups <- function(mm){
-	mm5<-sqldf(sprintf("
+	groups_in_mm5<-sqldf(sprintf("
 	      select
 	          mm.GAL_ID,
 	          mm.x, 
@@ -164,7 +178,7 @@ get_elements_in_m5_groups <- function(mm){
         where 
             mm.GROUP_ID=h.GROUP_ID and 
 	          h.members >= %s", min_members))
-	mm5
+	groups_in_mm5
 }
 get_elements_not_in <- function(dataset_mm, dataset_all){
   groups_results <- sqldf("select 
@@ -204,11 +218,17 @@ get_elements_in <- function(dataset_mm, dataset_all){
 			    from 
 					  dataset_all)")
 }
+```
+
+Then use it to find the target data:
+
+```{r}
+
 true_groups <- length(unique(mm5$GROUP_ID))
 number_non_isolated_galaxies <- dim(mm5)[1]
 number_isolated_galaxies <- dim(mm)[1] - dim(mm5)[1]
 print(
-  sprintf('Number of galaxies in groups with more than %s elements %s out of %s, aprox %s ', 
+  sprintf('Number of galaxies in groups with more than %s elements %s out of %s, aprox %s percent', 
           min_members, 
           number_non_isolated_galaxies, 
           dim(mm)[1], format(number_non_isolated_galaxies * 100
@@ -287,11 +307,7 @@ For this study we consider an output-cluster to be pure if P\>=0.66 (at least 2/
 
 **undetected_groups**: original groups not detected as majority-group in output-clusters
 
-length(unique(all\$cluster_id)),
-
-length(unique(all\$group_id)),
-
-Following code is devoted to asses the outcomes obtained with from an given output-cluster:
+Following code is aimed to asses the outcomes obtained with from an given output-cluster:
 
 ```{r}
 
@@ -495,7 +511,7 @@ print_global_stats <- function(global_stats, sequence_values) {
 }
 ```
 
-Following is intended to calculate stats
+Following code is intended to calculate stats
 
 ```{r}
 get_initial_stats_frame <- function(){
@@ -633,6 +649,8 @@ extract_stats_hdbscan <- function (delta_sequence_values, galaxyDens,
 
 ## Functions for plotting results
 
+We generated some functions to help us visualize the results graphically:
+
 ```{r}
 ########################################################################
 # 3D function plotting
@@ -750,16 +768,9 @@ ppplot_purity_completeness <- function(
 }
 ```
 
-# Clustering problem on dataset
-
-We want, in this work apply some clustering algorithms, and the compare the obtained results with the
-halo-based group finder optimized for grouping galaxies that reside in the same dark matter halo.
-
-In other words: this is not a normal clustering problem where we want to find a model where most of the samples belong to a group in an hypotetical method maximixed by the "Elbow method".
-
-We want to see whether any clustering algorithm with some hyperparameters configuration is able to modelize the data given by the halo-based finder.
-
 # Raw data processing
+
+We will process the data without any kind of scale or normalization.
 
 ## OPTICS
 
@@ -842,30 +853,7 @@ print_global_stats(x_stats, eps_sequence_test)
 
 Lets get a plots for completeness and purity:
 
-```{r}
-
-```
-
-```{r}
-plottable <- list('uno' = x_stats$purity_list,
-                  'uno' = x_stats$completeness_list,
-                  'uno' =  x_stats$fr_list,
-                  'uno' =  x_stats$fp_list
-                  )
-titles <-  c('Purity', 'Completeness', "FR" , "FPplo")
-atitle  <-  "Purity/completeness on not scaled data"
-xlab <- 'eps'
-ylab <- 'percentage'
-x <- 0.000525
-pplot_purity_completeness(
-  eps_sequence_test, 
-  plottable, 
-  titles, 
-  title=atitle, 
-  x, 
-  xlab, 
-  ylab)
-```
+We have the optimal point at \$\\epsilon= 0.0006, \$ where recovery =50% and completeness= 81% purity=65.5%
 
 ```{r}
 plot_purity_completeness(
@@ -890,7 +878,7 @@ plot_purity_completeness(
   x_stats$pure_complet/true_groups,
   c('Purity', 'Undetected gr.', 'Pure + Complet.'),
   "Group global group purity and undetected stats on not scaled data",
-  0.000525, 'eps', 'Percentage'
+  0.0006, 'eps', 'Percentage'
 )
 ```
 
@@ -904,7 +892,7 @@ plot_purity_completeness(
   true_groups - x_stats$und_gr,
   c('Undetected', 'Groups', 'Detected'),
   "Total purity and completeness on scaled data",
-   0.000525, 'eps', 'Groups number'
+   0.0006, 'eps', 'Groups number'
 )
 ```
 
@@ -925,6 +913,8 @@ length(unique( cl$cluster))
 plot3D_cluster(cl, mm)
 ```
 
+HDBSCAN do not work pretty well because it detects cluster in sparser areas which gives as a result cluster detection on noise regions.
+
 # Density Peaks Clustering(DPC )
 
 Alex Rodriguez and Alessandro Laio (2014).
@@ -934,8 +924,6 @@ Alex Rodriguez and Alessandro Laio (2014).
 By making this way it appears some clusters:
 
 ```{r}
-
-
 galaxyDens <- densityClust(points)
 galaxyClusters <- findClusters(galaxyDens, rho=0.995, delta=0.001)
 plot(galaxyClusters)
@@ -945,8 +933,6 @@ plot(galaxyClusters)
 
 mm$cluster_id <- galaxyClusters$cluster
 mm5 <- get_elements_in_groups(mm)
-
-
 ```
 
 ```{r}
@@ -954,6 +940,8 @@ all <- execute_stats(mm, galaxyClusters)
 print_stats(all)
 
 ```
+
+DPC is analogous to HDBCAN: the model do not fit well for the same reason: detecting clusters in noise regions.
 
 ## Output-clusters visualization
 
@@ -977,7 +965,7 @@ mm5 <- get_elements_in_m5_groups(mm)
 Again we can do the same for scaled data:
 
 ```{r}
-eps_sequence_test <- seq(0.02, 0.035, 0.005)
+eps_sequence_test <- seq(0.035, 0.06, 0.005)
 x_stats <- extract_stats_dbscan(eps_sequence_test, ress)
 ```
 
@@ -997,7 +985,7 @@ plot_purity_completeness(
     x_stats$recovery, 
     c('Purity', 'Undetected groups', 'Recovery'),
     "Group purity and undetected stats on not scaled data",
-    0.0230, 'eps', 'Percentage'
+    0.0370, 'eps', 'Percentage'
 )
 
 ```
@@ -1010,7 +998,7 @@ plot_purity_completeness(
   true_groups - x_stats$und_gr,
   c('Undetected', 'Groups', 'Detected'),
   "Purity and completeness on scaled data",
-   0.0237, 'eps', 'Groups number'
+   0.037, 'eps', 'Groups number'
 )
 ```
 
@@ -1022,10 +1010,10 @@ From the DBSCAN theory we can use the elbow on:
 
 ```{r}
 kNNdistplot(x = points_scaled, k = min_members)
-abline(h = 0.0235, lty = 3) 
+abline(h = 0.037, lty = 3) 
 ```
 
-How reader can see, the "elbow theory" does not apply here, the reason for this is that we are not trying to optimize the clusters given by the algorithm, instead we are trying to detect groups of galaxies.
+How reader can see, the "elbow theory" does not apply here, the reason for this is that we are not trying to optimize the clusters given by the algorithm, instead we are trying to detect groups of galaxies classified by the .
 
 In addition are data belonging to actual clusters with more than min_members members, this reduced the space to 774 galaxies out of more than 5000.
 
@@ -1052,18 +1040,19 @@ get_elements_not_in_groups <- function(mm5, dataset_all){
 		  mm5.GROUP_ID 
 		not in (select 
 		  			group_id 
-			    from dataset_all) group by mm5.GAL_ID,
-	      mm5.x, 
-	      mm5.y, 
-	      mm5.z, 
-	      mm5.GROUP_ID, 
-	      mm5.redshift, 
-	      mm5.dist")
+			    from dataset_all) 
+			      group by mm5.GAL_ID,
+	          mm5.x, 
+	          mm5.y, 
+	          mm5.z, 
+	          mm5.GROUP_ID, 
+	          mm5.redshift, 
+	          mm5.dist")
   groups_results
 }
 
 get_elements_in_groups <- function(dataset_mm, dataset_all){
-	mm5<-sqldf(sprintf("
+	tt<-sqldf(sprintf("
 	      select
 	          d.GAL_ID,
 	          d.x, 
@@ -1078,7 +1067,7 @@ get_elements_in_groups <- function(dataset_mm, dataset_all){
         where 
             d.GROUP_ID=a.GROUP_ID and 
 	          d.cluster_id>0"))
-	mm5
+	tt
 }
 
 ```
@@ -1264,13 +1253,13 @@ Test several hyper-parameters:
 
 ```{r}
 #optimal value found at 0.00015
-eps_sequence_test <- seq(0.00010, 0.00035, 0.00005)
+eps_sequence_test <- seq(0.000095, 0.00020, 0.00005)
 sx_stats <- extract_stats_dbscan(eps_sequence_test, sres)
 
 ```
 
 ```{r}
-print_global_stats(x_stats, eps_sequence_test)
+print_global_stats(sx_stats, eps_sequence_test)
 ```
 
 ```{r}
@@ -1282,7 +1271,7 @@ plot_purity_completeness(
   sx_stats$recovery,
   c('Purity', 'Completeness', 'Recovery'),
   'Purity Completeness on Slos data',
-  0.000132, 'eps', 'Percentage'
+  0.000108, 'eps', 'Percentage'
 )
 ```
 
@@ -1299,41 +1288,102 @@ plot_purity_completeness(
   sx_stats$completes/true_groups,  
   c('Purity', 'Completeness', 'Pur.+Comp.'),
   "Purity and completeness on scaled data",
-  0.000132, 'eps', 'Percentage'
+  0.000108, 'eps', 'Percentage'
   )
 
 ```
 
-# Density Peaks Clustering(DPC )
-
-Alex Rodriguez and Alessandro Laio (2014).
-
-<https://github.com/thomasp85/densityClust>
-
-By making this way it appears some clusters:
-
 ```{r}
-
-
-galaxyDens <- densityClust(points)
-galaxyClusters <- findClusters(galaxyDens, rho=0.995, delta=0.001)
-plot(galaxyClusters)
-
-#use this instead
-plot3D_cluster(galaxyClusters, points)
-
-# do not use this takes a lot!!:
-#plotMDS(galaxyClusters)
-
-mm$cluster_id <- galaxyClusters$cluster
-mm5 <- get_elements_in_groups(mm)
-
+plot_purity_completeness(
+  eps_sequence_test, 
+  sx_stats$und_gr,
+  sx_stats$group_list, 
+  true_groups - sx_stats$und_gr,
+  c('Undetected', 'Groups', 'Detected'),
+  "Purity and completeness on scaled data",
+   0.000108, 'eps', 'Groups number'
+)
 
 ```
 
+Undetected groups
+
 ```{r}
-all <- execute_stats(mm, galaxyClusters)
-print_stats(all)
+get_elements_not_in_groups <- function(mm5, dataset_all){
+  groups_results <- sqldf("select 
+	  	  mm5.GAL_ID,
+	      mm5.x, 
+	      mm5.y, 
+	      mm5.z, 
+	      mm5.GROUP_ID, 
+	      mm5.redshift, 
+	      mm5.dist,  
+	      0 as cluster_id
+	  from 
+		    mm5, dataset_all
+	  where 
+		  mm5.GROUP_ID 
+		not in (select 
+		  			group_id 
+			    from dataset_all) 
+			      group by mm5.GAL_ID,
+	          mm5.x, 
+	          mm5.y, 
+	          mm5.z, 
+	          mm5.GROUP_ID, 
+	          mm5.redshift, 
+	          mm5.dist")
+  groups_results
+}
+
+get_elements_in_groups <- function(dataset_mm, dataset_all){
+	tt<-sqldf(sprintf("
+	      select
+	          d.GAL_ID,
+	          d.x, 
+	          d.y, 
+	          d.z, 
+	          d.GROUP_ID, 
+	          d.redshift, 
+	          d.dist,  
+	          d.cluster_id 
+	      from 
+	          dataset_mm as d, dataset_all a 
+        where 
+            d.GROUP_ID=a.GROUP_ID and 
+	          d.cluster_id>0"))
+	tt
+}
+```
+
+```{r}
+
+sblo_scan <- extractDBSCAN(sres, eps_cl = 0.000108)
+mm$cluster_id <- sblo_scan$cluster
+
+all <- execute_stats(mm, sblo_scan)
+
+undetected <- get_elements_not_in_groups(mm5, all)
+detected <- get_elements_in_groups(mm, all)
+
+print(sprintf('Undetected groups: %s', length(unique(undetected$GROUP_ID))))
+print(sprintf('Detected groups: %s', length(unique(detected$GROUP_ID))))
+```
+
+Pot of detected groups
+
+```{r}
+plot3d(detected$x, detected$y, detected$z, 
+       col = detected$GROUP_ID +1, size = 2, 
+       xlab = "X", ylab = "Y", zlab = "Z")
+```
+
+Plot of not detected groups
+
+```{r}
+plot3d(undetected$x, undetected$y, undetected$z, 
+       col = undetected$GROUP_ID +1, size = 2, 
+       xlab = "X", ylab = "Y", zlab = "Z")
 ```
 
 ## Other functions to asses globally (unused by now)
@@ -1391,44 +1441,44 @@ print(outer_result)
 print(symmetric)
 ```
 
-# Summary and conclussions
+# Summary and conclusions
 
 The bests results obtained with each method:
 
-+-----------+------------+-----------+-------------+
-| Method    | DataSample | Outcomes  | Conclussion |
-+===========+============+===========+=============+
-| OPTICS    | Non-scaled | P: 0.72   |             |
-|           |            |           |             |
-|           |            | C: 0.72   |             |
-|           |            |           |             |
-|           |            | R         |             |
-+-----------+------------+-----------+-------------+
-| DBSCAN    | Non-scaled | P: 0.72   |             |
-|           |            |           |             |
-|           |            | C: 0.72   |             |
-|           |            |           |             |
-|           |            | R: 0.45   |             |
-+-----------+------------+-----------+-------------+
-| HDBSCAN   | Non-scaled | P         |             |
-|           |            |           |             |
-|           |            | C         |             |
-|           |            |           |             |
-|           |            | R         |             |
-+-----------+------------+-----------+-------------+
-| DPC       | Non-scaled | P         |             |
-|           |            |           |             |
-|           |            | C         |             |
-|           |            |           |             |
-|           |            | R         |             |
-+-----------+------------+-----------+-------------+
-| sOPTICS   | Scaled     |           |             |
-+-----------+------------+-----------+-------------+
-| OPTICS    | Scaled     |           |             |
-+-----------+------------+-----------+-------------+
-| DBSCAN    | Scaled     |           |             |
-+-----------+------------+-----------+-------------+
-| HDBSCAN   | Scaled     |           |             |
-+-----------+------------+-----------+-------------+
++----------------------+-------------------------+----------------------------+----------------+
+| Method               | Data Sample             | Outcomes                   | Conclusion     |
++======================+=========================+============================+================+
+| OPTICS               | Non-scaled              | P: 0.72                    |                |
+|                      |                         |                            |                |
+|                      |                         | C: 0.72                    |                |
+|                      |                         |                            |                |
+|                      |                         | R                          |                |
++----------------------+-------------------------+----------------------------+----------------+
+| DBSCAN               | Non-scaled              | P: 0.72                    |                |
+|                      |                         |                            |                |
+|                      |                         | C: 0.72                    |                |
+|                      |                         |                            |                |
+|                      |                         | R: 0.45                    |                |
++----------------------+-------------------------+----------------------------+----------------+
+| HDBSCAN              | Non-scaled              | P                          |                |
+|                      |                         |                            |                |
+|                      |                         | C                          |                |
+|                      |                         |                            |                |
+|                      |                         | R                          |                |
++----------------------+-------------------------+----------------------------+----------------+
+| DPC                  | Non-scaled              | P                          |                |
+|                      |                         |                            |                |
+|                      |                         | C                          |                |
+|                      |                         |                            |                |
+|                      |                         | R                          |                |
++----------------------+-------------------------+----------------------------+----------------+
+| sOPTICS              | Scaled                  |                            |                |
++----------------------+-------------------------+----------------------------+----------------+
+| OPTICS               | Scaled                  |                            |                |
++----------------------+-------------------------+----------------------------+----------------+
+| DBSCAN               | Scaled                  |                            |                |
++----------------------+-------------------------+----------------------------+----------------+
+| HDBSCAN              | Scaled                  |                            |                |
++----------------------+-------------------------+----------------------------+----------------+
 
 # Executive summary

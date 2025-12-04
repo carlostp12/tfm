@@ -110,6 +110,44 @@ In order to validate and assess the performance of a constructed galaxy clusteri
 
 The halo-based group finder was successfully applied to the galaxy catalogs from both the 2dFGRS and the SDSS (Data Release 7). This valuable group catalog is publicly accessible and can be downloaded from \cite{groups:2000}
 
+\subsection{Real space galaxy catalogue}
+
+There a serveral methods to cure the different redshift distorsion (one them is along the line of sight, we have already talk previously), one based the reader can take a look at the study at \cite{Shi:2016}. In \cite{Shi:2016} they authors created a method to cure the distorsions proper of any spectrscopic survey, those distorsions are occurs in the correlation of the distribution of galaxies and the global matter distribution \cite{Shi:2016}, these distorsions can be:
+\begin{enumerate}
+	\item FOG (Finger Of God): reduction in the correlation produced on small scales by the virialized motion of galaxies within the dark matter halos.
+	\item Kaiser effect: boost of the correlation in large scales induced by the infall motion of galaxies towards overdensity regions.
+\begin{enumerate}
+
+Given that 
+\begin{equation} \label{eq:3}
+ z_{obs} = z_{cos} + z_{pec} = z_{cos} + \frac{v_{pec}}{c}(1+z_{cos}).
+\end{equation}.
+
+Being $z_{obs}$, $z_{cos}$ the observed and cosmologial redsifhts and $v_{pec}$ the peculiar velocity of galaxy, but
+
+\begin{equation} \label{eq:3}
+ v_{pec} = v_{c} + v_{\sigma}.
+\end{equation}.
+
+Where $v_{cen}$ is the line-of-sight velocity of the center of the halo and $v_{\sigma}$ the line-of-sight component of the velocity vector of the galaxy with respect to that halo center. Then the $z_{Kaiser}$ and $z_{FOG}$ are defined as follows:
+
+\begin{equation} \label{eq:3}
+ z_{Kaiser} = z_{cos} + \frac{v_{cen}}{c}(1+z_{cos}).
+\end{equation}.
+
+\begin{equation} \label{eq:3}
+ z_{FOG} = z_{cos} + \frac{v_{\sigma}}{c}(1+z_{cos}).
+\end{equation}.
+
+To sum up, the authors in \cite{Shi:2016} applied their method to SDSS-DR7 and they generated new catalogue with new values for redsifth that modifies the space as shown in the \ref{fig:real}. We will also the modified dataset Re-real space use in present study to detect how this change influence in the clustering of galaxies.
+
+	\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.5\textwidth]{./figs/real_space.jpg}
+	\caption{SDSS-DR7: in the left redsifth space in the rigth Re-real space}{Source \cite{Shi:2016}.}
+	\label{fig:real}
+	\end{figure}
+	
 \section{The redshift–distance relation}
 
 It is well-established that the Universe is undergoing cosmic expansion. The Hubble–Lemaître Law quantifies this expansion, stipulating that the recessional velocity of a galaxy is directly proportional to its proper distance from the observer. This relationship is described by the equation:

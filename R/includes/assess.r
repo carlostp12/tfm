@@ -197,3 +197,58 @@ print_global_stats <- function(global_stats, sequence_values) {
   print(pretty_print("Bad class:", global_stats$bad_class))
   print(pretty_print("Recovery:", global_stats$recovery))
 }
+
+get_groups_with_more_than <- function(mm, min_members){
+	h<-sqldf("select 
+            count(GAL_ID) as members, 
+            GROUP_ID 
+          from 
+            mm 
+          group by 
+            GROUP_ID 
+          order by  
+            members desc")
+	sqldf(sprintf("
+    SELECT 
+        mm.GAL_ID,
+        mm.x, 
+        mm.y, 
+        mm.z, 
+        mm.GROUP_ID, 
+        mm.redshift, 
+        mm.dist
+      FROM 
+        mm as mm, h 
+      where 
+          mm.GROUP_ID=h.GROUP_ID and 
+          h.members >= %s"
+      , min_members))
+}
+
+get_clusters_with_more_than<- function(mm, min_members){
+	h<-sqldf("select 
+            count(GAL_ID) as members, 
+            cluster_id 
+          from 
+            mm 
+          group by 
+            cluster_id 
+          order by  
+            members desc")
+	sqldf(sprintf("
+    SELECT 
+        mm.GAL_ID,
+        mm.x, 
+        mm.y, 
+        mm.z, 
+        mm.GROUP_ID, 
+        mm.redshift, 
+        mm.dist,
+		mm.cluster_id
+      FROM 
+        mm as mm, h 
+      where 
+          mm.cluster_id=h.cluster_id and 
+          h.members >= %s"
+      , min_members))
+}

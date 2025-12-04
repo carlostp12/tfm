@@ -1,8 +1,5 @@
-import csv
-import math
-
-import numpy as np
-from scipy.integrate import quad
+import urllib
+import urllib.request
 import pandas as pd
 
 from project.utils.utils import parseRANumeric, parseDECNumeric, calculate_distance, changeCoordsSpericalX, \
@@ -31,12 +28,12 @@ class dFGRSImporter:
         23
         26
         '''
-        with open(self.sdss_File, "r") as f:
-            reader = csv.reader(f, delimiter="\t")
+        if True:
+            reader = urllib.request.urlopen(self.sdss_File)
             with open(self.destiny_file, "w") as fw:
                 fw.write('GAL_ID,ra,dec,z\n')
                 for i, line in enumerate(reader):
-                    adict = line[0].split()
+                    adict = line.split()
                     if int(adict[26]) > 2:  # If quality greater than 2
                         fw.write(
                             '{},{},{},{}\n'.format(int(adict[0]),
@@ -47,24 +44,24 @@ class dFGRSImporter:
                     if i % 10000 == 1:
                         print(i)
             fw.close()
-        f.close()
+        reader.close()
         print("End")
 
     def import_group_file(self):
         '''
         transform a group file in a CSV file
         '''
-        with open(self.sdss_File, "r") as f:
-            reader = csv.reader(f, delimiter="\t")
+        if True:
+            reader = urllib.request.urlopen(self.sdss_File)
             with open(self.destiny_file, "w") as fw:
                 fw.write('GAL_ID,GROUP_ID\n')
                 for i, line in enumerate(reader):
-                    adict = line[0].split()
-                    fw.write('{},{}\n'.format(adict[2], adict[0]))
+                    adict = line.split()
+                    fw.write('{},{}\n'.format(adict[2].decode('ASCII'), adict[0].decode('ASCII')))
                     if i % 10000 == 1:
                         print(i)
             fw.close()
-        f.close()
+        reader.close()
         print("End")
 
     def transform_final_dss(self, galaxy_file, groups_file):

@@ -40,6 +40,24 @@ calculate_output <- function(mm){
   )
 }
 
+get_elements_in_m5_groups <- function(mm){
+	groups_in_mm5<-sqldf(sprintf("
+	      select
+	          mm.GAL_ID,
+	          mm.x, 
+	          mm.y, 
+	          mm.z, 
+	          mm.GROUP_ID, 
+	          mm.redshift, 
+	          mm.dist,  
+	          mm.cluster_id 
+	      from 
+	          mm as mm, h 
+        where 
+            mm.GROUP_ID=h.GROUP_ID and 
+	          h.members >= %s", min_members))
+	groups_in_mm5
+}
 
 #Function to get clusters-stats from DBSCAN clustering
 extract_stats_dbscan <- function (eps_sequence_values, local_res) {

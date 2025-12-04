@@ -1,5 +1,5 @@
 ---
-title: "TFM-Density algorithms applied to SDSS"
+title: "TFM-Density algorithms applied to 2dFGRS"
 author: "Carlos Toro Peñas"
 date: '2025-12-15'
 output:
@@ -82,11 +82,13 @@ library(RColorBrewer)
 
 # The clustering problem on galaxy dataset
 
-We want, in this work apply some clustering algorithms, and the compare the obtained models with the halo-based group finder optimized for grouping galaxies that reside in the same dark matter halo.
+We want, in this work apply some clustering algorithms, and the compare the obtained models with the halo-based group finder optimized for groupping galaxies that reside in the same dark matter halo.
 
-In other words: this is not a normal clustering problem where we want to find a model where most of the samples belong to a group in an hypotetical method maximixed by the "Elbow method".
+In other words: this is not a normal clustering problem where we want to find a model where most of the samples belong to a group in an hypothetical method maximized by the "Elbow method".
 
-We want find some hyperparameters configuration makes possible to modelize the data-groups given by the halo-based finder.
+We want find some hyper-parameters configuration makes possible to modeling the data-groups given by the halo-based finder.
+
+We have to clarify that we reserved the term **group** for original and actual clusters in the dataset and **cluster** or **output-cluster** to design the clusters obtained as a result to apply our clustering methods.
 
 # Loading data files
 
@@ -107,15 +109,65 @@ dt <- read.csv(file)
 str(dt)
 ```
 
+# Generic functions for assessments
+
+## Functions to asses outcomes
+
+To assess the outcomes we will based our analysis on tree basic concepts:
+
+**Purity(P)**: measure of output-cluster: proportion of members coming exclusively from a single true group, providing confidence that the algorithm correctly groups members together. A high purity rate indicates the algorithm's effectiveness in identifying true groups.
+
+**Completeness (C)**: measure of an output-cluster: proportion of data true-group elements included in an output-cluster. A cluster is "complete" if contains all points of the original true group.
+
+**Recovery (R)**: measure of an output-cluster (much more restrictive): proportion of output-clusters which are both pure and complete. For this study we consider an output-cluster to be pure if P\>=0.66 (at least 2/3 of elements of an output-cluster belong to a single group). An original cluster is complete if C\>=0.5 (at least half data belong to an original true group).
+
+Some other stats are:
+
+**total_in_group:** number of elements in a given group.
+
+**total_in_cluster:** number of elements in a given output-cluster.
+
+**total_in_cluster_group:** number of elements in a given output-cluster belonging to a majority-group.
+
+**undetected_groups**: original groups not detected as majority-group in output-clusters.
+
+**detected_groups**: original groups detected as majority-group in output-clusters.
+
+Following code is aimed to asses the outcomes obtained with from an given output-cluster:
+
+```{r}
+sys.source(sprintf("%s\\assess.r", includes_folder), envir = knitr::knit_global())
+```
+
+Following code is intended to calculate stats
+
+```{r}
+sys.source(sprintf("%s\\calculate_stats.r", includes_folder), envir = knitr::knit_global())
+```
+
+We generated some functions to help us visualize the results graphically:
+
+```{r}
+sys.source(sprintf("%s\\plotting_functions.r", includes_folder),  envir = knitr::knit_global())
+```
+
+Last file to include content function to compute slos distance:
+
+```{r}
+sys.source(sprintf("%s\\slos.r", includes_folder),  envir = knitr::knit_global())
+```
+
 # Data Preprocessing
 
-## Descriptive analysis. **Data selection and visualization**
+## Descriptive analysis.
 
-There is an initial preprocessing of data-file in order to obtain proper distances and cartesian coordinates x,y,z, by now it is omitted here.
+### **Data selection and visualization**
 
-Take a sample bounded by minPts = 5 and RA and DEC:
+There is an initial pre-processing of data-file in order to obtain proper distances and Cartesian coordinates x,y,z, by now it is omitted here.
 
-$$RA \in [0, 2],\, DEC \in [-29, -27],\, \,and\,\, z \lt max\_redshift$$
+Take a sample bounded by minPts = 5 and in RA and DEC:
+
+$$RA \in [0, 2]h,\, DEC \in [-29, -27]º,\, \,and\,\, z \lt max\_redshift$$
 
 Then we take the initial values:
 
@@ -171,24 +223,6 @@ mm5<-sqldf(sprintf("
           h.members >= %s"
       , min_members))
 
-get_elements_in_m5_groups <- function(mm){
-	groups_in_mm5<-sqldf(sprintf("
-	      select
-	          mm.GAL_ID,
-	          mm.x, 
-	          mm.y, 
-	          mm.z, 
-	          mm.GROUP_ID, 
-	          mm.redshift, 
-	          mm.dist,  
-	          mm.cluster_id 
-	      from 
-	          mm as mm, h 
-        where 
-            mm.GROUP_ID=h.GROUP_ID and 
-	          h.members >= %s", min_members))
-	groups_in_mm5
-}
 ```
 
 Then use it to find the target data:
@@ -231,6 +265,8 @@ plot3d(mm$x, mm$y, mm$z, col = 'black',
        size = 1, xlab = "X", ylab = "Y", zlab = "Z")
 ```
 
+![](images/paste-8A824687.png)
+
 ```{r}
 aa <- sqldf("select 
 	  	  GAL_ID,
@@ -257,47 +293,7 @@ plot3d(mm5$x, mm5$y, mm5$z, col = mm5$GROUP_ID,
        size = 2, xlab = "X", ylab = "Y", zlab = "Z")
 ```
 
-# Generic functions for assessments
-
-## Functions to asses outcomes
-
-To aseess the outcomes we will based our analysis on two basic concepts:
-
-**Purity(P)**: measure of output-cluster: proportion of members coming exclusively from a single true group, providing confidence that the algorithm correctly groups members together. A high purity rate indicates the algorithm's effectiveness in identifying true groups.
-
-**Completeness (C)**: measure of an output-cluster: proportion of data true-group elements included in an output-cluster. A cluster is considered "complete" if contains all points of the original true group.
-
-For this study we consider an output-cluster to be pure if P\>=0.66 (at least 2/3 of elements of an output-cluster belong to a single group). An original cluster is complete if C\>=0.5 (at least half data belong to an original true group)
-
-**total_in_group:** number of elements in a given group.
-
-**total_in_cluster:** number of elements in a given output-cluster.
-
-**total_in_cluster_group:** number of elements in a given output-cluster belonging to a majority-group.
-
-**undetected_groups**: original groups not detected as majority-group in output-clusters
-
-Following code is aimed to asses the outcomes obtained with from an given output-cluster:
-
-```{r}
-sys.source(sprintf("%s\\assess.r", includes_folder), envir = knitr::knit_global())
-```
-
-Following code is intended to calculate stats
-
-```{r}
-sys.source(sprintf("%s\\calculate_stats.r", includes_folder), envir = knitr::knit_global())
-```
-
-## 
-
-## Functions for plotting results
-
-We generated some functions to help us visualize the results graphically:
-
-```{r}
-sys.source(sprintf("%s\\plotting_functions.r", includes_folder),  envir = knitr::knit_global())
-```
+![](images/paste-1FB9DA76.png)
 
 # Raw data processing
 
@@ -318,7 +314,7 @@ plot(res)
 
 In the previous plot we can see how OPTICS modeling valleys (clusters) and the peaks (cluster-separation).
 
-Execute with $\xi=0.3$:
+Execute extractXI to obtain a hierarchical clustering with $\xi=0.15$:
 
 ```{r}
 optics <- extractXi(res, xi=0.15)
@@ -333,7 +329,11 @@ Take a plot of the clustering obtained:
 plot3D_cluster(optics, mm)
 ```
 
-Stats with different values
+![](images/paste-3D6047CC.png)
+
+As shown, this method do not work in clustering detection.
+
+Stats with different values:
 
 ```{r}
 mm$cluster_id <- as.numeric(optics$cluster)
@@ -363,6 +363,8 @@ in the other hand the output-clusters from DBSCAN:
 plot3D_cluster(blo_scan, points)
 ```
 
+![](images/paste-FD16F768.png)
+
 ```{r}
 all <- execute_stats(mm, blo_scan)
 head(all, 5)
@@ -390,7 +392,7 @@ print_global_stats(x_stats, eps_sequence_test)
 
 Lets get a plots for completeness and purity:
 
-We have the optimal point at \$\\epsilon= 0.0006, \$ where recovery =50% and completeness= 81% purity=65.5%
+We have the optimal point at $\epsilon = 6.10^{-4}$, \$ where recovery =50% and completeness= 87% purity=65%
 
 ```{r}
 seleced_eps <- 0.0006
@@ -405,7 +407,7 @@ plot_purity_completeness(
 )
 ```
 
-This chart shows that optimal point is around $0.00055$. Is at this value where completeness is maximum and purity is still high.
+This chart shows that optimal point is around $0.0006$. Is at this value where completeness is maximum and purity is still high.
 
 ```{r}
 
@@ -420,7 +422,7 @@ plot_purity_completeness(
 )
 ```
 
-According with previous chart, the optimal value is $\epsilon = 6.10^{4}$. Given that at this value is reach the maximum purity, purity+completeness and the number of undetected groups remains at minimum.
+For groups detection, we have:
 
 ```{r}
 plot_purity_completeness(
@@ -433,8 +435,6 @@ plot_purity_completeness(
    seleced_eps , 'eps', 'Groups number'
 )
 ```
-
-Once again the optimal point is at $\epsilon = 6.10^{4}$.
 
 # HDBSCAN data processing
 
@@ -451,6 +451,8 @@ length(unique( cl$cluster))
 plot3D_cluster(cl, mm)
 ```
 
+![](images/paste-23E75DA8.png)
+
 HDBSCAN do not work pretty well because it detects cluster in sparser areas which gives as a result cluster detection on noise regions.
 
 # Density Peaks Clustering(DPC )
@@ -463,7 +465,7 @@ By making this way it appears some clusters:
 
 ```{r}
 galaxyDens <- densityClust(points)
-galaxyClusters <- findClusters(galaxyDens, rho=0.995, delta=0.001)
+galaxyClusters <- findClusters(galaxyDens, rho=0.997, delta=0.00086)
 plot(galaxyClusters)
 
 # do not use this takes a lot!!:
@@ -488,7 +490,7 @@ peaks <- mm[galaxyClusters$peaks,]
 print(sprintf("DPC detected %s out of %s clusters", length(unique(peaks$GROUP_ID)), true_groups))
 ```
 
-In fact we can create a heatmap for $\rho$ and $\delta$ hyperparameters:
+In fact we can create a heat-map for $\rho$ and $\delta$ hyper-parameters:
 
 ```{r}
 
@@ -512,17 +514,21 @@ for (rho in rhos){
 }
 
 
-custom_heatmap(matrix_data, deltas, rhos, xTitle = "delta", yTitle = "rho", numColors = 11)
+custom_heatmap(matrix_data, deltas, rhos, xTitle = "rho", yTitle = "delta", numColors = 11)
 ```
 
-In which case, we can see that \$\\rho=0.00084,\\,\\, \\delta=0.9985 \$ produce the best chosen with a 97% of cluster detection.
+In which case, we can see that $\delta=0.00084$ and $\rho=0.9985$ produce the best results with a 97% of group-centers detection.
 
 ## Output-clusters visualization
 
 ```{r}
+galaxyClusters <- findClusters(galaxyDens, rho=0.9985, delta=0.00084)
+peaks <- mm[galaxyClusters$peaks,]
 plot3d(peaks$x, peaks$y, peaks$z, col = peaks$GROUP_ID+1, 
          size = 3, xlab = "X", ylab = "Y", zlab = "Z")
 ```
+
+![](images/paste-C7B2D9FF.png)
 
 And decision graph remains finally:
 
@@ -531,6 +537,15 @@ plot(galaxyClusters)
 abline(h =0.00084, lty = 5)
 abline(v=0.9985, col="blue")
 ```
+
+Note that DPC is good in obtaining groups centers but not in separate the groups over the global datase as we can see
+
+```{r}
+plot3d(mm$x, mm$y, mm$z, col = mm$cluster_id+1, 
+       size = 3, xlab = "X", ylab = "Y", zlab = "Z")
+```
+
+![](images/paste-4080C1EB.png)
 
 # Normalized data processing
 
@@ -556,12 +571,12 @@ x_stats <- extract_stats_dbscan(eps_sequence_test, ress)
 print_global_stats(x_stats, eps_sequence_test)
 ```
 
-Results look quite better when all variables are scaled to a mean=0, sd=1. The optimal value of eps gives more than 76% for both purity and completeness.
+Results look sligthly better when all variables are scaled to a mean=0, sd=1. The optimal value of eps gives more than 81% and 72% for completeness and purity respectively .
 
 The same plots before
 
 ```{r}
-seleced_eps <- 0.0370
+seleced_eps <- 0.04
 plot_purity_completeness(
     eps_sequence_test, 
     x_stats$purity_list,
@@ -586,7 +601,7 @@ plot_purity_completeness(
 )
 ```
 
-## Hyperparameter tunning
+## Hyper-parameter tunning by the elbow method
 
 We have selected that minPts = min_members, which is a reasonable value for interpreting a group / clustering.
 
@@ -597,7 +612,7 @@ kNNdistplot(x = points_scaled, k = min_members)
 abline(h =seleced_eps, lty = 3) 
 ```
 
-How reader can see, the "elbow theory" does not apply here, the reason for this is that we are not trying to optimize the clusters given by the algorithm, instead we are trying to detect groups of galaxies classified by the .
+How reader can see, the "elbow method" does not apply here, the reason for this is that we are not trying to optimize the clusters given by the algorithm, instead we are trying to detect groups of galaxies classified by the .
 
 In addition are data belonging to actual clusters with more than min_members members, this reduced the space to 774 galaxies out of more than 5000.
 
@@ -606,9 +621,6 @@ We can infer that optimal value is content within the interval (0.0023, 0.0033).
 ## Undetected original groups
 
 The element whose groups were not detected are:
-
-```{}
-```
 
 ```{r}
 blo_scans <- extractDBSCAN(ress, eps_cl = seleced_eps)
@@ -620,10 +632,10 @@ undetected <- get_elements_not_in_groups(mm5, all)
 detected <- get_elements_in_groups(mm, all)
 
 print(sprintf('Undetected groups: %s', length(unique(undetected$GROUP_ID))))
-print(sprintf('Detected groups: %s', length(unique(detected$GROUP_ID)))
+print(sprintf('Detected groups: %s', length(unique(detected$GROUP_ID))))
 ```
 
-Plot detected clusters
+Plot detected groups
 
 ```{r}
 plot3d(detected$x, detected$y, detected$z, 
@@ -631,7 +643,9 @@ plot3d(detected$x, detected$y, detected$z,
        xlab = "X", ylab = "Y", zlab = "Z")
 ```
 
-Plot undetected clusters
+![](images/paste-8F549CDC.png)
+
+Plot undetected groups
 
 ```{r}
 plot3d(undetected$x, undetected$y, undetected$z, 
@@ -639,121 +653,15 @@ plot3d(undetected$x, undetected$y, undetected$z,
        xlab = "X", ylab = "Y", zlab = "Z")
 ```
 
+![](images/paste-2C743843.png)
+
 # s-Distances (SLos application)
 
-Following coder allow to calculate the sdistance: It consists in make a elongation along the line of sight
-
-```{r}
-#######################################
-# Calculate angle between two points
-#######################################
-#nulos <- 0
-calculate_angle <- function(v1, v2) {
-	dot_product <- sum(v1 * v2)
-	mod_v1 <- sqrt(sum(v1^2))
-	mod_v2 <- sqrt(sum(v2^2))
-	acos_angle <- dot_product / (mod_v1 * mod_v2)
-	bool <- abs(acos_angle)  >1 | is.na(acos_angle)
-	if(bool == TRUE) {
-		0
-	}else{
-		acos(acos_angle)
-	}
-	
-}
-
-
-#######################################
-# Calculate traverse distance from proper distance
-# simple Angle X Distance
-#######################################
-traverse_distance <- function(v1, v2, distance) {
-	calculate_angle(v1, v2) * distance
-}
-
-
-#######################################
-# Calculate scaled distance symmetric way
-#######################################
-d_LOS_scaled_symmetric <- function(v1, v2, redshift1, redshift2) {
-	(d_LOS(v1, v2, redshift1) + d_LOS(v2, v1, redshift2)) / 2
-}
-
-
-#######################################
-# Calculate scaled distance between two given vectors
-# sfactor is global constant, f.e sfactor=0.2
-# This formulae comes from Hai-Xia-Ma:2025:
-# https://arxiv.org/abs/2405.09855
-#######################################
-d_LOS <- function(v1, v2, redshift) {
-  if (SLOS>0){
-    sfactor <- SLOS
-  }else{
-    if(redshift< 0.01){
-		  sfactor <- 0.6
-	  } else if(redshift< 0.04){
-  		sfactor <- 0.5
-	  } else if(redshift< 0.06){
-		  sfactor <- 0.4
-	  } else if(redshift< 0.08){
-		  sfactor <- 0.35
-	  }else if(redshift< 0.1){
-		  sfactor <- 0.3
-	  }else if(redshift< 0.12){
-		  sfactor <- 0.19
-	  }else if(redshift< 0.15){
-		  sfactor <- 0.08
-	  }else if(redshift< 0.2){
-		  sfactor <- 0.01
-	  }else {
-		  sfactor <- 0.2
-	  }
-  }
-	sfactor * sum((v1-v2)*v1) / sqrt(sum(v1^2))
-}
-
-
-#######################################
-# Calculate elongated distance
-# depends on sfactor (a factor, for example sfactor=0.2) and proper_distance
-# v1 = c(x, y, x, distance)
-# sfactor must be a global variable
-#######################################
-s_distance <- function(v1, v2){
-  vector1 <- v1[1:3]
-	vector2 <- v2[1:3]
-	proper_distance <- v1[4]
-	#proper_distance <- (v1[4] + v2[4])/2
-	redshift1 <- v1[5]
-	redshift2 <- v2[5]
-  
-    sqrt (traverse_distance(vector1, vector2, proper_distance)^2 + 
-          d_LOS_scaled_symmetric(vector1, vector2, redshift1, redshift2)^2
-		)
-}
-
-
-#######################################
-# Get a dist object made up from s_distances
-# use a coordintates matrix as follows:
-#	a<- mm[,c('x', 'y', 'z', 'dist', 'redshift')]
-#   matriz_distancias <- get_matrix_of_distances(a)
-# The aim is to call optics with this object as follows
-#   aaa <- as.dist(matriz_distancias)
-#   res <- optics(aaa, minPts = min_members)
-#######################################
-get_matrix_of_distances <- function(matrix_coordintates) {
-	row_list <- as.list(data.frame(t(matrix_coordintates)))
-	distances_matrix <- outer(row_list, row_list, FUN = Vectorize(s_distance))
-	#as.dist(distances_matrix) This is not needed anymore
-	distances_matrix
-}
-```
+We will use the code to calculate the s-distance, which consists in make a elongation along the line of sight.
 
 ## sDistances Matrix Calculation
 
-And then we can calculate distance matrix to apply OPTICS to this new metric, following code takes a lot of time:
+We can calculate distance matrix to apply OPTICS to this new metric, executing following code may take a long time:
 
 ```{r}
 a<- mm[,c('x', 'y', 'z', 'dist', 'redshift')]
@@ -765,12 +673,16 @@ dist_object <- as.dist(distance_matrix)
 
 ## OPTICS
 
+Apply OPTICS algoritim and then obtain a reachability plot:
+
 ```{r}
 sres <- optics(dist_object, minPts = min_members)
 plot(sres)
 ```
 
 ## DBSCAN:
+
+Extract DBSCAN:
 
 ```{r}
 sblo_scan <- extractDBSCAN(sres, eps_cl = 0.00025)
@@ -779,7 +691,7 @@ mm$cluster_id <- sblo_scan$cluster
 plot(sblo_scan)
 ```
 
-We obtain a notable improvement:
+We obtain a notable improvement comparing previous results:
 
 ```{r}
 sall <- execute_stats(mm, sblo_scan)
@@ -799,6 +711,8 @@ sx_stats <- extract_stats_dbscan(eps_sequence_test, sres)
 print_global_stats(sx_stats, eps_sequence_test)
 ```
 
+We get to the best value:
+
 ```{r}
 seleced_eps <- 0.000108
 plot_purity_completeness(
@@ -814,7 +728,7 @@ plot_purity_completeness(
 
 There is a notable improvement of the results with the sLos distances.
 
-Finally, for groups:
+Finally, for groups detection:
 
 ```{r}
 
@@ -843,10 +757,7 @@ plot_purity_completeness(
 
 ```
 
-Undetected groups
-
-```{}
-```
+Detected and undetected groups:
 
 ```{r}
 
@@ -862,7 +773,7 @@ print(sprintf('Undetected groups: %s', length(unique(undetected$GROUP_ID))))
 print(sprintf('Detected groups: %s', length(unique(detected$GROUP_ID))))
 ```
 
-Pot of detected groups
+Plot for detected groups:
 
 ```{r}
 plot3d(detected$x, detected$y, detected$z, 
@@ -870,7 +781,9 @@ plot3d(detected$x, detected$y, detected$z,
        xlab = "X", ylab = "Y", zlab = "Z")
 ```
 
-Plot of not detected groups
+![](images/paste-2176DF96.png)
+
+Plot for not detected groups:
 
 ```{r}
 plot3d(undetected$x, undetected$y, undetected$z, 
@@ -878,97 +791,68 @@ plot3d(undetected$x, undetected$y, undetected$z,
        xlab = "X", ylab = "Y", zlab = "Z")
 ```
 
-## Other functions to asses globally (unused by now)
-
-Following calculation is for global clusters, once we have outcomes dataset:
-
-```{r}
-
-# Assume a symmetric function f(x)
-f <- function(x, y) x*y
-
-# Create a vector of numbers
-x <- 1:5
-
-# Compute outer() with outer() function
-outer_result <- outer(x, x, f)
-
-# Create a symmetric matrix using the faster method
-n <- length(x)
-lower_tri_indices <- which(outer(1:n, 1:n, function(i, j) i >= j), arr.ind = TRUE)
-lower_tri_values <- f(x[lower_tri_indices[,1]], x[lower_tri_indices[,2]])
-symmetric_result <- matrix(0, n, n)
-symmetric_result[lower_tri_indices] <- lower_tri_values
-#symmetric_result <- symmetric_result + t(symmetric_result) - diag(diag(symmetric_result))
-
-# Compare the two results
-print(outer_result)
-print(symmetric_result)
-
-
-```
-
-Seria
-
-```{r}
-# Assume a symmetric function f(x)
-f <- function(x, y) x*y
-
-# Create a vector of numbers
-x <- 1:5
-
-# Compute outer() with outer() function
-outer_result <- outer(x, x, f)
-
-# Create a symmetric matrix using the faster method
-n <- length(x)
-lower_tri_indices <- which(outer(1:n, 1:n, function(i, j) i >= j), arr.ind = TRUE)
-lower_tri_values <- f(x[lower_tri_indices[,1]], x[lower_tri_indices[,2]])
-symmetric_result <- matrix(0, n, n)
-symmetric_result[lower_tri_indices] <- lower_tri_values
-#symmetric_result <- symmetric_result + t(symmetric_result) - diag(diag(symmetric_result))
-symmetric <- as.dist(symmetric_result)
-# Compare the two results
-print(outer_result)
-print(symmetric)
-```
+![](images/paste-CE9D1A2D.png)
 
 # Summary and conclusions
 
-The bests results obtained with each method:
+The bests results obtained with each method we summarize in next table:
 
-+-----------+-------------+----------------------------+----------------------------------------------------+
-| Method    | Data Sample | Outcomes                   | Conclusion                                         |
-+===========+=============+============================+====================================================+
-| OPTICS    | Non-scaled  | P: 0.72                    | Good in cluster reachability plot                  |
-|           |             |                            |                                                    |
-|           |             | C: 0.72                    |                                                    |
-|           |             |                            |                                                    |
-|           |             | R                          |                                                    |
-+-----------+-------------+----------------------------+----------------------------------------------------+
-| DBSCAN    | Non-scaled  | P: 0.72                    | Good in cluster detection                          |
-|           |             |                            |                                                    |
-|           |             | C: 0.72                    |                                                    |
-|           |             |                            |                                                    |
-|           |             | R: 0.45                    |                                                    |
-+-----------+-------------+----------------------------+----------------------------------------------------+
-| HDBSCAN   | Non-scaled  | P                          | Not good in cluster detection.                     |
-|           |             |                            |                                                    |
-|           |             | C                          |                                                    |
-|           |             |                            |                                                    |
-|           |             | R                          |                                                    |
-+-----------+-------------+----------------------------+----------------------------------------------------+
-| DPC       | Non-scaled  | 97% nuclei-group detecion. | Good in group nuclei detection, but not in cluster |
-|           |             |                            |                                                    |
-|           |             |                            | rho=0.00084 delta=0.9985                           |
-+-----------+-------------+----------------------------+----------------------------------------------------+
-| sOPTICS   | Scaled      |                            |                                                    |
-+-----------+-------------+----------------------------+----------------------------------------------------+
-| OPTICS    | Scaled      |                            |                                                    |
-+-----------+-------------+----------------------------+----------------------------------------------------+
-| DBSCAN    | Scaled      |                            |                                                    |
-+-----------+-------------+----------------------------+----------------------------------------------------+
-| HDBSCAN   | Scaled      |                            |                                                    |
-+-----------+-------------+----------------------------+----------------------------------------------------+
++-------------------------------+----------------+-----------------------------+--------------------------------------------------------------------------+
+| Method                        | Data Sample    | Outcomes                    | Conclusion                                                               |
++===============================+================+=============================+==========================================================================+
+| OPTICS                        | Non-scaled     | \-                          | Good in cluster reachability plot                                        |
++-------------------------------+----------------+-----------------------------+--------------------------------------------------------------------------+
+| OPTICS Xi hierarchical method | Non-scaled     | Not applicable.             | Not valuable result were found.                                          |
++-------------------------------+----------------+-----------------------------+--------------------------------------------------------------------------+
+| DBSCAN                        | Non-scaled     | P: 0.65                     | Good in cluster detection                                                |
+|                               |                |                             |                                                                          |
+|                               |                | C: 0.87                     |                                                                          |
+|                               |                |                             |                                                                          |
+|                               |                | R: 0.42                     |                                                                          |
+|                               |                |                             |                                                                          |
+|                               |                | U: 21                       |                                                                          |
++-------------------------------+----------------+-----------------------------+--------------------------------------------------------------------------+
+| HDBSCAN                       | Non-scaled     | \-                          | Not good in cluster detection.                                           |
++-------------------------------+----------------+-----------------------------+--------------------------------------------------------------------------+
+| DPC                           | Non-scaled     | 97% group-center detection. | Good in group center detection, but not in clustering the whole dataset. |
+|                               |                |                             |                                                                          |
+|                               |                |                             | $\delta=0.00084$ and $\rho=0.9985$                                       |
++-------------------------------+----------------+-----------------------------+--------------------------------------------------------------------------+
+| **sOPTICS**                   | **Non-scaled** | **P: 0.84**                 | **Good on group detection with**                                         |
+|                               |                |                             |                                                                          |
+|                               |                | **C: 0.84**                 | **eps=0.000108**                                                         |
+|                               |                |                             |                                                                          |
+|                               |                | **R: 0.86**                 |                                                                          |
+|                               |                |                             |                                                                          |
+|                               |                | **U: 12**                   |                                                                          |
++-------------------------------+----------------+-----------------------------+--------------------------------------------------------------------------+
+| OPTICS                        | Scaled         | \-                          | Good in cluster reachability plot                                        |
++-------------------------------+----------------+-----------------------------+--------------------------------------------------------------------------+
+| DBSCAN                        | Scaled         | P: 0.72                     | Good in cluster detection with                                           |
+|                               |                |                             |                                                                          |
+|                               |                | C: 0.81                     | eps = 0.04                                                               |
+|                               |                |                             |                                                                          |
+|                               |                | R: 0.41                     |                                                                          |
+|                               |                |                             |                                                                          |
+|                               |                | U: 22                       |                                                                          |
++-------------------------------+----------------+-----------------------------+--------------------------------------------------------------------------+
 
 # Executive summary
+
+In conclusion. We took for this study a sample from the 2dFGRS catalog and selected 6173 objects within an area between 0 and 1h in RA and -25 and -36º in DEC. We tried several methods in groups detecting selecting groups with a minimum of 5 elements (galaxies), we got 95 groups.
+
+We can stand out the following points:
+
+-   The method sOPTICS with DBSCAN reached the highest values in completeness, purity and recovery and in group detection.
+
+-   The DPC algorithm worked pretty well in group-center detection (reached a 97%), but did not worked in separate the groups in the whole dataset.
+
+-   A normalization or scaled of data data slightly improve results, this is because all data are in fact in approx. in same scale, given that all coordinates: x, y, z and dist are all of them expressed under same units and in same range of values.
+
+Finally we compare the original with the best clustering obtained in this study:
+
++--------------------------------+--------------------------------------+
+| Actual groups distribution     | Best cluster detection with sOPTICS. |
++================================+======================================+
+| ![](images/paste-500A6000.png) | ![](images/paste-2176DF96.png)       |
++--------------------------------+--------------------------------------+
