@@ -6,7 +6,7 @@ def import_files():
 
 
 def import_groups():
-    load_2dfgrs_group_galaxy3.execute()
+    load_2dfgrs_group2.execute()
 
 
 def import_groups_galaxy():
