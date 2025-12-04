@@ -622,7 +622,7 @@ print(sprintf('Undetected groups: %s', length(unique(undetected$GROUP_ID))))
 print(sprintf('Detected groups: %s', length(unique(detected$GROUP_ID))))
 ```
 
-Plot detected clusters
+Plot detected groups
 
 ```{r}
 plot3d(detected$x, detected$y, detected$z, 
@@ -632,7 +632,7 @@ plot3d(detected$x, detected$y, detected$z,
 
 ![](images/paste-02936D06.png)
 
-Plot undetected clusters
+Plot undetected groups
 
 ```{r}
 plot3d(undetected$x, undetected$y, undetected$z, 
@@ -766,6 +766,8 @@ plot3d(detected$x, detected$y, detected$z,
        xlab = "X", ylab = "Y", zlab = "Z")
 ```
 
+![](images/paste-8D96AF8B.png)
+
 Plot not detected groups
 
 ```{r}
@@ -773,6 +775,8 @@ plot3d(undetected$x, undetected$y, undetected$z,
        col = undetected$GROUP_ID +1, size = 2, 
        xlab = "X", ylab = "Y", zlab = "Z")
 ```
+
+![](images/paste-86F7CB72.png)
 
 # Summary and conclusions
 
@@ -824,8 +828,14 @@ We can stand out the following points:
 
 -   The method sOPTICS with DBSCAN reached the highest values in completeness, purity and recovery and in group detection.
 
--   The DPC algorithm worked pretty well in group-center detection (reached a 99%), but did not worked in separate the groups in the whole dataset.
+-   The DPC algorithm worked almost perfectly in group-center detection (reached a 99%), but did not worked in separate the groups in the whole dataset.
 
 -   A normalization or scaled of data data slightly improve results, this is because all data are in fact in approx. in same scale, given that all coordinates: x, y, z and dist are all of them expressed under same units and in same range of values.
 
 Finally we compare the original with the best clustering obtained in this study:
+
++--------------------------------+--------------------------------------+
+| Actual groups distribution     | Best cluster detection with sOPTICS. |
++================================+======================================+
+| ![](images/paste-C0421FDF.png) | ![](images/paste-9187A18F.png)       |
++--------------------------------+--------------------------------------+

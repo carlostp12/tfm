@@ -851,8 +851,6 @@ We can stand out the following points:
 
 Finally we compare the original with the best clustering obtained in this study:
 
-+--------------------------------+--------------------------------------+
 | Actual groups distribution     | Best cluster detection with sOPTICS. |
-+================================+======================================+
+|--------------------------------|--------------------------------------|
 | ![](images/paste-500A6000.png) | ![](images/paste-2176DF96.png)       |
-+--------------------------------+--------------------------------------+
