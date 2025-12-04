@@ -1,4 +1,6 @@
-import csv
+
+import urllib
+import urllib.request
 import pandas as pd
 
 from project.utils.utils import calculate_distance, changeCoordsSpericalY, changeCoordsSpericalX, changeCoordsSpericalZ
@@ -20,12 +22,12 @@ class SDSSImporter:
         z_index = 4
         if self.real_importer is True:
             z_index = 16
-        with open(self.sdss_File, "r") as f:
-            reader = csv.reader(f, delimiter="\t")
+        if True:
+            reader = urllib.request.urlopen(self.sdss_File)
             with open(self.destiny_file, "w") as fw:
                 fw.write('GAL_ID,ra,dec,z\n')
                 for i, line in enumerate(reader):
-                    adict = line[0].split()
+                    adict = line.split()
                     if self.real_importer is False:
                         fw.write('{},{},{},{}\n'.format(int(adict[1]), float(adict[2]), float(adict[3]), float(adict[z_index])))
                     else:
@@ -33,24 +35,25 @@ class SDSSImporter:
                     if i % 10000 == 1:
                         print(i)
             fw.close()
-        f.close()
+        reader.close()
         print("End")
 
     def import_group_file(self):
         '''
         transform a group file in a CSV file
         '''
-        with open(self.sdss_File, "r") as f:
-            reader = csv.reader(f, delimiter="\t")
+        if True:
+            reader = urllib.request.urlopen(self.sdss_File)
             with open(self.destiny_file, "w") as fw:
                 fw.write('GAL_ID,GROUP_ID\n')
                 for i, line in enumerate(reader):
-                    adict = line[0].split()
-                    fw.write('{},{}\n'.format(adict[1], adict[2]))
+
+                    adict = line.split()
+                    fw.write('{},{}\n'.format(adict[1].decode('ASCII'), adict[2].decode('ASCII')))
                     if i % 10000 == 1:
                         print(i)
             fw.close()
-        f.close()
+        reader.close()
         print("End")
 
     def transform_final_dss(self, galaxy_file, groups_file):
