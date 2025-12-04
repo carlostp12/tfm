@@ -6,7 +6,8 @@ def execute(real=0):
     base_folder = os.getenv('PROJECT_TFM')
     if base_folder is None:
         print("You have to set up your $PROJECT_TFM env variable")
-        real_importer = real > 0
+
+    real_importer = real > 0
     if real == 0:
         galaxy_file = '{}\\data\\sdss\\SDSS7_galaxy.csv'.format(base_folder)
         groups_file = '{}\\data\\sdss\\SDSS7_galaxy_group.csv'.format(base_folder)
