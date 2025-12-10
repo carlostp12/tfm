@@ -15,10 +15,10 @@ def execute(real=0):
     if real == 1:
         galaxy_file = '{}\\data\\sdss\\SDSS7_real_galaxy.csv'.format(base_folder)
         groups_file = '{}\\data\\sdss\\SDSS7_galaxy_group.csv'.format(base_folder)
-        destiny = '{}\\data\\sdss\\SDSS7-valid.csv'.format(base_folder)
+        destiny = '{}\\data\\sdss\\SDSS7-valid-real.csv'.format(base_folder)
     sdss_real = SDSSImporter(destiny, destiny, real_importer)
     sdss_real.transform_final_dss(galaxy_file, groups_file)
 
 
 if __name__ == "__main__":
-    execute()
+    execute(0)
