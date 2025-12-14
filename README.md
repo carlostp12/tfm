@@ -6,7 +6,7 @@ In the future, these methods may be applied to new surveys and other celestial r
 The project utilizes both Python and R due to their role as the primary programming languages throughout the Master's program. The overall structure of the project is systematically divided as follows:
 1. Python
 This segment encompasses all scripts related to data preprocessing and data acquisition.
-Furthermore, the Python environment includes several Jupyter notebooks dedicated to the calculation and analysis of the correlation function estimators, this part is still optional and today (14-12-2025) still working on it.
+Furthermore, the Python environment includes a Jupyter notebook (notebook-2df.ipynb) dedicated to the calculation and analysis of the correlation function estimators for 2dFGRS catalog, this part is still optional and today (14-12-2025) still working on it.
 3. R
 This component is dedicated to the evaluation of all density-based algorithms under consideration. It includes the execution of these algorithms and the subsequent derivation of the final conclusions across the following datasets:
 
