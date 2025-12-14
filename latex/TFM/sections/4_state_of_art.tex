@@ -133,43 +133,46 @@ The specific form of equation \ref{eq:2} may vary according to the chosen cosmol
  \Omega_{r0} = 0.0001, \,\, \Omega_{m0} = 0.3 , \,\, \Omega_{\Lambda 0} = 0.7.
 \end{equation}.
 
-\subsection{Real space galaxy catalog}
+\subsection{Real space galaxy catalog}\label{section:real}
 
-There a serveral methods to cure the different redshift distorsion (one them along the line of sight, we have already talk previously). Distorsions in redshift survey can be mainly splitted in two sets:
+Numerous methods exist to mitigate the various effects of redshift space distortion (RSD), including the discussed in section \label{section:slos} component along the line of sight. Redshift survey distortions are primarily categorized into two distinct sets:
 
 \begin{enumerate}
 	\item FOG (Finger Of God): reduction in the correlation produced on small scales by the virialized motion of galaxies within the dark matter halos.
 	\item Kaiser effect: boost of the correlation in large scales induced by the infall motion of galaxies towards overdensity regions.
 \end{enumerate}
 
-Both kind of distorsions occur in the correlation of the distribution of galaxies and the global matter distribution. 
+Both categories of distortions manifest within the correlation function of the galaxy distribution and the global matter distribution. 
 
-There are several accurate methods to solve, ate least partially both issues, we will cite the one based described at \cite{Shi:2016}. In such study the authors propose a method to cure the distorsions as follows:
+Several accurate methodologies are available to mitigate the effects of both issues, at least partially. This discussion will focus on the approach described by Shi et al. in \cite{Shi:2016}, where the authors propose a method to correct these distortions as follows:
 
-Given that 
+
+The observed redshift ($z_{\text{obs}}$) of a galaxy is a combination of the cosmological redshift ($z_{\text{cos}}$) due to the Hubble flow and the Doppler shift caused by the galaxy's peculiar velocity ($v_{\text{pec}}$).4 The total relationship is expressed as:
 \begin{equation} \label{eq:4}
  z_{obs} = z_{cos} + z_{pec} = z_{cos} + \frac{v_{pec}}{c}(1+z_{cos}).
 \end{equation}.
 
-Being $z_{obs}$, $z_{cos}$ the observed and cosmologial redsifhts respectively and $v_{pec}$ the peculiar velocity of galaxy, but $v_{pec} $ can be decomposed as:
+And then for $v_{\text{pec}}$ we have:
 
 \begin{equation} \label{eq:5}
- v_{pec} = v_{c} + v_{\sigma}.
+ v_{pec} = v_{cen} + v_{\sigma}.
 \end{equation}.
 
-Where $v_{cen}$ is the line-of-sight velocity of the center of the halo and $v_{\sigma}$ the line-of-sight component of the velocity vector of the galaxy with respect to that halo center. Then the $z_{Kaiser}$ and $z_{FOG}$ are defined as follows:
+Where $v_{\text{cen}}$ is the line-of-sight component of the coherent velocity of the halo center, representing the infall motion that causes the large-scale Kaiser effect. $v_{\sigma}$ is the line-of-sight component of the internal velocity dispersion of the galaxy with respect to its halo center, representing the random motion that causes the small-scale Fingers-of-God (FoG) effect.
 
-\begin{equation} \label{eq:6}
- z_{Kaiser} = z_{cos} + \frac{v_{cen}}{c}(1+z_{cos}).
-\end{equation}.
+The resulting effective redshifts corresponding to these two distinct effects are formally defined as follows:
 
 \begin{equation} \label{eq:7}
- z_{FOG} = z_{cos} + \frac{v_{\sigma}}{c}(1+z_{cos}).
+ z_{FOG} = z_{cos} + \frac{v_{\sigma}}{cen}(1+z_{cos}).
 \end{equation}.
 
-Roughly speaking $v_{c}$ is the manifestation of  $z_{Kaiser}$, whereas FOG effect is depicted by $v_{\sigma}$. 
+Roughly speaking $v_{cen}$ is the manifestation of  $z_{Kaiser}$, whereas FOG effect is depicted by $v_{\sigma}$. 
 
-Accordng to \cite{Shi:2016}, the authors define several spaces by introducing \ref{eq:6} \ref{eq:7} to \label{eq:4} and then recalculate \label{eq:2} in each space. For this study we will use the so called Re-Real space which corresponding to the one including both effects. This way leads to obtain a new catalog with new values for redsifth and rtherefore that modifying the space as shown in the \ref{fig:real}. We will also use this Re-real space dataset in present study to detect how this change influence in the clustering of galaxies.
+Following the methodology proposed in \cite{Shi:2016}, the authors define several coordinate spaces by utilizing Equations \ref{eq:6}, \ref{eq:7}, and \ref{eq:4} to recalculate the positions (Equation \ref{eq:2}) in each space.
+
+For the present study, we will utilize the coordinate system referred to as the Re-Real space. This space is particularly relevant as it incorporates the effects of both the Kaiser and FoG distortions.
+
+Employing this approach yields a modified catalog where the new redshift values effectively transform the coordinate space, as illustrated in Figure \ref{fig:real} . We will use this Re-Real space dataset to thoroughly investigate how this transformation influences the resulting clustering of galaxies.
 
 	\begin{figure}[h]
 	\centering
@@ -385,10 +388,40 @@ $C \leftarrow 0$ \tcp{Cluster counter}
 
 As mentioned, the algorithm takes an unvisited point $p$ and evaluates its eps-neighborhood througth the function \textit{RegionQuery}, if it contains fewer than MinPts points $p$ is labeled as noise. Otherwise $p$ is labeled as core point algorithm expand the cluster througth the \textit{ExpandCluster} function.
 
-\subsection{sLOS: Modifying the distance}
+\subsection{sLOS: sOPTICS Modifying the distance}\label{section:slos}
 
-To be included if have time.
-There is a direct application from \cite{Hai-Xia-Ma:2025} which works by modifing the distance along de line of sight.
+There is a direct application from \cite{Hai-Xia-Ma:2025} which works by modifing the distance along de line of sight as shown at \ref{fig:slos}. This distorsion is the same referred as $FOG$ in the section \ref{section:real} 
+
+This algorithm works with a normal OPTICS but the distance has been modified by a new one wich work as follows:
+Given two point u and v the usual Euclidean distance is calculated as
+
+\begin{equation} \label{eq:10}
+ D^2 (u,v)=\sum_{i=1}^{3} (u_i-v_i)^2.
+\end{equation}.
+Instead, a new version of distance concept is created by calculate the so called Ellongated Euclidean Distance as
+\begin{equation} \label{eq:11}
+ D_{Elongated}^2 (u,v, sLos)= d_{traverse}^2 (u,v) + d_{sLOS}^2 (u,v, sLos) 
+\end{equation}.
+Where 
+\begin{equation} \label{eq:12}
+ d_{sLOS} (u,v, sLos) = sLOS*\frac{\sum_{i=1}^{3} (u_i-v_i)u_i}{\sqrt{\sum_{i=1}^{3}u_i^2}}
+\end{equation}.
+
+Since the sLOS factor must be calculated, the final consideration addresses the distance metric. To ensure a symmetric distance concept—and thereby guarantee the stability of the core-point definitions—the distance chosen is defined as:
+
+ \begin{equation} \label{eq:12}
+ d_{sLOS}^{sym} (u,v, sLos) = sLOS*\frac{d_{sLOS} (u,v, sLos) + d_{sLOS} (v,u, sLos)}{2}
+\end{equation}.
+
+Figure \ref{fig:slos} illustrates the elongated Euclidean distance’s effect on the OPTICS clustering results. Clusters are computed in an elongated way along the line of sight in order to cure the redshift space distortion.
+
+	\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.5\textwidth]{./figs/slos.jpg}
+	\caption{Illustration of how sLos algorithm works elongating the line of sigth} {Source \cite{Hai-Xia-Ma:2025}.}
+	\label{fig:slos}
+	\end{figure}
+
 
 \subsection{HDBSCAN}
 
@@ -434,7 +467,7 @@ The strength of HDBSCAN is its adaptability, this can result in a defect because
 
 Density Peaks Clustering (DPC) is a newer (proposed in 2014) density-based algorithm, it works by quickly search of cluster centers through the so called decision diagram
 
-DPC realies on the assumption that cluster centers are points of clusters where density reaches local maximum, and then each one is surrounded by points with lower local densisty with relatively large distance away from other centers. Therefore two quantites are computed for each point $p_i$ in the dataset:
+The Density Peak Clustering (DPC) algorithm operates under the fundamental assumption that cluster centers correspond to points where the local density attains its maximum. A critical distinguishing characteristic is that each center is separated by a considerable distance from all other centers, while being immediately surrounded by points of comparatively lower local density. Therefore, two quantities are calculated for each point, $p_i$, in the dataset:
 
 \begin{enumerate}
 		\item Local density ($\rho_{i} $). Which is calculated as $\rho_{i}=\sum_{j}\chi(d_{ij}-d_c) $, where $d_c$ is a cutoff distances and $\chi(x)=1 $ if $x<0$ and  $\chi(x)=0 $ if $x \geq 0$. In other words, $\rho_{i}$ is the number of points that are closer than $d_{c}$ to the point $i$.
@@ -442,6 +475,10 @@ DPC realies on the assumption that cluster centers are points of clusters where 
 	$\delta_i = min_{j:\rho_j>\rho_i}(d_{ij})$. and for the point with highest density $\delta_i = max_{j}(d_{ij})$. Therefore $\delta_i$ is much larger than other typical values for those points where density reachs its local or global maximum.
 \end{enumerate}
 	
+
+	
+Following the computation of both parameters, the diagram presented in \ref{fig:mst} can be utilized to establish appropriate thresholds for $\rho$ and $\delta$ in order to select the points which represent centers for each clusters$\delta$. This process allows for the identification of points representing the center of each cluster. DPC excels at cluster center detection because these selected points inherently correspond to locations where the local density reaches its maximum.
+
 	\begin{figure}[h]
 	\centering
 	\includegraphics[width=0.5\textwidth]{./figs/dpc_1.jpg}
@@ -450,8 +487,6 @@ DPC realies on the assumption that cluster centers are points of clusters where 
 	\label{fig:mst}
 	\end{figure}
 	
-Once both parameters are calculated we can use the diagram in \cite{fig:mst} to chose some thresholds for $\rho$ and $\delta$ in order to select the points which represent the centers for each clusters. Once selected DPC is really good in cluster center detection because is in such points where density reaches its maximum.
-
 \subsection{Previous machine learning applications in galaxy clustering}
 
 This section briefly reviews several Machine Learning (ML) applications in cosmology, with particular emphasis on clustering techniques, but first we will introduce some historical research in globally galaxy custering.

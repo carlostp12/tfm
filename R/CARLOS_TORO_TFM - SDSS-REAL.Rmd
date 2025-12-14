@@ -1,5 +1,5 @@
 ---
-title: "TFM-Density algorithms applied to SDSS"
+title: "TFM-Density algorithms applied to SDSS Re-real space"
 author: "Carlos Toro Peñas"
 date: '2025-12-15'
 output:
@@ -98,9 +98,9 @@ We want find some hyperparameters configuration makes possible to modelize the d
 ######################
 folder <- Sys.getenv('PROJECT_TFM')
 includes_folder  <- sprintf('%s\\R\\includes\\', folder)
-folder <- sprintf('%s\\data\\groups\\sdss_real\\', folder)
+folder <- sprintf('%s\\data\\sdss\\', folder)
 print(folder)
-file <- sprintf('%sSDSS7-valid.csv', folder)
+file <- sprintf('%sSDSS7-valid-real.csv', folder)
 setwd(folder)
 dt <- read.csv(file)
 str(dt)
@@ -156,20 +156,17 @@ sys.source(sprintf("%s\\slos.r", includes_folder),  envir = knitr::knit_global()
 
 # Data Preprocessing
 
-## Descriptive analysis.
-
-### **Data selection and visualization**
+## Descriptive analysis and visualization
 
 There is an initial preprocessing of data-file in order to obtain proper distances and cartesian coordinates x,y,z, by now it is omitted here.
 
 Take a sample bounded by minPts = 5 and RA and DEC:
 
-$$RA \in [210, 180],\, DEC \in [27, 29],\, \,and\,\, z \lt max\_redshift$$
+$$RA \in [90, 150],\, DEC \in [15, 25],\, \,and\,\, z \lt max\_redshift$$
 
-Then we take the initial values:
+Then we take the initial values and take a look at the remaining distribution:
 
 ```{r}
-sLos <- 0.4 #Here the slos is fixed beforehand
 min_members <- 5
 
 ra_lim_inf <- 90
@@ -271,11 +268,25 @@ barplot(ttable, col=('red'),
                      min_members))
 ```
 
+And the number of members for each group distribution:
+
 ```{r}
 boxplot(hhh$members, main="Boxplot of wt")
 ```
 
-Lets take a look at the complete target sample:
+We finally update the groups in order to get the final target dataset:
+
+```{r}
+temp <- suppressWarnings(sqldf(c("
+      update mm set GROUP_ID=0
+ where 
+       GROUP_ID not in (select distinct(GROUP_ID) from mm5)", "select * from main.mm")))
+temp
+
+mm_real <- temp
+```
+
+Lets take a look at the complete target sample distribution in the space:
 
 ```{r}
 plot3d(mm$x, mm$y, mm$z, col = 'black', 
@@ -283,6 +294,8 @@ plot3d(mm$x, mm$y, mm$z, col = 'black',
 ```
 
 ![](images/paste-8BB880F1.png)
+
+The groups colored in this space:
 
 ```{r}
 aa <- sqldf("select 
@@ -302,6 +315,8 @@ aa <- sqldf("select
 plot3d(aa$x, aa$y, aa$z, col = aa$group_id+1, 
        size = 2, xlab = "X", ylab = "Y", zlab = "Z")
 ```
+
+![](images/paste-E91E66FA.png)
 
 And the groups with more than min_members:
 
@@ -331,7 +346,7 @@ plot(res)
 
 In the previous plot we can see how OPTICS modeling valleys (clusters) and the peaks (cluster-separation).
 
-Execute with $\xi=0.3$:
+Next, we try the extractXi function which allows to extract hierarchical clusters, execute with $\xi=0.3$:
 
 ```{r}
 optics <- extractXi(res, xi=0.15)
@@ -348,7 +363,9 @@ plot3D_cluster(optics, mm)
 
 ![](images/paste-26B3B4CF.png)
 
-Stats with different values
+The group obtained is not very accurate.
+
+Stats with different values:
 
 ```{r}
 mm$cluster_id <- as.numeric(optics$cluster)
@@ -359,7 +376,7 @@ print_stats(all)
 
 ## DBSCAN
 
-We can directly apply extractDBSCAN on the OPTICS model.
+We can directly apply extractDBSCAN on the OPTICS model:
 
 ```{r}
 
@@ -371,9 +388,7 @@ plot(blo_scan)
 
 ### Output-clusters visualization
 
-We have, on one hand all groups with more than min_members members (made up by a reduced amount of galaxies from catalog)
-
-in the other hand the output-clusters from DBSCAN:
+We have, on one hand all groups with more than min_members members (made up by a reduced amount of galaxies from catalog) , in the other hand we have the output-clusters from DBSCAN:
 
 ```{r}
 plot3D_cluster(blo_scan, points)
@@ -408,7 +423,7 @@ print_global_stats(x_stats, eps_sequence_test)
 
 Lets get a plots for completeness and purity:
 
-We have the optimal point at \$\\epsilon= 0.0006, \$ where recovery =50% and completeness= 81% purity=65.5%
+We have the optimal point at \$\\epsilon= 0.0003, \$ where recovery =98.7% and completeness= 92% purity=83%:
 
 ```{r}
 seleced_eps<- 0.0003
@@ -438,7 +453,7 @@ plot_purity_completeness(
 )
 ```
 
-According with previous chart, the optimal value is $\epsilon = 3.10^{4}$. Given that at this value is reach the maximum purity, purity+completeness and the number of undetected groups remains at minimum.
+According with previous chart, the optimal value is $\epsilon = 3.10^{4}$. The number of undetected groups remains at minimum.
 
 ```{r}
 plot_purity_completeness(
@@ -452,7 +467,7 @@ plot_purity_completeness(
 )
 ```
 
-Once again the optimal point is at $\epsilon = 3.70^{4}$.
+Once again the optimal point is at $\epsilon = 3.10^{4}$.
 
 # HDBSCAN data processing
 
@@ -469,6 +484,8 @@ length(unique( cl$cluster))
 plot3D_cluster(cl, mm)
 ```
 
+![](images/paste-DD3B2CB4.png)
+
 HDBSCAN do not work pretty well because it detects cluster in sparser areas which gives as a result cluster detection on noise regions.
 
 # Density Peaks Clustering(DPC )
@@ -480,6 +497,7 @@ Alex Rodriguez and Alessandro Laio (2014).
 By making this way it appears some clusters:
 
 ```{r}
+points<- mm[,c('x', 'y', 'z')]
 galaxyDens <- densityClust(points)
 galaxyClusters <- findClusters(galaxyDens, rho=0.997, delta=0.00086)
 plot(galaxyClusters)
@@ -519,14 +537,28 @@ we create a heat-map for $\rho$ and $\delta$ hyper-parameters:
 rhos <- seq(0.9980, 0.999, 0.0001)
 deltas <- seq(0.0008, 0.0009, 0.00001)
 
+#rhos <- seq(0.9950, 0.9954, 0.0001)
+#deltas <- seq(0.00095, 0.00105, 0.00001)
+
+#rhos <- seq(0.9956, 0.9962, 0.0001)
+#deltas <- seq(0.00088, 0.00098, 0.00001)
+
+#rhos <- seq(0.9966, 0.9978, 0.0001)
+#deltas <- seq(0.00086, 0.00099, 0.00001)
+
+
+#rhos <- seq(0.9955, 0.9968, 0.0001)
+#deltas <- seq(0.00094, 0.00110, 0.00001)
+
 j<-1
 i<-1
 matrix_data=matrix(ncol=length(rhos), nrow = length(deltas)) 
 for (rho in rhos){
 	for (delta in deltas){
         galaxyClusters <- findClusters(galaxyDens, rho=rho, delta=delta)
-        peaks <- mm[galaxyClusters$peaks,]
-        l <- length(unique(peaks$GROUP_ID))
+        peaks <- mm5[galaxyClusters$peaks,]
+        #l <- length(unique(peaks$GROUP_ID))
+        l <- length(unique(peaks[peaks$GROUP_ID>0, c('GROUP_ID')]))
         #print(min(l/true_groups, true_groups/l))
         matrix_data[i, j] <- min(l/true_groups, true_groups/l)
         i <- i+1
@@ -536,10 +568,12 @@ for (rho in rhos){
 }
 
 
-custom_heatmap(matrix_data, deltas, rhos, xTitle = "rho", yTitle = "delta", numColors = 11)
+custom_heatmap(matrix_data, deltas, rhos, xTitle = "rho", yTitle = "delta", numColors = 10)
 ```
 
 As we can see , all groups-center are detected with DPC for values $\delta=0.00085$ and $\rho=0.9986$.
+
+Nevertheless we can check how the points
 
 # Normalized data processing
 
@@ -595,7 +629,7 @@ plot_purity_completeness(
 )
 ```
 
-## Hyperparameter tunning
+## Elbow method for hyperparameter tunning
 
 We have selected that minPts = min_members, which is a reasonable value for interpreting a group / clustering.
 
@@ -606,7 +640,7 @@ kNNdistplot(x = points_scaled, k = min_members)
 abline(h = seleced_eps, lty = 3) 
 ```
 
-How reader can see, the "elbow theory" does not apply here, the reason for this is that we are not trying to optimize the clusters given by the algorithm, instead we are trying to detect groups of galaxies classified by the .
+How reader can see, the "elbow mehod" does not apply here pretty well, this is because we are not trying to optimize the out-put clusters given by the algorithm, instead we are trying to fit some density methods in order to detect groups of galaxies generated by black matter halos and grouped by density .
 
 In addition are data belonging to actual clusters with more than min_members members, this reduced the space to 774 galaxies out of more than 5000.
 
@@ -701,8 +735,6 @@ We can stand out the following points:
 
 Finally we compare the original with the best clustering obtained in this study:
 
-+---------------------------------------------+-------------------------------------+
 | Actual groups distribution in Re-Real Space | Best cluster detection with DBSCAN. |
-+=============================================+=====================================+
+|---------------------------------------------|-------------------------------------|
 | ![](images/paste-BC9FEB7D.png)              | ![](images/paste-D7228FBB.png)      |
-+---------------------------------------------+-------------------------------------+

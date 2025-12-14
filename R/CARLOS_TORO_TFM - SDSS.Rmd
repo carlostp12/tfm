@@ -161,17 +161,15 @@ sys.source(sprintf("%s\\slos.r", includes_folder),  envir = knitr::knit_global()
 
 # Data Preprocessing
 
-## Descriptive analysis.
-
-### **Data selection and visualization**
+## Descriptive analysis **and visualization**
 
 There is an initial preprocessing of data-file in order to obtain proper distances and cartesian coordinates x,y,z, by now it is omitted here.
 
 Take a sample bounded by minPts = 5 and RA and DEC:
 
-$$RA \in [6, 10] h,\, DEC \in [15, 25] º,\, \,and\,\, z \lt max\_redshift$$
+$$RA \in [90, 1500] h,\, DEC \in [15, 25] º,\, \,and\,\, z \lt max\_redshift$$
 
-Then we take the initial values:
+Then we take the initial values and take a look at the remaining distribution:
 
 ```{r}
 SLOS <- 0.4 #Here the slos is fixed beforehand
@@ -834,8 +832,6 @@ We can stand out the following points:
 
 Finally we compare the original with the best clustering obtained in this study:
 
-+--------------------------------+--------------------------------------+
 | Actual groups distribution     | Best cluster detection with sOPTICS. |
-+================================+======================================+
+|--------------------------------|--------------------------------------|
 | ![](images/paste-C0421FDF.png) | ![](images/paste-9187A18F.png)       |
-+--------------------------------+--------------------------------------+

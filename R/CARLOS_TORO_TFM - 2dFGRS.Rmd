@@ -159,17 +159,15 @@ sys.source(sprintf("%s\\slos.r", includes_folder),  envir = knitr::knit_global()
 
 # Data Preprocessing
 
-## Descriptive analysis.
-
-### **Data selection and visualization**
+## Descriptive analysis **and visualization**
 
 There is an initial pre-processing of data-file in order to obtain proper distances and Cartesian coordinates x,y,z, by now it is omitted here.
 
 Take a sample bounded by minPts = 5 and in RA and DEC:
 
-$$RA \in [0, 2]h,\, DEC \in [-29, -27]º,\, \,and\,\, z \lt max\_redshift$$
+$$RA \in [0, 30]h,\, DEC \in [-36, -25]º,\, \,and\,\, z \lt max\_redshift$$
 
-Then we take the initial values:
+Then we take the initial values and take a look at the remaining distribution:
 
 ```{r}
 SLOS <- 0 #Here the slos is not fixed beforehand
