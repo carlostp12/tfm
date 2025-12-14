@@ -110,44 +110,6 @@ In order to validate and assess the performance of a constructed galaxy clusteri
 
 The halo-based group finder was successfully applied to the galaxy catalogs from both the 2dFGRS and the SDSS (Data Release 7). This valuable group catalog is publicly accessible and can be downloaded from \cite{groups:2000}
 
-\subsection{Real space galaxy catalogue}
-
-There a serveral methods to cure the different redshift distorsion (one them is along the line of sight, we have already talk previously), one based the reader can take a look at the study at \cite{Shi:2016}. In \cite{Shi:2016} they authors created a method to cure the distorsions proper of any spectrscopic survey, those distorsions are occurs in the correlation of the distribution of galaxies and the global matter distribution \cite{Shi:2016}, these distorsions can be:
-\begin{enumerate}
-	\item FOG (Finger Of God): reduction in the correlation produced on small scales by the virialized motion of galaxies within the dark matter halos.
-	\item Kaiser effect: boost of the correlation in large scales induced by the infall motion of galaxies towards overdensity regions.
-\begin{enumerate}
-
-Given that 
-\begin{equation} \label{eq:3}
- z_{obs} = z_{cos} + z_{pec} = z_{cos} + \frac{v_{pec}}{c}(1+z_{cos}).
-\end{equation}.
-
-Being $z_{obs}$, $z_{cos}$ the observed and cosmologial redsifhts and $v_{pec}$ the peculiar velocity of galaxy, but
-
-\begin{equation} \label{eq:3}
- v_{pec} = v_{c} + v_{\sigma}.
-\end{equation}.
-
-Where $v_{cen}$ is the line-of-sight velocity of the center of the halo and $v_{\sigma}$ the line-of-sight component of the velocity vector of the galaxy with respect to that halo center. Then the $z_{Kaiser}$ and $z_{FOG}$ are defined as follows:
-
-\begin{equation} \label{eq:3}
- z_{Kaiser} = z_{cos} + \frac{v_{cen}}{c}(1+z_{cos}).
-\end{equation}.
-
-\begin{equation} \label{eq:3}
- z_{FOG} = z_{cos} + \frac{v_{\sigma}}{c}(1+z_{cos}).
-\end{equation}.
-
-To sum up, the authors in \cite{Shi:2016} applied their method to SDSS-DR7 and they generated new catalogue with new values for redsifth that modifies the space as shown in the \ref{fig:real}. We will also the modified dataset Re-real space use in present study to detect how this change influence in the clustering of galaxies.
-
-	\begin{figure}[h]
-	\centering
-	\includegraphics[width=0.5\textwidth]{./figs/real_space.jpg}
-	\caption{SDSS-DR7: in the left redsifth space in the rigth Re-real space}{Source \cite{Shi:2016}.}
-	\label{fig:real}
-	\end{figure}
-	
 \section{The redshift–distance relation}
 
 It is well-established that the Universe is undergoing cosmic expansion. The Hubble–Lemaître Law quantifies this expansion, stipulating that the recessional velocity of a galaxy is directly proportional to its proper distance from the observer. This relationship is described by the equation:
@@ -157,7 +119,7 @@ It is well-established that the Universe is undergoing cosmic expansion. The Hub
 \end{equation}	
 Where $V, H_{0}, D$ are respectively, the velocity, Hubble constant and distance.
 
- The equation \ref{eq:1} is strictly valid on small redshifts $ z \ll 1 $ \cite{Cepa:2023} (which means nearby objects). In higher redshift it is necessary to use a full cosmological model to address the redshift-distance relation. According with the most recent theories \cite{Cepa:2023}:
+ The equation \ref{eq:1} is strictly valid on small redshifts $ z \ll 1 $ \cite{Cepa:2023} (which means nearby objects). In higher redshift it is necessary to use a full cosmological model to address the redshift-distance relation. According to the most recent theories \cite{Cepa:2023}:
 
 \begin{equation} \label{eq:2}
 	D_p =  \frac{1}{H_0} \int_0^z \frac{dz}{ \sqrt{\sum_i \Omega_{r0} (1+z)^{4} + \Omega_{m0} (1+z)^{3} + \Omega_{\Lambda 0}  } }
@@ -170,6 +132,53 @@ The specific form of equation \ref{eq:2} may vary according to the chosen cosmol
 \begin{equation} \label{eq:3}
  \Omega_{r0} = 0.0001, \,\, \Omega_{m0} = 0.3 , \,\, \Omega_{\Lambda 0} = 0.7.
 \end{equation}.
+
+\subsection{Real space galaxy catalog}
+
+There a serveral methods to cure the different redshift distorsion (one them along the line of sight, we have already talk previously). Distorsions in redshift survey can be mainly splitted in two sets:
+
+\begin{enumerate}
+	\item FOG (Finger Of God): reduction in the correlation produced on small scales by the virialized motion of galaxies within the dark matter halos.
+	\item Kaiser effect: boost of the correlation in large scales induced by the infall motion of galaxies towards overdensity regions.
+\end{enumerate}
+
+Both kind of distorsions occur in the correlation of the distribution of galaxies and the global matter distribution. 
+
+There are several accurate methods to solve, ate least partially both issues, we will cite the one based described at \cite{Shi:2016}. In such study the authors propose a method to cure the distorsions as follows:
+
+Given that 
+\begin{equation} \label{eq:4}
+ z_{obs} = z_{cos} + z_{pec} = z_{cos} + \frac{v_{pec}}{c}(1+z_{cos}).
+\end{equation}.
+
+Being $z_{obs}$, $z_{cos}$ the observed and cosmologial redsifhts respectively and $v_{pec}$ the peculiar velocity of galaxy, but $v_{pec} $ can be decomposed as:
+
+\begin{equation} \label{eq:5}
+ v_{pec} = v_{c} + v_{\sigma}.
+\end{equation}.
+
+Where $v_{cen}$ is the line-of-sight velocity of the center of the halo and $v_{\sigma}$ the line-of-sight component of the velocity vector of the galaxy with respect to that halo center. Then the $z_{Kaiser}$ and $z_{FOG}$ are defined as follows:
+
+\begin{equation} \label{eq:6}
+ z_{Kaiser} = z_{cos} + \frac{v_{cen}}{c}(1+z_{cos}).
+\end{equation}.
+
+\begin{equation} \label{eq:7}
+ z_{FOG} = z_{cos} + \frac{v_{\sigma}}{c}(1+z_{cos}).
+\end{equation}.
+
+Roughly speaking $v_{c}$ is the manifestation of  $z_{Kaiser}$, whereas FOG effect is depicted by $v_{\sigma}$. 
+
+Accordng to \cite{Shi:2016}, the authors define several spaces by introducing \ref{eq:6} \ref{eq:7} to \label{eq:4} and then recalculate \label{eq:2} in each space. For this study we will use the so called Re-Real space which corresponding to the one including both effects. This way leads to obtain a new catalog with new values for redsifth and rtherefore that modifying the space as shown in the \ref{fig:real}. We will also use this Re-real space dataset in present study to detect how this change influence in the clustering of galaxies.
+
+	\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.5\textwidth]{./figs/real_space.jpg}
+	\caption{SDSS-DR7: in the left redsifth space in the rigth Re-real space}{Source \cite{Shi:2016}.}
+	\label{fig:real}
+	\end{figure}
+	
+
 
 \section{Machine Learning applied to cosmology}
 
@@ -426,24 +435,22 @@ The strength of HDBSCAN is its adaptability, this can result in a defect because
 Density Peaks Clustering (DPC) is a newer (proposed in 2014) density-based algorithm, it works by quickly search of cluster centers through the so called decision diagram
 
 DPC realies on the assumption that cluster centers are points of clusters where density reaches local maximum, and then each one is surrounded by points with lower local densisty with relatively large distance away from other centers. Therefore two quantites are computed for each point $p_i$ in the dataset:
-	- $\ro_i$ local density. which is calculated as $\rho_i=\sum_{j}\chi(d_{ij}-d_c) $, where $d_c$ is a cutoff distances and $\chi(x)=1 $ if $x<0$ and  $\chi(x)=0 $ if $x \geq 0$. In other words, $\rho_i$ is the number of points that are closer than $d_c$ to the point $i$.
-	- $\delta_i$: distance from  next point with higher density. this is measured by computing:
+
+\begin{enumerate}
+		\item Local density ($\rho_{i} $). Which is calculated as $\rho_{i}=\sum_{j}\chi(d_{ij}-d_c) $, where $d_c$ is a cutoff distances and $\chi(x)=1 $ if $x<0$ and  $\chi(x)=0 $ if $x \geq 0$. In other words, $\rho_{i}$ is the number of points that are closer than $d_{c}$ to the point $i$.
+		\item Distance from  next point $\delta_i$ with higher density. This parameter is measured by computing:
 	$\delta_i = min_{j:\rho_j>\rho_i}(d_{ij})$. and for the point with highest density $\delta_i = max_{j}(d_{ij})$. Therefore $\delta_i$ is much larger than other typical values for those points where density reachs its local or global maximum.
+\end{enumerate}
 	
 	\begin{figure}[h]
 	\centering
-	\includegraphics[width=0.5\textwidth]{./figs/dpc_1.jpg.jpg}
+	\includegraphics[width=0.5\textwidth]{./figs/dpc_1.jpg}
 	\caption{ DPC in two dimensions}{(A) Point distribution. Data points are ranked in order of decreasing density.} {(B) Decision graph for the data in
 (A). Different colors correspond to different clusters.}{Source \cite{DPC:2014}.}
 	\label{fig:mst}
 	\end{figure}
 	
-	
-The algorithm has its basis in the assumptions that cluster centers are surrounded by neighbors with lower local density and that they are at a relatively large distance from any points with a higher local density. For each data point i, we compute two quantities: its local density ri and its distance di from points of higher density. Both
-these quantities depend only on the distances dij
-between data points, which are assumed to satisfy
-the triangular inequality. The local density ri
-of data point i is defined as
+Once both parameters are calculated we can use the diagram in \cite{fig:mst} to chose some thresholds for $\rho$ and $\delta$ in order to select the points which represent the centers for each clusters. Once selected DPC is really good in cluster center detection because is in such points where density reaches its maximum.
 
 \subsection{Previous machine learning applications in galaxy clustering}
 
