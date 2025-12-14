@@ -1,0 +1,186 @@
+\documentclass[12pt,a4paper,twoside]{book}
+\usepackage{graphicx}
+\usepackage{setspace} %double spacing for text, single for captions, footnotes, etc.
+%\usepackage{hypernat} %substitute for cite that allows hyperlinks
+\usepackage{natbib} % substitute for 'hypernat' that works on Windows.
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{color}
+\usepackage{hhline} % extended styles for tables
+\usepackage{multirow}
+\usepackage{subfigure}
+\usepackage{acronym}
+\usepackage{hyperref}
+\usepackage{amsmath,amsmath,amssymb}
+\usepackage{fancyhdr}
+\usepackage{epsfig, amsmath}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+% general settings
+\hypersetup{
+linktocpage=true,
+colorlinks=true,
+linkcolor=blue,
+citecolor=blue,
+}
+\definecolor{Hgray}{gray}{0.6}
+
+\newenvironment{definition}[1][Definition]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+
+\setlength{\topmargin}{0cm}
+\setlength{\textheight}{23cm}
+\setlength{\textwidth}{17cm}
+\setlength{\oddsidemargin}{0cm}
+\setlength{\evensidemargin}{0cm}
+\setlength{\headheight}{1cm}
+
+% indicates that 'sub-sub-sections' are numbered and appear in the index
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{2}
+
+% settings for code
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+
+%%%%%%%%%%%%
+% DOCUMENT %
+%%%%%%%%%%%%
+\begin{document}
+
+\setcounter{section}{0} % Resets the section counter to 0 at the document's start
+\renewcommand{\thesection}{\arabic{section}} % Changes the section numbering scheme
+
+% cover page
+\input{0_titulo.tex}
+\newpage
+% abstract
+\input{0_resumen.tex}
+\newpage
+
+\pagestyle{fancy}
+\renewcommand{\chaptermark}[1]{ \markboth{#1}{}}
+\renewcommand{\sectionmark}[1]{\markright{ \thesection.\ #1}}
+\lhead[\fancyplain{}{\bfseries\thepage}]{\fancyplain{}{\bfseries\rightmark}}
+\rhead[\fancyplain{}{\bfseries\leftmark}]{\fancyplain{}{\bfseries\thepage}}
+\cfoot{}
+
+% table of contents
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{Table of Contents}
+\tableofcontents
+% list of figures
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{List of Figures}
+\listoffigures
+% list of tables
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{List of Tables}
+\listoftables
+
+\thispagestyle{empty}
+
+\pagenumbering{arabic}
+
+\pagestyle{fancy}
+\renewcommand{\chaptermark}[1]{ \markboth{#1}{}}
+\renewcommand{\sectionmark}[1]{\markright{ \thesection.\ #1}}
+\lhead[\fancyplain{}{\bfseries\thepage}]{\fancyplain{}{\bfseries\rightmark}}
+\rhead[\fancyplain{}{\bfseries\leftmark}]{\fancyplain{}{\bfseries\thepage}}
+\cfoot{}
+
+\onehalfspacing
+
+% chapters of the document
+\section{Introduction}
+
+This template aims to be a guide for students. This template can be adapted to the specific needs of each project if the project supervisor agrees with the changes.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.5\textwidth]{./figs/image1.png}
+\caption{Sample figure. It will be indexed in the “List of Figures”.}
+\label{fig:sample_figure}
+\end{figure}
+
+\subsection{Context and motivation}
+
+Starting point of the project (Which is the problem that needs to be solved? Why is it a relevant topic? How is the problem currently being solved?) and description of the contribution (What is the intended outcome?)
+
+\subsection{Goals}
+
+List of the goals to be achieved in this project.
+
+\subsection{Sustainability, diversity, and ethical/social challenges}
+
+This section should assess the positive/negative impact of the project in the following dimensions. It is not required to reach a positive impact in any/all dimensions, but it is necessary to consider and discuss whether there is an impact or not from the beginning of the project.
+
+\begin{description}
+    \item[Sustainability] In the development of the project or during its entire lifecycle (e.g., deployment, retirement), does the output of this project have an impact on sustainability and/or ecological footprint (energy/resource consumption/savings, waste, pollution, depletion of raw materials)? Is it affected by laws or regulations on this matter? Considering another perspective, does it affect any of the Sustainable Development Goals (SDG) related to these dimensions? If it does not have any impact, either positive or negative, you should explain how you reached this conclusion and justify your answer.
+    \item[Ethical behaviour and social responsibility] Is the outcome of the project too technical to have any positive/negative impact in ethical/social aspects? Does it have an impact on laws/regulations (data, privacy, labour, intellectual property, personal security, …)? Does it adhere to the deontological principles of the profession? Does it endanger/improve/worsen any job position? If it does not have any impact, either positive or negative, you should explain how you reached this conclusion and justify your answer.
+    \item[Diversity, gender and human rights] Is the result of this project so technical that it has no positive/negative impact in terms of gender, diversity, or human rights? And in any laws/regulations? And in terms of accessibility, disability, ergonomics and/or information security? If it does not have any impact, either positive or negative, you should explain how you reached this conclusion and justify your answer.
+\end{description}
+
+\subsection{Approach and methodology}
+
+Describe the potential strategies to develop this project and explain the selected strategy. Discuss why the selected strategy is the most suitable one to achieve the project’s goals.
+
+\subsection{Schedule}
+
+Description of the resources needed to develop the project, the tasks to be carried out and a schedule for each task using a Gantt diagram or equivalent. This planning should define the milestones that will be completed in each Continuous Assessment Test.
+
+\subsection{Summary of the outputs of the project}
+
+It is not necessary to describe each output in detail: this will be done in the remaining chapters of the project.
+
+\subsection{Brief description of the remaining chapters of the report}
+
+Brief description of the contents of each chapter and their relationship with the rest of the project.
+
+\section{Methods and resources}
+
+In these sections, it is necessary to describe:
+
+\begin{itemize}
+    \item The most relevant aspects of the design and development of the project.
+    \item The methodology used in the development process, describing the potential alternatives, the decisions that have been taken and the criteria used to take these decisions.
+    \item A description of the products that have been created.
+\end{itemize}
+
+The structure of these sections may change according to the type of project being developed.
+
+\section{Results}
+
+Describe the results achieved using the previously described methodology.
+
+\section{Conclusions and future work}
+
+This section should include the following:
+
+\begin{itemize}
+    \item A description of the conclusions of the work.
+    \item A critical assessment of the degree of achievement of the initial goals.
+    \item A critical assessment of the schedule and methodology used in the project.
+    \item Considering the sustainability, diversity and ethical-social challenges linked to the project.
+    \item A discussion of topics for potential future work that have not been explored in this project.
+\end{itemize}
+
+\section{Glossary}
+
+Definition of the most relevant terms and acronyms used in this report.
+
+% bibliography
+\addcontentsline{toc}{chapter}{Bibliography}
+\bibliographystyle{plain}
+\bibliography{references}
+
+\section{Appendices}
+
+List of sections that are too long to be included in the body of the report and that are self-contained.
+
+
+\end{document}

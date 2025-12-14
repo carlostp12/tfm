@@ -1,0 +1,199 @@
+---
+title: "PAC2_Estadística_CARLOS_TORO_PEÑAS"
+author: "Carlos Toro Peñas"
+date: '2022-11-08'
+output:
+  html_document:
+    highlight: default
+    number_sections: yes
+    theme: cosmo
+    toc: yes
+    toc_depth: 2
+    includes:
+      in_header: 75.584-PEC-header.html
+  word_document: default
+  pdf_document:
+    toc: yes
+    number_sections: true
+    df_print: kable
+    highlight: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+if (!require('jsonlite')) install.packages('jsonlite')
+library(jsonlite)
+if (!require('dbscan')) install.packages('dbscan')
+library(dbscan)
+if (!require('readr')) install.packages('readr')
+library(readr)
+if (!require('rjson')) install.packages('rjson')
+library(rjson)
+
+if (!require('dplyr')) install.packages('dplyr')
+library(dplyr)
+
+if (!require('akima')) install.packages('akima')
+library(akima)
+
+if (!require('astrolibR')) install.packages("astrolibR")
+library(astrolibR)
+
+if (!require('scatterplot3d')) install.packages("scatterplot3d")
+library(scatterplot3d)
+
+if (!require('gMOIP')) install.packages("gMOIP")
+library(gMOIP)
+
+if (!require('ggplot2')) install.packages("ggplot2")
+library(ggplot2)
+
+if (!require('rgl')) install.packages("rgl")
+library(rgl)
+
+if (!require('pracma')) install.packages("pracma")
+library(pracma)
+
+if (!require('plotly')) install.packages("plotly")
+
+library(plotly)
+
+if (!require('sqldf')) install.packages("sqldf")
+library(sqldf)
+
+if (!require('tidyr')) install.packages("tidyr")
+library(tidyr)
+
+if (!require('densityClust')) install.packages('densityClust')
+library(densityClust)
+```
+
+# Loading data files
+
+## Galaxy catalog for 2dFGRS
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+######################
+#     Galaxy 2dFGRS loading # 
+######################
+destiny_dir <- 'C:/desarrollo/astro/tfm/data' 
+setwd('C:/users/Carlos/OneDrive/data-science/TFM/tfm/data')
+dt <- read.csv('../data/2dfgrs-title-dist.csv')
+str(dt)
+```
+
+## Galaxy group catalog for 2dFGRS
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+######################
+#     GROUPS loading #    
+###################### 
+setwd('C:/users/Carlos/OneDrive/data-science/TFM/tfm/data')
+dt_groups <- read.csv('../data/groups/group_members.csv', sep = ',')       
+
+
+```
+
+Fields for our clustering analysis are: ID, x, y, z, redshift, distance.
+
+# Data Preprocessing
+
+## Descriptive analysis. **Data selection and visualization**
+
+There is an initial preprocessing of data-file in order to obtain proper distances and cartesian coordinates x,y,z, by now it is omitted here.
+
+Take a sample with: minPts = 5, minQ_Z\>3 and by RA and DEC:
+
+$$RA \in [0, 1],\, DEC \in [-29, -27],\, \,and\,\, z \lt max\_redshift$$
+
+```{r}
+min_members <- 5
+max_redshift <- 0.3
+ra_lim_inf <-  0
+ra_lim_sup <- 1
+dec_lim_inf <- -29
+dec_lim_sup <-  -27
+
+# Take a sample using boundaries
+dt_sample3 <- dt[dt$Q_Z>3 & dt$RAh<= ra_lim_sup & 
+              dt$RAh>=ra_lim_inf & dt$Ded>= dec_lim_inf & 
+              dt$Ded<=dec_lim_sup & dt$Z< max_redshift,]
+
+#Change column name
+names(dt_sample3)[names(dt_sample3) == 'Z'] <- 'redshift'
+
+#Take the parameters necessary for clustering effect.
+dt_sample3<- dt_sample3[,c('SEQNUM','x', 'y', 'z', 'redshift',  "dist")]
+
+# mm is an object containing both groups and galaxy identification
+mm<-merge(dt_sample3, dt_groups, by.x = 'SEQNUM', by.y = 'ID_2DF')
+ggplot(dt_sample3, aes(x=redshift, y=redshift))+geom_violin()
+```
+
+Select groups with more than min_members members
+
+```{r}
+h<-sqldf("select 
+            count(SEQNUM) as members, 
+            GROUP_ID 
+          from mm 
+          group by GROUP_ID 
+          order by  members desc")  
+mm5<-sqldf(sprintf("
+    SELECT 
+        mm.SEQNUM,
+        mm.x, 
+        mm.y, 
+        mm.z, 
+        mm.GROUP_ID, 
+        mm.redshift, 
+        mm.dist, 
+        mm.GAL_ID 
+      FROM 
+        mm as mm, h 
+      where 
+          mm.GROUP_ID=h.GROUP_ID and 
+          h.members >= %s"
+      , min_members))
+
+update_mm5 <- function(mm){
+	mm5<-sqldf(sprintf("
+	      select
+	          mm.SEQNUM,
+	          mm.x, 
+	          mm.y, 
+	          mm.z, 
+	          mm.GROUP_ID, 
+	          mm.redshift, 
+	          mm.dist, 
+	          mm.GAL_ID, 
+	          mm.cluster_id 
+	      from 
+	          mm as mm, h 
+        where 
+            mm.GROUP_ID=h.GROUP_ID and 
+	          h.members >= %s", min_members))
+	mm5
+}
+
+#mm <- sqldf(c("UPDATE mm set group_ID=0 WHERE group_ID not in(select group_id from mm5)", "select * from main.mm" ))
+
+#write.csv(mm, sprintf('%s/2dfgrs-data.csv', destiny_dir))
+```
+
+```{r}
+true_groups <- length(unique(mm5$GROUP_ID))
+
+print(
+  sprintf('Number of galaxies in groups with more than %s elements %s out of %s', 
+          min_members, 
+          dim(mm5)[1], 
+          dim(mm)[1]))
+print(sprintf("Number of groups with more than %s members: %s", 
+              min_members, 
+              true_groups))
+```
