@@ -601,6 +601,32 @@ delta = 0.0009
 "Groups 95 whereas clusters 79" => 0.8315
 ```
 
+```{r}
+rhos <- seq(0.9955, 0.9985, 0.0005)
+deltas <- seq(0.0005, 0.0009, 0.00005)#seq(0.00070, 0.00087, 0.00001)
+
+j <- 1
+i <- length(deltas)
+matrix_data=matrix(nrow = length(deltas), ncol=length(rhos))
+
+for (rho in rhos){
+  #print(sprintf("Columna %s %s", j, rho))
+	for (delta in deltas){
+	    #print(sprintf(" Fila %s %s", i, delta))
+        value <- assessDPC(delta, rho, mm)
+        matrix_data[i, j] <- value
+        i <- i-1
+       # print(sprintf("   L = %s", min(l/true_groups, true_groups/l)))
+    }
+    j <- j+1
+    i <- length(deltas)
+}
+
+#custom_heatmap(matrix_data, rhos, deltas, xTitle = "delta", yTitle = "rho", numColors = 7)
+               
+custom_heatmap(matrix_data, deltas, rhos, xTitle = "rho", yTitle = "delta", numColors = 10)
+```
+
 we create a heat-map for $\rho$ and $\delta$ hyper-parameters, va por lo anterior:
 
 ```{r}
