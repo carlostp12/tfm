@@ -237,6 +237,7 @@ assessDPC <- function (delta, rho, mm){
 	mm5 <- update_mm5(mm)
 	length(unique(mm5$GROUP_ID))
 	length(unique(mm5$cluster_id))
-	print(sprintf("Groups %s whereas clusters %s" , length(unique(mm5$GROUP_ID)), length(unique(mm5$cluster_id))))
+	print(sprintf("Groups %s whereas clusters %s -> %s %s" , 
+		length(unique(mm5$GROUP_ID)), length(unique(mm5$cluster_id)), rho, delta))
 	(min(length(unique(mm5$GROUP_ID))/length(unique(mm5$cluster_id)) , length(unique(mm5$cluster_id))/length(unique(mm5$GROUP_ID))))
 }
