@@ -208,3 +208,35 @@ custom_heatmap <- function(data, rowN, colN, xTitle = "", yTitle = "", numColors
             # add text values into matrix based on transposed/rotated indices + round values to two digits
             text(x, y, round(dataAdjusted[x,y],2))
 }
+
+update_mm5 <- function(mm) {
+	mm5<-sqldf(sprintf("
+    SELECT 
+        mm.GAL_ID,
+        mm.x, 
+        mm.y, 
+        mm.z, 
+        mm.GROUP_ID, 
+        mm.redshift, 
+        mm.dist, mm.cluster_id
+      FROM 
+        mm as mm, h 
+      where 
+          mm.GROUP_ID=h.GROUP_ID and 
+          h.members >= %s"
+                   , min_members))
+  return (mm5)
+}
+
+assessDPC <- function (delta, rho, mm){
+	galaxyClusters <- findClusters(galaxyDens, rho=rho, delta=delta)
+	#plot(galaxyClusters)
+	#abline(h = delta, lty = 3) 
+	#abline(v = rho, lty = 3) 
+	mm$cluster_id <- galaxyClusters$cluster
+	mm5 <- update_mm5(mm)
+	length(unique(mm5$GROUP_ID))
+	length(unique(mm5$cluster_id))
+	print(sprintf("Groups %s whereas clusters %s" , length(unique(mm5$GROUP_ID)), length(unique(mm5$cluster_id))))
+	(min(length(unique(mm5$GROUP_ID))/length(unique(mm5$cluster_id)) , length(unique(mm5$cluster_id))/length(unique(mm5$GROUP_ID))))
+}

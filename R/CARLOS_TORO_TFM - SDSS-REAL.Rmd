@@ -500,11 +500,12 @@ By making this way it appears some clusters:
 points<- mm[,c('x', 'y', 'z')]
 galaxyDens <- densityClust(points)
 galaxyClusters <- findClusters(galaxyDens, rho=0.997, delta=0.00086)
+mm$cluster_id <- galaxyClusters$cluster
 plot(galaxyClusters)
-
+abline(h = 0.997, lty = 3) 
 # do not use this takes a lot!!:
 #plotMDS(galaxyClusters)
-mm$cluster_id <- galaxyClusters$cluster
+
 ```
 
 ```{r}
@@ -519,23 +520,94 @@ May be DPC is not good in finding cluster but it can be useful in finding the ce
 
 ```{r}
 galaxyClusters <- findClusters(galaxyDens, rho=0.9985, delta=0.00084)
-peaks <- mm[galaxyClusters$peaks,]
+peaks <- mm5[galaxyClusters$peaks,]
 print(sprintf("DPC detected %s out of %s clusters", length(unique(peaks$GROUP_ID)), true_groups))
 ```
 
 ## Output-clusters visualization
 
 ```{r}
-plot3D_cluster(galaxyClusters, mm)
+plot3D_cluster(galaxyClusters, mm5)
 ```
 
 ![](images/paste-34E0ECD3.png)
 
-we create a heat-map for $\rho$ and $\delta$ hyper-parameters:
+DPG is not good in create a model of clustering, but it can be good detecting the peaks for each group, for exmaple:
 
 ```{r}
-rhos <- seq(0.9980, 0.999, 0.0001)
-deltas <- seq(0.0008, 0.0009, 0.00001)
+rho = 0.9970
+delta = 0.002
+galaxyClusters <- findClusters(galaxyDens, rho=rho, delta=delta)
+plot(galaxyClusters)
+abline(h = delta, lty = 3) 
+abline(v = rho, lty = 3) 
+```
+
+We can obtain
+
+```{r}
+update_mm5 <- function() {
+mm5<-sqldf(sprintf("
+    SELECT 
+        mm.GAL_ID,
+        mm.x, 
+        mm.y, 
+        mm.z, 
+        mm.GROUP_ID, 
+        mm.redshift, 
+        mm.dist, mm.cluster_id
+      FROM 
+        mm as mm, h 
+      where 
+          mm.GROUP_ID=h.GROUP_ID and 
+          h.members >= %s"
+                   , min_members))
+  return (mm5)
+}
+mm$cluster_id <- galaxyClusters$cluster
+mm5 <- update_mm5()
+```
+
+```{r}
+print(sprintf("GRUPOS %s mientras que clusters %s" , length(unique(mm5$GROUP_ID)), length(unique(mm5$cluster_id))))
+```
+
+```{r}
+
+galaxyClusters <- findClusters(galaxyDens, rho=rho, delta=delta)
+mm$cluster_id <- galaxyClusters$cluster
+
+```
+
+We can go playing with rho and deltas in order to obtain maximize the number of centers detected:
+
+```{r}
+rho = 0.9977
+delta = 0.0010
+galaxyClusters <- findClusters(galaxyDens, rho=rho, delta=delta)
+plot(galaxyClusters)
+abline(h = delta, lty = 3) 
+abline(v = rho, lty = 3) 
+mm$cluster_id <- galaxyClusters$cluster
+mm5 <- update_mm5()
+print(sprintf("GRUPOS %s mientras que clusters %s" , length(unique(mm5$GROUP_ID)), length(unique(mm5$cluster_id))))
+```
+
+The best detected until now was the
+
+```         
+rho = 0.9975
+delta = 0.0009
+"Groups 95 whereas clusters 79" => 0.8315
+```
+
+we create a heat-map for $\rho$ and $\delta$ hyper-parameters, va por lo anterior:
+
+```{r}
+#rhos <- seq(0.950, 0.960, 0.005)
+#deltas <- seq(0.0001, 0.0005, 0.0001)
+
+
 
 #rhos <- seq(0.9950, 0.9954, 0.0001)
 #deltas <- seq(0.00095, 0.00105, 0.00001)
@@ -550,30 +622,53 @@ deltas <- seq(0.0008, 0.0009, 0.00001)
 #rhos <- seq(0.9955, 0.9968, 0.0001)
 #deltas <- seq(0.00094, 0.00110, 0.00001)
 
-j<-1
-i<-1
-matrix_data=matrix(ncol=length(rhos), nrow = length(deltas)) 
+rhos <- seq(0.9955, 0.9963, 0.0001)
+deltas <- seq(0.00005, 0.0004, 0.00005)#seq(0.00070, 0.00087, 0.00001)
+
+j <- 1
+i <- length(deltas)
+matrix_data=matrix(nrow = length(deltas), ncol=length(rhos))
+
 for (rho in rhos){
+  #print(sprintf("Columna %s %s", j, rho))
 	for (delta in deltas){
+	    #print(sprintf(" Fila %s %s", i, delta))
         galaxyClusters <- findClusters(galaxyDens, rho=rho, delta=delta)
         peaks <- mm5[galaxyClusters$peaks,]
-        #l <- length(unique(peaks$GROUP_ID))
-        l <- length(unique(peaks[peaks$GROUP_ID>0, c('GROUP_ID')]))
-        #print(min(l/true_groups, true_groups/l))
+        l <- length(unique(peaks[peaks$GROUP_ID>0 &
+                    !is.na(peaks$GROUP_ID), c('GROUP_ID')]))
         matrix_data[i, j] <- min(l/true_groups, true_groups/l)
-        i <- i+1
+        i <- i-1
+       # print(sprintf("   L = %s", min(l/true_groups, true_groups/l)))
     }
     j <- j+1
-    i<-1
+    i <- length(deltas)
 }
 
-
+#custom_heatmap(matrix_data, rhos, deltas, xTitle = "delta", yTitle = "rho", numColors = 7)
+               
 custom_heatmap(matrix_data, deltas, rhos, xTitle = "rho", yTitle = "delta", numColors = 10)
 ```
 
-As we can see , all groups-center are detected with DPC for values $\delta=0.00085$ and $\rho=0.9986$.
+As we can see , all groups-center are detected with DPC for values $\delta=0.000778$ and $\rho=80.9979$. We can obtain them as follows
 
-Nevertheless we can check how the points
+```{r}
+rho=0.998
+delta=0.00077
+galaxyClusters <- findClusters(galaxyDens, rho=rho, delta=delta)
+peaks5 <- mm5[galaxyClusters$peaks,]
+l <- length(peaks5[peaks5$GROUP_ID>0 &  !is.na(peaks5$GROUP_ID), c('GROUP_ID')])
+min(l/true_groups, true_groups/l)
+
+peaks <- na.omit(peaks5)
+
+plot3d(peaks$x, peaks$y, peaks$z, col = peaks$GROUP_ID+1, size = 3, xlab = "X", ylab = "Y", zlab = "Z")
+
+```
+
+![](images/clipboard-2231986640.png){width="581"}
+
+Each point in this plot represents a different represent for each cluster
 
 # Normalized data processing
 
@@ -735,6 +830,8 @@ We can stand out the following points:
 
 Finally we compare the original with the best clustering obtained in this study:
 
++---------------------------------------------+-------------------------------------+
 | Actual groups distribution in Re-Real Space | Best cluster detection with DBSCAN. |
-|---------------------------------------------|-------------------------------------|
++=============================================+=====================================+
 | ![](images/paste-BC9FEB7D.png)              | ![](images/paste-D7228FBB.png)      |
++---------------------------------------------+-------------------------------------+
