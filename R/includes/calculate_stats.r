@@ -209,7 +209,7 @@ custom_heatmap <- function(data, rowN, colN, xTitle = "", yTitle = "", numColors
             text(x, y, round(dataAdjusted[x,y],2))
 }
 
-update_mm5 <- function(mm) {
+update_mm5 <- function() {
 	mm5<-sqldf(sprintf("
     SELECT 
         mm.GAL_ID,
@@ -228,16 +228,17 @@ update_mm5 <- function(mm) {
   return (mm5)
 }
 
-assessDPC <- function (delta, rho, mm){
-	galaxyClusters <- findClusters(galaxyDens, rho=rho, delta=delta)
+assessDPC <- function (dd, rr){
+	g = findClusters(galaxyDens, rho=rr, delta=dd)
 	#plot(galaxyClusters)
 	#abline(h = delta, lty = 3) 
 	#abline(v = rho, lty = 3) 
-	mm$cluster_id <- galaxyClusters$cluster
-	mm5 <- update_mm5(mm)
-	length(unique(mm5$GROUP_ID))
-	length(unique(mm5$cluster_id))
+	mm$cluster_id <- g$cluster
+	tt5 <- update_mm5()
+	length(unique(tt5$GROUP_ID))
+	length(unique(tt5$cluster_id))
 	print(sprintf("Groups %s whereas clusters %s -> %s %s" , 
-		length(unique(mm5$GROUP_ID)), length(unique(mm5$cluster_id)), rho, delta))
-	(min(length(unique(mm5$GROUP_ID))/length(unique(mm5$cluster_id)) , length(unique(mm5$cluster_id))/length(unique(mm5$GROUP_ID))))
+		length(unique(tt5$GROUP_ID)), length(unique(tt5$cluster_id)), rr, dd))
+	return (length(unique(tt5$cluster_id))/length(unique(tt5$GROUP_ID)))
+	#(min(length(unique(mm5$GROUP_ID))/length(unique(mm5$cluster_id)) , length(unique(mm5$cluster_id))/length(unique(mm5$GROUP_ID))))
 }

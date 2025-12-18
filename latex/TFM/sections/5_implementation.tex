@@ -7,80 +7,162 @@
 %\section{Introduction}
 
 
-
 \section{ETL processing of datasets}
 
-A python framework has been implemented in order to extract valid-format (CSV) datasets to serve as input of our analysis. The python preproceesign framework transform the raw files on a final CSV containing the fields:
+A python framework has been implemented in order to extract valid-format (CSV) datasets to serve as input of our analysis. The python preproceesign framework transform the raw files on a final CSV the fields as in the table \ref{table:data}.
+
+The final objective consist in get the association of individual galaxies with their respective dark matter halos or larger groups, enabling us to apply density based algorithm analysis. There are three basic steps to merging:
 
 \begin{enumerate}
-	\item \textit{GAL_ID}: ID of galaxy en each catalog.
-	\item \textit{ra}: numerical right ascension coordinate.
-	\item \textit{dec}: numerical declination coordinate.
-	\item \textit{x}: x cartesiaan coordinate.
-	\item \textit{y}: y cartesiaan coordinate.
-	\item \textit{z}: z cartesiaan coordinate.
-	\item \textit{redshift}: the measured redshift value from the survey.
-	\item \textit{dist}:  calculated proper distance.
-	\item \textit{GROUP_ID}: id-group galaxy belongs.
-\end{enumerate}
+	\item Format the galaxy catalog to a CSV file.
+	\item Format the group catalog to a CSV file.
+	\item Merge galaxy and group catalog and transform coordinates and distances.
+\end{enumerate}	
 
-Different catalogs have different structures, that is why we splitted in several sections.
+The synthesis results in a unified dataset formatted for computational efficiency. The header of this processed file, which contains the spatial and environmental metadata for each galaxy, is displayed in Figure \ref{fig:cat}.
+
+Due to the varying structures of the survey catalogs, the data acquisition and preparation phase is divided into distinct modules to ensure inter-survey compatibility.
 
 \subsection{2dF Galaxy Redshift Survey (2dfGRS)}
 
-We need to download downloaded:
 
 \begin{enumerate}
-	\item \textit{2dfGRS.dat}: file which contains 245591 entries for each galaxy. (only those which quality >=3 are selected.)
-	\item \textit{group_members}: which is other raw data-file relating 104913 galaxies with their groups.
+	\item \textit{2dfGRS.dat}: Which comprises 245,591 individual galaxy entries. To ensure high-fidelity measurements and minimize redshift uncertainty, we applied a quality constraint of $Q \geq 3$, excluding objects with poorly determined spectral features or low signal-to-noise ratios
+	
+	\item \textit{group\_members}: a supplementary group-membership file consisting of 104,913 galaxies.
 \end{enumerate}	
 
-The merge of both files gives a total of 104912 rows in the final catalog. This is because not all galaxies belongs to a group. There are 3 basic steps to merging:
-	1. format the galaxy catalog to a CSV file.
-	2. format the group catalog to a CSV file.
-	3. Merge galaxy and group catalog and transform coordinates and distances.
-The final result is the 2dfgrs-valid.csv file whose head is showed at \ref{fig:} 
 
 \subsection{Sloan Digital Sky Survey (SDSS)}
 
-The package downloaded contains several files depending on the magnitude type, etc. For our porposes, the imodelC_1 one is perfectly valid.
+Among the diverse datasets provided by the SDSS archive, the imodelC\_1 file was identified as the most suitable for this analysis. It contains the required astrometric and photometric parameters to accurately cross-match with our random catalogs, allowing for a robust calculation of the large-scale structure signal.
 
 \begin{enumerate}
-	\item \textit{SDSS7): galaxy catalog of the survey, contains .
-	\item \textit{imodelC_1} file which contains 245591 entries for each galaxy. (only those which quality >=3 are selected.)
+	\item \textit{SDSS7}: Galaxy catalog of the survey.
+	\item \textit{imodelC\_1} Comprises 245,591 entries for each galaxy. (again we applied a quality constraint of $Q \geq 3$.)
 \end{enumerate}	
 	
-The framework process both files to obtain the final csv file. 	
-Also a final dataset was downloaded with the SDSS catalog corrected the redshift distorsion, the so called "Real Space Galaxy Catalogue".
+Our pipeline performs a multi-source integration of the raw data files, executing the necessary joins and quality filters to produce a unified CSV file optimized for clustering analysis. A representative sample of this finalized data product is provided in Figure \ref{fig:cat}, demonstrating the successful synthesis of spatial and environmental metadata.
 
+\begin{table}[]
+\centering
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Field-Name} & \textbf{FDescription} & \textbf{Field-Type} \\
+\hline
+ GAL\_ID & ID of galaxy en each catalog & numerical \\ \hline
+ ra & Right ascension coordinate  & decimal \\  \hline
+ dec & Declination coordinate  & decimal    \\ \hline
+ x & X cartesiaan coordinate & decimal    \\ \hline
+ y & Y cartesiaan coordinate & decimal    \\ \hline
+ z & Z cartesiaan coordinate & decimal    \\ \hline
+ redshift & cell8 & decimal \\ \hline
+ dist & Raw distance value & decimal  \\ \hline
+ GROUP\_ID & id-group galaxy belongs to & numerical \\ \hline
+ 
+\end{tabular}
+\caption{Datasheet metadata.}
+\label{tab:data}
+\end{table}
 
+\subsection{Real Space Galaxy Catalogue}
+Finally, we incorporated the SDSS 'Real Space Galaxy Catalogue,' which provides galaxy coordinates reconstructed to account for redshift distortions as we explained in sections \ref{section:slos} and \ref{section:real} . This enables a robust comparison between observed clustering and theoretical predictions by isolating the isotropic real-space correlation function.
 
+	\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.5\textwidth]{./figs/catalog.jpg}
+	\caption{ Final format of datasheet }
+	\label{fig:cat}
+	\end{figure}
+	
 
 \section{The two-point correlation function: another point of view of density analysis}
 
-Other way to study the density of galaxies in the universe is through the two-points correlation function (2pcf) which depicts a statistical measure to quantify how clusteread is a distribution of galaxies. It works by calculating the probability of finding a two objects at a given distance.
+Drawing on the comparative analysis provided by \ref{Kerscher:2000}, we implement four distinct estimators to quantify the clustering signal. This selection allows for a rigorous cross-examination of the statistical bias and variance inherent in each method when applied to large-scale galaxy catalogs.
 
-The Fourier transform of the two-point correlation function is the power spectrum, which is often used to describe density fluctuations observed in the cosmic microwave background.
-
-There exists several stimators for 2pcf, according to \ref{Kerscher:2000} we choose four of them:
-
-\begin{equation} \label{eq:4_1}
-	\widehat{\xi_{LS}} = \frac{DD}{RR} -1
-	\caption{Davids and Peebels}
+Natural
+\begin{equation} \label{eq:43}
+	\widehat{\xi} _{N}= \frac{DD}{RR} - 1
 \end{equation}.
 
-\begin{equation} \label{eq:4_2}
-	\widehat{\xi_{LS}} = \frac{DD-DR}{RR}
-	\caption{Hamilton}
+Davids and Peebels:
+\begin{equation} \label{eq:41}
+	\widehat{\xi} _{DP}= \frac{DD}{DR} - 1
 \end{equation}.
 
-\begin{equation} \label{eq:4_3}
-	\widehat{\xi_{LS}} = \frac{DD}{DR} -1
-	\caption{Hewett}
+Hamilton:
+\begin{equation} \label{eq:42}
+	\widehat{\xi} _{Ha}= \frac{DD \, RR}{DR^2}
 \end{equation}.
-\begin{equation} \label{eq:4_4}
-	\widehat{\xi_{LS}} = \frac{DD-2DR+RR}{RR}
-	\caption{Landy and Szlay}
+
+Landy and Szalay:
+\begin{equation} \label{eq:44}
+	\widehat{\xi} _{LS}= \frac{DD -2DR +RR}{RR}
+\end{equation}.
+
+Upon applying these estimators to the 2dFGRS dataset, we successfully recovered a distinct clustering feature at approximately $100 \ h^{-1}\text{Mpc}$. This signal is statistically consistent with the predicted scale of Baryon Acoustic Oscillations (BAOs), representing a detection of the primordial acoustic horizon in the late-time galaxy distribution.
+
+
+\section{Applying density-based algorithms to data}
+
+We have tested several algorithms in order to obtain a model of density clustering.
+
+OPTICS: To crete the reachability plot.
+OPTICSXi: Generate clusters in hierarchical mode.
+DBSCAN: Generate clusters by reachability plot threshods.
+HDBSCAN: Generate cluster form variable density regions.
+DPC (Density Peaks Clustering): Generate cluster from density peaks.
+OPTICS (on scaled data): The same in OPTICS with scaled data.
+DBSCAN  (on scaled data): The same in DBSCAN with scaled data.
+sOPTICS and sDBSCAN: Generate reachability plot and clusters with the modified distances as explained at \ref{section:slos}
+
+It is important to emphasize that this study departs from traditional unsupervised clustering objectives, such as minimizing intra-cluster variance via the Elbow Method. Instead, we treat the Halo-based group distribution as a physical ground truth. Consequently, many standard clustering algorithms —and their default hyperparameter configurations— may fail to yield results consistent with our model of virialized galaxy groups, as they are not intrinsically designed to account for the specific density profiles of dark matter halos.
+
+The performance of each algorithm is evaluated based on its Recovery Rate of known halo members. We prioritize models that maximize the completeness and purity of identified groups relative to the 2dFGRS/SDSS group catalogs, rather than those that simply minimize global silhouette scores.
+
+With this in mind and guided by \cite{Hai-Xia-Ma:2025} we defined:
+	
+\begin{equation} \label{eq:purity}
+	Purity = \frac{total\_in\_cluster\_group}{total\_in\_cluster}
+\end{equation}.
+
+$total\_in\_cluster$: number of elements in output-cluster.
+$total\_in\_cluster\_group$: number of elements from orignal group present in an output-cluster. 
+$total\_in\_cluster_group$: number of elements from orignal group present in an output-cluster.
+
+\begin{equation} \label{eq:completeness}
+	Completeness = \frac{total\_in\_cluster\_group}{total\_in\_group}
+\end{equation}.
+
+Following the same concept as \cite{Hai-Xia-Ma:2025}, an output-cluster is said to be $Pure$ if $Purity \geq \frac{2}{3} $ and complete if $Completeness \geq \frac{1}{2} $.
+
+With this concepts we evaluate the following ratios:
+  
+\begin{equation} \label{eq:completeness}
+	Fp = \frac{number\_pure\_groups}{predicted\_groups}
+\end{equation}.
+
+\begin{equation} \label{eq:completeness}
+	Fr = \frac{number\_pure\_complete\_groups}{predicted\_groups}
+\end{equation}.
+Fr only for complete an pure output-clusters:
+
+\begin{equation} \label{eq:completeness}
+	Fr = \frac{total\_in\_group}{number\_non\_isolated\_galaxies}
 \end{equation}.
 
 
+\section{Applying 2pcf estimators to 2dFGRS datasheet}
+
+-- SELECT TOP 10 o.objID, o.ra, o.dec, p.z
+select count(o.objID) 
+FROM photoprimary o INNER JOIN Photoz p ON o.objID = p.objID 
+WHERE
+p.z BETWEEN 0.2 AND 0.4 AND
+o.ra BETWEEN 50 AND 60 AND
+o.dec BETWEEN 0 AND 30 AND
+(o.dered_r-o.dered_i) < 2 AND
+o.cmodelmag_i-o.extinction_i BETWEEN 17.5 AND 19.9 AND
+(o.dered_r-o.dered_i) - (o.dered_g-o.dered_r)/8. > 0.55 AND
+o.fiber2mag_i < 21.7 AND o.devrad_i < 20. AND
+o.dered_i < 19.86 + 1.60*((o.dered_r-dered_i) - (o.dered_g-dered_r)/8. - 0.80) 

@@ -135,7 +135,8 @@ The specific form of equation \ref{eq:2} may vary according to the chosen cosmol
 
 \subsection{Real space galaxy catalog}\label{section:real}
 
-Numerous methods exist to mitigate the various effects of redshift space distortion (RSD), including the discussed in section \label{section:slos} component along the line of sight. Redshift survey distortions are primarily categorized into two distinct sets:
+Redshift survey distortions are primarily categorized into two distinct sets:
+
 
 \begin{enumerate}
 	\item FOG (Finger Of God): reduction in the correlation produced on small scales by the virialized motion of galaxies within the dark matter halos.
@@ -148,6 +149,7 @@ Several accurate methodologies are available to mitigate the effects of both iss
 
 
 The observed redshift ($z_{\text{obs}}$) of a galaxy is a combination of the cosmological redshift ($z_{\text{cos}}$) due to the Hubble flow and the Doppler shift caused by the galaxy's peculiar velocity ($v_{\text{pec}}$).4 The total relationship is expressed as:
+
 \begin{equation} \label{eq:4}
  z_{obs} = z_{cos} + z_{pec} = z_{cos} + \frac{v_{pec}}{c}(1+z_{cos}).
 \end{equation}.
@@ -475,17 +477,53 @@ The Density Peak Clustering (DPC) algorithm operates under the fundamental assum
 	$\delta_i = min_{j:\rho_j>\rho_i}(d_{ij})$. and for the point with highest density $\delta_i = max_{j}(d_{ij})$. Therefore $\delta_i$ is much larger than other typical values for those points where density reachs its local or global maximum.
 \end{enumerate}
 	
-
-	
 Following the computation of both parameters, the diagram presented in \ref{fig:mst} can be utilized to establish appropriate thresholds for $\rho$ and $\delta$ in order to select the points which represent centers for each clusters$\delta$. This process allows for the identification of points representing the center of each cluster. DPC excels at cluster center detection because these selected points inherently correspond to locations where the local density reaches its maximum.
 
+\begin{figure}
+\centering
+\begin{minipage}{.5\textwidth}
+  \centering
+  \includegraphics[width=.5\linewidth]{./figs/dpc_11.jpg}
+  \caption{Different colors correspond to different clusters.}
+  \label{fig:group}
+\end{minipage}%
+\begin{minipage}{.5\textwidth}
+  \centering
+  \includegraphics[width=.5\linewidth]{./figs/dpc_12.jpg}
+  \caption{(B) Decision graph for data}{Source \cite{DPC:2014}.}
+  \label{fig:cluster}
+\end{minipage}
+\end{figure}
+
+Then we can select $\rho = \rho_{0}$ and $\delta = _{0}$ to obtains centers for clusters:
+ 
 	\begin{figure}[h]
 	\centering
-	\includegraphics[width=0.5\textwidth]{./figs/dpc_1.jpg}
-	\caption{ DPC in two dimensions}{(A) Point distribution. Data points are ranked in order of decreasing density.} {(B) Decision graph for the data in
-(A). Different colors correspond to different clusters.}{Source \cite{DPC:2014}.}
+	\includegraphics[width=0.5\textwidth]{./figs/dpc_3.jpg}
+	\caption{ $\rho = \rho_{0}$ and $\delta = \delta_{0}$ inside decision graph }{Source \cite{DPC:2014}.}
 	\label{fig:mst}
 	\end{figure}
+	
+\section{The two-point correlation function: another point of view of density analysis}
+
+An alternative approach to investigating the cosmic galaxy density field is through the two-point correlation function (2PCF). This statistic provides a robust measure for quantifying the spatial clustering of a galaxy distribution by determining the excess probability of finding a pair of objects at a given separation scale, $r$, relative to a random (Poisson) distribution.
+
+The two-point correlation function $\xi(r)$ and the power spectrum, $P(k)$, form a Fourier transform pair, representing the clustering signal in real and spectral space, respectively. While $\xi(r)$ provides an intuitive measure of spatial separations, the power spectrum is the standard framework for characterizing the primordial density fluctuations observed in the Cosmic Microwave Background (CMB).
+
+According to \cite{Peebels:1980}, if one pick a galaxy at random, the probability ($dP$) of finding another galaxy at a distance $r$ within a small volume $dV$ is given by:
+
+$$dP = \bar{n}^2 [1 + \xi(r)] dV_1 dV_2$$
+
+Where $\bar{n}$ is the mean number density of galaxies in the survey and $\xi(r)$ is the correlation function.
+
+The value of $\xi(r)$ tells us how the galaxies "feel" each other at different scales \cite{Peebels:1980}: 
+\begin{enumerate}
+	\item $\xi(r) > 0$ (Clustering): You are more likely to find a pair of galaxies at that distance than you would by pure chance. On small scales, gravity pulls galaxies together, making this value high.
+	
+	\item$\xi(r) = 0$ (Randomness): The distribution is perfectly random (like static on a TV).
+	
+	\item $\xi(r) < 0$ (Anti-clustering): Galaxies are "repelling" each other or are more spread out than a random distribution.
+\end{enumerate}	
 	
 \subsection{Previous machine learning applications in galaxy clustering}
 

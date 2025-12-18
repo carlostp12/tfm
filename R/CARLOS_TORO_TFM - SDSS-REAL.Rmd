@@ -82,13 +82,11 @@ library(RColorBrewer)
 
 # The clustering problem on galaxy dataset
 
-We want, in this work apply some clustering algorithms, and the compare the obtained models with the halo-based group finder optimized for grouping galaxies that reside in the same dark matter halo.
+Rather than pursuing a traditional unsupervised clustering optimization---such as variance maximization via the **Elbow Method**---this work evaluates the efficacy of **density-based clustering algorithms** in replicating a physically motivated **halo-based group finder**.
 
-In other words: this is not a normal clustering problem where we want to find a model where most of the samples belong to a group in an hypotetical method maximixed by the "Elbow method".
+We aim to identify the optimal hyperparameter configurations that allow these algorithms to recover the underlying **dark matter halo membership** of galaxies, effectively using the halo-based catalog as a benchmark for physical validity.
 
-We want find some hyperparameters configuration makes possible to modelize the data-groups given by the halo-based finder.
-
-# Loading data files
+Loading data files
 
 ## Galaxy catalog for SDSS
 
@@ -526,16 +524,18 @@ print(sprintf("DPC detected %s out of %s clusters", length(unique(peaks$GROUP_ID
 
 ## Output-clusters visualization
 
+R DPC library generate some clusters distribution that we can take a look:
+
 ```{r}
 plot3D_cluster(galaxyClusters, mm5)
 ```
 
 ![](images/paste-34E0ECD3.png)
 
-DPG is not good in create a model of clustering, but it can be good detecting the peaks for each group, for exmaple:
+DPG is not good in create a model of clustering, but it can be good detecting the peaks for each group, for example:
 
 ```{r}
-rho = 0.9970
+rho = 0.9985
 delta = 0.002
 galaxyClusters <- findClusters(galaxyDens, rho=rho, delta=delta)
 plot(galaxyClusters)
@@ -582,48 +582,48 @@ mm$cluster_id <- galaxyClusters$cluster
 We can go playing with rho and deltas in order to obtain maximize the number of centers detected:
 
 ```{r}
-rho = 0.9977
-delta = 0.0010
+rho = 0.99912
+delta = 0.00035
 galaxyClusters <- findClusters(galaxyDens, rho=rho, delta=delta)
 plot(galaxyClusters)
 abline(h = delta, lty = 3) 
 abline(v = rho, lty = 3) 
 mm$cluster_id <- galaxyClusters$cluster
 mm5 <- update_mm5()
-print(sprintf("GRUPOS %s mientras que clusters %s" , length(unique(mm5$GROUP_ID)), length(unique(mm5$cluster_id))))
+print(sprintf("GRUPOS %s mientras que clusters %s out of %s" , length(unique(mm5$GROUP_ID)), length(unique(mm5$cluster_id)), length(unique(mm$cluster_id))))
 ```
 
 The best detected until now was the
 
-```         
-rho = 0.9975
-delta = 0.0009
-"Groups 95 whereas clusters 79" => 0.8315
+    rho = 0.9975
+    delta = 0.0009
+    "Groups 95 whereas clusters 79" => 0.8315
+
+```{r}
+rhos <- seq(0.9980, 0.999, 0.0001)
+deltas <- seq(0.0008, 0.0009, 0.00001)
+
+j<-1
+i<-1
+matrix_data=matrix(ncol=length(rhos), nrow = length(deltas)) 
+for (rho in rhos){
+    for (delta in deltas){
+        galaxyClusters <- findClusters(galaxyDens, rho=rho, delta=delta)
+        peaks <- mm[galaxyClusters$peaks,]
+        l <- length(unique(peaks$GROUP_ID))
+        #print(min(l/true_groups, true_groups/l))
+        matrix_data[i, j] <- min(l/true_groups, true_groups/l)
+        i <- i+1
+    }
+    j <- j+1
+    i<-1
+}
+
+
+custom_heatmap(matrix_data, deltas, rhos, xTitle = "rho", yTitle = "delta", numColors = 11)
 ```
 
 ```{r}
-rhos <- seq(0.9955, 0.9985, 0.0005)
-deltas <- seq(0.0005, 0.0009, 0.00005)#seq(0.00070, 0.00087, 0.00001)
-
-j <- 1
-i <- length(deltas)
-matrix_data=matrix(nrow = length(deltas), ncol=length(rhos))
-
-for (rho in rhos){
-  #print(sprintf("Columna %s %s", j, rho))
-	for (delta in deltas){
-	    #print(sprintf(" Fila %s %s", i, delta))
-        value <- assessDPC(delta, rho, mm)
-        matrix_data[i, j] <- value
-        i <- i-1
-       # print(sprintf("   L = %s", min(l/true_groups, true_groups/l)))
-    }
-    j <- j+1
-    i <- length(deltas)
-}
-
-#custom_heatmap(matrix_data, rhos, deltas, xTitle = "delta", yTitle = "rho", numColors = 7)
-               
 custom_heatmap(matrix_data, deltas, rhos, xTitle = "rho", yTitle = "delta", numColors = 10)
 ```
 
@@ -679,22 +679,22 @@ custom_heatmap(matrix_data, deltas, rhos, xTitle = "rho", yTitle = "delta", numC
 As we can see , all groups-center are detected with DPC for values $\delta=0.000778$ and $\rho=80.9979$. We can obtain them as follows
 
 ```{r}
-rho=0.998
-delta=0.00077
+rho=0.9986
+delta=0.00084
 galaxyClusters <- findClusters(galaxyDens, rho=rho, delta=delta)
-peaks5 <- mm5[galaxyClusters$peaks,]
-l <- length(peaks5[peaks5$GROUP_ID>0 &  !is.na(peaks5$GROUP_ID), c('GROUP_ID')])
+peaks <- mm[galaxyClusters$peak,]
+l <- length(peaks[peaks$GROUP_ID>0 &  !is.na(peaks5$GROUP_ID), c('GROUP_ID')])
 min(l/true_groups, true_groups/l)
 
-peaks <- na.omit(peaks5)
+peaks <- na.omit(peaks)
 
 plot3d(peaks$x, peaks$y, peaks$z, col = peaks$GROUP_ID+1, size = 3, xlab = "X", ylab = "Y", zlab = "Z")
 
 ```
 
-![](images/clipboard-2231986640.png){width="581"}
+![](images/paste-F4ADE5CA.png){width="429"}
 
-Each point in this plot represents a different represent for each cluster
+All groups are represented in this plot.
 
 # Normalized data processing
 
@@ -712,7 +712,7 @@ mm5 <- get_elements_in_m5_groups(mm)
 Again we can do the same for scaled data:
 
 ```{r}
-eps_sequence_test <- seq(0.025, 0.04, 0.005)
+eps_sequence_test <- seq(0.02, 0.035, 0.005)
 x_stats <- extract_stats_dbscan(eps_sequence_test, ress)
 ```
 
@@ -761,7 +761,7 @@ kNNdistplot(x = points_scaled, k = min_members)
 abline(h = seleced_eps, lty = 3) 
 ```
 
-How reader can see, the "elbow mehod" does not apply here pretty well, this is because we are not trying to optimize the out-put clusters given by the algorithm, instead we are trying to fit some density methods in order to detect groups of galaxies generated by black matter halos and grouped by density .
+How reader can see, the "elbow method" does not apply here pretty well, this is because we are not trying to optimize the out-put clusters given by the algorithm, instead we are trying to fit some density methods in order to detect groups of galaxies in the catalog obtained by the halo-based group finder developed by in [.
 
 In addition are data belonging to actual clusters with more than min_members members, this reduced the space to 774 galaxies out of more than 5000.
 
@@ -829,7 +829,7 @@ The bests results obtained with each method:
 +-------------------------------+-------------+---------------------------------+--------------------------------------------------------------------------+
 | DPC                           | Non-scaled  | 100% in groups-center detection | Good in group center detection, but not in clustering the whole dataset. |
 |                               |             |                                 |                                                                          |
-|                               |             |                                 | $\delta=0.00085$ and $\rho=0.9986$                                       |
+|                               |             |                                 | $\delta=0.00084$ and $\rho=0.9986$                                       |
 +-------------------------------+-------------+---------------------------------+--------------------------------------------------------------------------+
 | OPTICS                        | Scaled      | \-                              | Good in cluster reachability plot                                        |
 +-------------------------------+-------------+---------------------------------+--------------------------------------------------------------------------+
@@ -859,5 +859,5 @@ Finally we compare the original with the best clustering obtained in this study:
 +---------------------------------------------+-------------------------------------+
 | Actual groups distribution in Re-Real Space | Best cluster detection with DBSCAN. |
 +=============================================+=====================================+
-| ![](images/paste-BC9FEB7D.png)              | ![](images/paste-D7228FBB.png)      |
+| ![](images/paste-BC9FEB7D.png)              | ![](images/paste-BF39E32D.png)      |
 +---------------------------------------------+-------------------------------------+
