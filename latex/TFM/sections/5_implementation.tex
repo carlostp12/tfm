@@ -159,10 +159,12 @@ select count(o.objID)
 FROM photoprimary o INNER JOIN Photoz p ON o.objID = p.objID 
 WHERE
 p.z BETWEEN 0.2 AND 0.4 AND
-o.ra BETWEEN 50 AND 60 AND
-o.dec BETWEEN 0 AND 30 AND
+--o.ra BETWEEN 30 AND 60 AND
+o.ra BETWEEN 165 AND 195 AND
+o.dec BETWEEN 0 AND 50 AND
 (o.dered_r-o.dered_i) < 2 AND
 o.cmodelmag_i-o.extinction_i BETWEEN 17.5 AND 19.9 AND
 (o.dered_r-o.dered_i) - (o.dered_g-o.dered_r)/8. > 0.55 AND
 o.fiber2mag_i < 21.7 AND o.devrad_i < 20. AND
 o.dered_i < 19.86 + 1.60*((o.dered_r-dered_i) - (o.dered_g-dered_r)/8. - 0.80) 
+ 
