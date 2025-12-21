@@ -88,7 +88,7 @@ We aim to identify the optimal hyperparameter configurations that allow these al
 
 Loading data files
 
-## Galaxy catalog for SDSS
+## Galaxy catalog for Real-SDSS
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 ######################

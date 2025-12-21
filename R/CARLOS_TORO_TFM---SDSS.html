@@ -446,18 +446,11 @@ Calculation</a></li>
 <div id="the-clustering-problem-on-galaxy-dataset" class="section level1" number="1">
 <h1><span class="header-section-number">1</span> The clustering problem
 on galaxy dataset</h1>
-<p>We want, in this work apply some clustering algorithms, and the
-compare the obtained models with the halo-based group finder optimized
-for groupping galaxies that reside in the same dark matter halo.</p>
-<p>In other words: this is not a normal clustering problem where we want
-to find a model where most of the samples belong to a group in an
-hypothetical method maximized by the “Elbow method”.</p>
-<p>We want find some hyper-parameters configuration makes possible to
-modeling the data-groups given by the halo-based finder.</p>
-<p>We have to clarify that we reserved the term <strong>group</strong>
-for original and actual clusters in the dataset and
-<strong>cluster</strong> or <strong>output-cluster</strong> to design
-the clusters obtained as a result to apply our clustering methods.</p>
+<p>Rather than pursuing a traditional unsupervised clustering optimization—such as variance maximization via the <strong>Elbow Method</strong>—this work evaluates the efficacy of <strong>density-based clustering algorithms</strong> in replicating a physically motivated <strong>halo-based group finder</strong>.
+</p>
+<p>
+We aim to identify the optimal hyperparameter configurations that allow these algorithms to recover the underlying <strong>dark matter halo</strong> membership of galaxies, effectively using the halo-based catalog as a benchmark for physical validity.
+.</p>
 </div>
 <div id="loading-data-files" class="section level1" number="2">
 <h1><span class="header-section-number">2</span> Loading data files</h1>

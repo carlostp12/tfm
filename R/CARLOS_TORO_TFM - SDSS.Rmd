@@ -82,13 +82,9 @@ library(RColorBrewer)
 
 # The clustering problem on galaxy dataset
 
-We want, in this work apply some clustering algorithms, and the compare the obtained models with the halo-based group finder optimized for groupping galaxies that reside in the same dark matter halo.
+Rather than pursuing a traditional unsupervised clustering optimization---such as variance maximization via the **Elbow Method**---this work evaluates the efficacy of **density-based clustering algorithms** in replicating a physically motivated **halo-based group finder**.
 
-In other words: this is not a normal clustering problem where we want to find a model where most of the samples belong to a group in an hypothetical method maximized by the "Elbow method".
-
-We want find some hyper-parameters configuration makes possible to modeling the data-groups given by the halo-based finder.
-
-We have to clarify that we reserved the term **group** for original and actual clusters in the dataset and **cluster** or **output-cluster** to design the clusters obtained as a result to apply our clustering methods.
+We aim to identify the optimal hyperparameter configurations that allow these algorithms to recover the underlying **dark matter halo membership** of galaxies, effectively using the halo-based catalog as a benchmark for physical validity.
 
 # Loading data files
 
@@ -832,6 +828,8 @@ We can stand out the following points:
 
 Finally we compare the original with the best clustering obtained in this study:
 
++--------------------------------+--------------------------------------+
 | Actual groups distribution     | Best cluster detection with sOPTICS. |
-|--------------------------------|--------------------------------------|
++================================+======================================+
 | ![](images/paste-C0421FDF.png) | ![](images/paste-9187A18F.png)       |
++--------------------------------+--------------------------------------+

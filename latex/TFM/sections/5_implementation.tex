@@ -9,9 +9,11 @@
 
 \section{ETL processing of datasets}
 
-A python framework has been implemented in order to extract valid-format (CSV) datasets to serve as input of our analysis. The python preproceesign framework transform the raw files on a final CSV the fields as in the table \ref{table:data}.
+This section describes the Data Engineering Pipeline that converts the astronomical raw data into the machine learning-ready format you used for your 2dFGRS analysis.
 
-The final objective consist in get the association of individual galaxies with their respective dark matter halos or larger groups, enabling us to apply density based algorithm analysis. There are three basic steps to merging:
+Our Python framework acts as a bridge between the raw observational catalog and the unsupervised learning models. By producing a sanitized CSV with pre-calculated, scaled Cartesian coordinates to operate with maximum efficiency and physical accuracy which data definition is shown in table \ref{table:data}.
+
+The final objective of this pipeline is to associate individual galaxies with their respective Dark Matter Halos or larger structures. To achieve this, we follow three basic steps to merge the algorithmic output with the physical catalog:
 
 \begin{enumerate}
 	\item Format the galaxy catalog to a CSV file.
@@ -24,7 +26,6 @@ The synthesis results in a unified dataset formatted for computational efficienc
 Due to the varying structures of the survey catalogs, the data acquisition and preparation phase is divided into distinct modules to ensure inter-survey compatibility.
 
 \subsection{2dF Galaxy Redshift Survey (2dfGRS)} \label{data:2d}
-
 
 \begin{enumerate}
 	\item \textit{2dfGRS.dat}: Which comprises 245,591 individual galaxy entries. To ensure high-fidelity measurements and minimize redshift uncertainty, we applied a quality constraint of $Q \geq 3$, excluding objects with poorly determined spectral features or low signal-to-noise ratios
@@ -53,9 +54,9 @@ Our pipeline performs a multi-source integration of the raw data files, executin
  GAL\_ID & ID of galaxy en each catalog & numerical \\ \hline
  ra & Right ascension coordinate  & decimal \\  \hline
  dec & Declination coordinate  & decimal    \\ \hline
- x & X cartesiaan coordinate & decimal    \\ \hline
- y & Y cartesiaan coordinate & decimal    \\ \hline
- z & Z cartesiaan coordinate & decimal    \\ \hline
+ x & X cartesian coordinate & decimal    \\ \hline
+ y & Y cartesian coordinate & decimal    \\ \hline
+ z & Z cartesian coordinate & decimal    \\ \hline
  redshift & cell8 & decimal \\ \hline
  dist & Raw distance value & decimal  \\ \hline
  GROUP\_ID & id-group galaxy belongs to & numerical \\ \hline
@@ -65,17 +66,17 @@ Our pipeline performs a multi-source integration of the raw data files, executin
 \end{table}
 
 \subsection{Real Space Galaxy Catalogue}
-Finally, we incorporated the SDSS 'Real Space Galaxy Catalogue,' which provides galaxy coordinates reconstructed to account for redshift distortions as we explained in sections \ref{section:slos} and \ref{section:real} . This enables a robust comparison between observed clustering and theoretical predictions by isolating the isotropic real-space correlation function.
+Finally, we incorporated the SDSS 'Real Space Galaxy Catalogue', which provides galaxy coordinates reconstructed to account for redshift distortions as we explained in sections \ref{section:slos} and \ref{section:real} . This enables a robust comparison between observed clustering and theoretical predictions by isolating the isotropic real-space correlation function.
 
 	\begin{figure}[h]
 	\centering
 	\includegraphics[width=1\textwidth]{./figs/catalog.jpg}
-	\caption{ Final format of datasheet }
+	\caption{ Final format of dataset }
 	\label{fig:cat}
 	\end{figure}
 	
 
-\section{The two-point correlation function: another point of view of density analysis}
+\section{The two-point correlation function (2pcf)}
 
 Drawing on the comparative analysis provided by \cite{Kerscher:2000}, we implement four distinct estimators to quantify the clustering signal. This selection allows for a rigorous cross-examination of the statistical bias and variance inherent in each method when applied to large-scale galaxy catalogs.
 
@@ -308,9 +309,9 @@ The results of our comparative analysis along different catalogs can be summariz
 	
 \end{enumerate}
 
-\section{Applying 2pcf Estimators to the 2dFGRS Dataset}\label{2pcf}
+\section{Applying 2PCF Estimators to the 2dFGRS Dataset}\label{2pcf}
 
-This is another mode to analysis the density of galaxies across the Universe: we will move from a discrete classification ((deciding which galaxy belongs to which group) to statistical distribution (measuring how galaxies "crowd" together across the entire manifold). While clustering algorithms tell where the groups are, the Two-Point Correlation Function (2PCF) deals with the probability of finding galaxies at specific distances from each other.
+This is another mode to analysis the density of galaxies across the Universe: we will move from a discrete classification (deciding which galaxy belongs to which group) to statistical distribution (measuring how galaxies "crowd" together across the entire manifold). While clustering algorithms tell where the groups are, the Two-Point Correlation Function (2PCF) deals with the probability of finding galaxies at specific distances from each other.
 
 We created a python notebook based on the dataset shown in section \ref{data:2d}. Loaded the 2dFGRS dataset we take a sample to enable us to compare the distribution in the space of galaxies contained in the sample. By contrasting the 2dFGRS sample with a synthetic Poisson we expect this approach may convey information about the geometry of the matter across the Universe.
 
@@ -321,8 +322,3 @@ The obtained results are interestring because we can observe a peak  over the $1
 The BAOs is also one more demonstration of the dark matter presence, sparse in the Universe, shaping it, creating the halos where clusters shown in this study reside.
 
 Finally, our results show that the clusters identified by sDBSCAN and sOPTICS are not random associations, but are the physical manifestations of galaxies residing within the gravitational potential wells of Dark Matter halos, whose distribution was dictated by the sound horizon of the early Universe."
-
-
-
-
- 
