@@ -72,7 +72,8 @@ We are fortunate that, nowadays, we have access to data from several major astro
 	
 The data set employed in this analysis originates from the 2003 final data release, which encompasses a total of 245,591 objects. After quality cuts, 221,414 objects were determined to be spectroscopically reliable galaxy data, thus forming the foundation for the subsequent investigation.
 	
-\subsection{Sloan Digital Sky Survey (SDSS)}
+\subsection{Sloan Digital Sky Survey (SDSS)} \label{data:sdss}
+
 The Sloan Digital Sky Survey (SDSS) \cite{sdss:2000} began collecting data in 2000 and is one of the largest and most influential astronomical surveys ever conducted. The primary goal is to comprehensively map the Universe to expand our understanding of its large-scale structure, the formation of stars and galaxies, and the history of the Milky Way. It uses a dedicated wide-angle optical telescope (the Sloan Foundation 2.5-m Telescope) at Apache Point Observatory in New Mexico (see figure \ref{fig:sdss}), and in later phases, also observations in the Southern Hemisphere.
 
 	\begin{figure}[h]
@@ -108,7 +109,7 @@ Beyond the substantial logistical and resource constraints associated with const
 
 In order to validate and assess the performance of a constructed galaxy clustering model, it is necessary to compare the results from the target galaxy catalog (the data being clustered) against a well-established, pre-existing group/cluster catalog (the ground truth). For this work, we employ the catalog result obtained by the halo-based group finder developed by in \cite{Yang:2007}. This method is specifically optimized for grouping galaxies residing in the same dark matter halo and and utilizes an iterative approach based on an adaptive filter modeled after the general properties of dark matter halos (see \cite{Yang:2007}) for full details).
 
-The halo-based group finder was successfully applied to the galaxy catalogs from both the 2dFGRS and the SDSS (Data Release 7). This valuable group catalog is publicly accessible and can be downloaded from \cite{groups:2000}
+The halo-based group finder was successfully applied to the galaxy catalogs from both the 2dFGRS and the SDSS (Data Release 7). This valuable group catalog is publicly accessible and can be downloaded from \cite{groups:2000}.
 
 \section{The redshift–distance relation}
 
@@ -136,7 +137,6 @@ The specific form of equation \ref{eq:2} may vary according to the chosen cosmol
 \subsection{Real space galaxy catalog}\label{section:real}
 
 Redshift survey distortions are primarily categorized into two distinct sets:
-
 
 \begin{enumerate}
 	\item FOG (Finger Of God): reduction in the correlation produced on small scales by the virialized motion of galaxies within the dark matter halos.
@@ -172,14 +172,14 @@ Roughly speaking $v_{cen}$ is the manifestation of  $z_{Kaiser}$, whereas FOG ef
 
 Following the methodology proposed in \cite{Shi:2016}, the authors define several coordinate spaces by utilizing Equations \ref{eq:6}, \ref{eq:7}, and \ref{eq:4} to recalculate the positions (Equation \ref{eq:2}) in each space.
 
-For the present study, we will utilize the coordinate system referred to as the Re-Real space. This space is particularly relevant as it incorporates the effects of both the Kaiser and FoG distortions.
+For the present study, we will utilize the coordinate system referred to as the Real space which when reconstructted based on correcting redshift space distortions is called Re-Real space \cite{Shi:2016}. This space is particularly relevant as it incorporates the effects of both the Kaiser and FoG distortions.
 
-Employing this approach yields a modified catalog where the new redshift values effectively transform the coordinate space, as illustrated in Figure \ref{fig:real} . We will use this Re-Real space dataset to thoroughly investigate how this transformation influences the resulting clustering of galaxies.
+Employing this approach yields a modified catalog where the new redshift values effectively transform the coordinate space, as illustrated in Figure \ref{fig:real} . We will use this Real space dataset to thoroughly investigate how this transformation influences the resulting clustering of galaxies.
 
 	\begin{figure}[h]
 	\centering
-	\includegraphics[width=0.5\textwidth]{./figs/real_space.jpg}
-	\caption{SDSS-DR7: in the left redsifth space in the rigth Re-real space}{Source \cite{Shi:2016}.}
+	\includegraphics[width=0.7\textwidth]{./figs/real_space.jpg}
+	\caption{SDSS-DR7: In the left-hand side a sample of SDSS in the redshift space. The right-hand side shows SDSS in Re-Real space}{Source \cite{Shi:2016}.}
 	\label{fig:real}
 	\end{figure}
 	
@@ -273,7 +273,7 @@ From the unsupervised methods set we have: clustering and segmentation. These me
 	
 	\begin{figure}[h]
 	\centering
-	\includegraphics[width=0.5\textwidth]{./figs/reach2.png}
+	\includegraphics[width=0.8\textwidth]{./figs/reach2.png}
 	\caption{Example of OPTICS reachability plot}
 	\label{fig:reach2}
 	\end{figure}
@@ -308,7 +308,7 @@ Then a cluster $C$ is a subset of S satisfying:
 
 	\begin{figure}[h]
 	\centering
-	\includegraphics[width=0.5\textwidth]{./figs/density.jpg}
+	\includegraphics[width=0.7\textwidth]{./figs/density.jpg}
 	\caption{Left: density reachablability. Right: density connectivity}{Source \cite{Rhys:2020}.}
 	\label{fig:density}
 	\end{figure}
@@ -324,8 +324,9 @@ DBSCAN creates then a set of clusters $C_1, ..., C_k$ and all points in $S$ are 
 The DBSCAN algorithm initiates cluster discovery by selecting an arbitrary, unvisited database point $p$ and retrieving its density-reachable neighborhood (relative to $\epsilon$ and $\text{MinPts}$). The subsequent action depends on the nature of $p$:
 
 \begin{enumerate}
-		\item If $p$ is a core-point: A new cluster is formed containing $p$ and all points density-reachable from $p$. This process is then iteratively expanded.
-		\item If $p$ is not a core point: No points are density-reachable from $p$. DBSCAN assigns $p$ to the noise-point category and proceeds to the next unvisited point.
+	\item If $p$ is a core-point: A new cluster is formed containing $p$ and all points density-reachable from $p$. This process is then iteratively expanded.
+		
+	\item If $p$ is not a core point: No points are density-reachable from $p$. DBSCAN assigns $p$ to the noise-point category and proceeds to the next unvisited point.
 \end{enumerate}
 		
 It is important to note that if $p$ is a border-point of a cluster $C$, it will eventually be reached during the expansion phase from a core point of $C$ and correctly assigned to the cluster. The algorithm concludes once every point has been processed and assigned either to a cluster or to the noise-point set.
@@ -419,7 +420,7 @@ Figure \ref{fig:slos} illustrates the elongated Euclidean distance’s effect on
 
 	\begin{figure}[h]
 	\centering
-	\includegraphics[width=0.5\textwidth]{./figs/slos.jpg}
+	\includegraphics[width=0.75\textwidth]{./figs/slos.jpg}
 	\caption{Illustration of how sLos algorithm works elongating the line of sigth} {Source \cite{Hai-Xia-Ma:2025}.}
 	\label{fig:slos}
 	\end{figure}
@@ -438,7 +439,7 @@ $$ mreach(p,\,q) = max{core-dist(p), \, core-dist(q), \, dist(p, q)}$$
 
 	\begin{figure}[h]
 	\centering
-	\includegraphics[width=0.5\textwidth]{./figs/MST.jpg}
+	\includegraphics[width=0.65\textwidth]{./figs/MST.jpg}
 	\caption{Minimium Spanning Tree ($MSP$}{Source \cite{hdbscan:2000}.}
 	\label{fig:mst}
 	\end{figure}
@@ -456,7 +457,7 @@ The final clusters are extracted from this condensed dendrogram \ref{fig:tree} b
 
 	\begin{figure}[h]
 	\centering
-	\includegraphics[width=0.5\textwidth]{./figs/hbclusters.jpg}
+	\includegraphics[width=0.65\textwidth]{./figs/hbclusters.jpg}
 	\caption{Condensed tree from HDBSCAN} {Source \cite{hdbscan:2000}.}
 	\label{fig:tree}
 	\end{figure}
@@ -483,13 +484,13 @@ Following the computation of both parameters, the diagram presented in \ref{fig:
 \centering
 \begin{minipage}{.5\textwidth}
   \centering
-  \includegraphics[width=.5\linewidth]{./figs/dpc_11.jpg}
+  \includegraphics[width=.8\linewidth]{./figs/dpc_11.jpg}
   \caption{Different colors correspond to different clusters.}
   \label{fig:group}
 \end{minipage}%
 \begin{minipage}{.5\textwidth}
   \centering
-  \includegraphics[width=.5\linewidth]{./figs/dpc_12.jpg}
+  \includegraphics[width=.8\linewidth]{./figs/dpc_12.jpg}
   \caption{(B) Decision graph for data}{Source \cite{DPC:2014}.}
   \label{fig:cluster}
 \end{minipage}
@@ -499,7 +500,7 @@ Then we can select $\rho = \rho_{0}$ and $\delta = _{0}$ to obtains centers for 
  
 	\begin{figure}[h]
 	\centering
-	\includegraphics[width=0.5\textwidth]{./figs/dpc_3.jpg}
+	\includegraphics[width=0.7\textwidth]{./figs/dpc_3.jpg}
 	\caption{ $\rho = \rho_{0}$ and $\delta = \delta_{0}$ inside decision graph }{Source \cite{DPC:2014}.}
 	\label{fig:mst}
 	\end{figure}

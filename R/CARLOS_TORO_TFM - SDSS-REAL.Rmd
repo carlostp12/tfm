@@ -269,7 +269,7 @@ barplot(ttable, col=('red'),
 And the number of members for each group distribution:
 
 ```{r}
-boxplot(hhh$members, main="Boxplot of wt")
+boxplot(hhh$members, main="Boxplot of num of members in groups")
 ```
 
 We finally update the groups in order to get the final target dataset:

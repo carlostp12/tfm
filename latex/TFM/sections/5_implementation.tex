@@ -23,7 +23,7 @@ The synthesis results in a unified dataset formatted for computational efficienc
 
 Due to the varying structures of the survey catalogs, the data acquisition and preparation phase is divided into distinct modules to ensure inter-survey compatibility.
 
-\subsection{2dF Galaxy Redshift Survey (2dfGRS)}
+\subsection{2dF Galaxy Redshift Survey (2dfGRS)} \label{data:2d}
 
 
 \begin{enumerate}
@@ -59,10 +59,9 @@ Our pipeline performs a multi-source integration of the raw data files, executin
  redshift & cell8 & decimal \\ \hline
  dist & Raw distance value & decimal  \\ \hline
  GROUP\_ID & id-group galaxy belongs to & numerical \\ \hline
- 
 \end{tabular}
 \caption{Datasheet metadata.}
-\label{tab:data}
+\label{table:data}
 \end{table}
 
 \subsection{Real Space Galaxy Catalogue}
@@ -70,7 +69,7 @@ Finally, we incorporated the SDSS 'Real Space Galaxy Catalogue,' which provides 
 
 	\begin{figure}[h]
 	\centering
-	\includegraphics[width=0.5\textwidth]{./figs/catalog.jpg}
+	\includegraphics[width=1\textwidth]{./figs/catalog.jpg}
 	\caption{ Final format of datasheet }
 	\label{fig:cat}
 	\end{figure}
@@ -78,7 +77,7 @@ Finally, we incorporated the SDSS 'Real Space Galaxy Catalogue,' which provides 
 
 \section{The two-point correlation function: another point of view of density analysis}
 
-Drawing on the comparative analysis provided by \ref{Kerscher:2000}, we implement four distinct estimators to quantify the clustering signal. This selection allows for a rigorous cross-examination of the statistical bias and variance inherent in each method when applied to large-scale galaxy catalogs.
+Drawing on the comparative analysis provided by \cite{Kerscher:2000}, we implement four distinct estimators to quantify the clustering signal. This selection allows for a rigorous cross-examination of the statistical bias and variance inherent in each method when applied to large-scale galaxy catalogs.
 
 Natural
 \begin{equation} \label{eq:43}
@@ -100,71 +99,230 @@ Landy and Szalay:
 	\widehat{\xi} _{LS}= \frac{DD -2DR +RR}{RR}
 \end{equation}.
 
-Upon applying these estimators to the 2dFGRS dataset, we successfully recovered a distinct clustering feature at approximately $100 \ h^{-1}\text{Mpc}$. This signal is statistically consistent with the predicted scale of Baryon Acoustic Oscillations (BAOs), representing a detection of the primordial acoustic horizon in the late-time galaxy distribution.
+Upon applying these estimators to the 2dFGRS dataset, as we will se in  \ref{2pcf} we successfully recovered a distinct clustering feature at approximately $100 \ h^{-1}\text{Mpc}$ (see figures \ref{estimators1} and \ref{estimators2}. This signal is statistically consistent with the predicted scale of Baryon Acoustic Oscillations (BAOs), representing a detection of the primordial acoustic horizon in the late-time galaxy distribution.
 
 
-\section{Applying density-based algorithms to data}
+	\begin{figure}[h]
+	\centering
+	\includegraphics[width=1\textwidth]{./figs/estimators1.jpg}
+	\caption{ Natural and Hamilton estimators measured on the 2dFGRS sample. }
+	\label{fig:estimators1}
+	\end{figure}
+	
+	\begin{figure}[h]
+	\centering
+	\includegraphics[width=1\textwidth]{./figs/estimators2.jpg}
+	\caption{ David and Peebels and Landy and Szalay estimators for 2dFGRS sample. }
+	\label{fig:estimators2}
+	\end{figure}
+	
+\section{Application of density-based algorithms to datasets}
 
-We have tested several algorithms in order to obtain a model of density clustering.
+We performed a comparative evaluation of several density-based clustering frameworks to assess their capability in recovering the physical halo distribution. The algorithms were selected based on their distinct approaches to density reachability, hierarchical extraction, and noise handling
 
-OPTICS: To crete the reachability plot.
-OPTICSXi: Generate clusters in hierarchical mode.
-DBSCAN: Generate clusters by reachability plot threshods.
-HDBSCAN: Generate cluster form variable density regions.
-DPC (Density Peaks Clustering): Generate cluster from density peaks.
-OPTICS (on scaled data): The same in OPTICS with scaled data.
-DBSCAN  (on scaled data): The same in DBSCAN with scaled data.
-sOPTICS and sDBSCAN: Generate reachability plot and clusters with the modified distances as explained at \ref{section:slos}
+We tested several algorithms in order to obtain a model of density clustering both for non-scaled and scaled data to ensure that the density metrics are isotropic and not biased by the differing scales of the coordinate axes.
+to prevent .
+
+\begin{itemize}
+    \item OPTICS: Utilized to generate a reachability plot, providing a visualization of the hierarchical density structure and identifying the spatial ordering of galaxies.
+	
+	\item OPTICSXi: An extension of OPTICS used to extract clusters in a hierarchical mode by identifying steep density gradients (the $\xi$ parameter), allowing for the detection of clusters with varying densities.
+	
+	\item DBSCAN: Implemented as a baseline density-based method to identify clusters as density-connected components based on a fixed global proximity threshold ($\epsilon$).
+	
+	\item HDBSCAN: A robust hierarchical implementation that constructs a spanning tree to find stable clusters across all possible density scales, making it highly effective for multi-scale cosmological distributions.
+	
+	\item DPC (Density Peaks Clustering): Employed to identify clusters based on the detection of local density maxima and their relative distance from other high-density peaks, which is physically analogous to identifying halo centers.
+		
+	\item sOPTICS and sDBSCAN: These variants account for line-of-sight positional uncertainties due to redshift space distortions with the modified distances as explained at \ref{section:slos}
+\end{itemize} \label{sel:algorithms}
+
 
 It is important to emphasize that this study departs from traditional unsupervised clustering objectives, such as minimizing intra-cluster variance via the Elbow Method. Instead, we treat the Halo-based group distribution as a physical ground truth. Consequently, many standard clustering algorithms —and their default hyperparameter configurations— may fail to yield results consistent with our model of virialized galaxy groups, as they are not intrinsically designed to account for the specific density profiles of dark matter halos.
 
 The performance of each algorithm is evaluated based on its Recovery Rate of known halo members. We prioritize models that maximize the completeness and purity of identified groups relative to the 2dFGRS/SDSS group catalogs, rather than those that simply minimize global silhouette scores.
 
-With this in mind and guided by \cite{Hai-Xia-Ma:2025} we defined:
+Guided by the validation protocols established in \cite{Hai-Xia-Ma:2025} we employ the following metrics to assess the topological and member-wise similarity between the density-based models ($C$) and the halo-based ground truth ($H$):
+
+We define:
+\begin{itemize}
+	\item $total\_in\_cluster$: number of elements in output-cluster.
+	\item $total\_in\_cluster\_group$: number of elements from orignal group present in an output-cluster. 
+	\item $total\_in\_cluster_group$: number of elements from orignal group present in an output-cluster.
+\end{itemize}
 	
 \begin{equation} \label{eq:purity}
-	Purity = \frac{total\_in\_cluster\_group}{total\_in\_cluster}
+	 Purity = \mathcal{P} = \frac{total\_in\_cluster\_group}{total\_in\_cluster}
+% $$\mathcal{P} = \frac{|C \cap H|}{|C|}$$
 \end{equation}.
-
-$total\_in\_cluster$: number of elements in output-cluster.
-$total\_in\_cluster\_group$: number of elements from orignal group present in an output-cluster. 
-$total\_in\_cluster_group$: number of elements from orignal group present in an output-cluster.
 
 \begin{equation} \label{eq:completeness}
-	Completeness = \frac{total\_in\_cluster\_group}{total\_in\_group}
+	 Completeness = \mathcal{C} = \frac{total\_in\_cluster\_group}{total\_in\_group} 
+%$$\mathcal{C} = \frac{|C \cap H|}{|H|}$$
 \end{equation}.
 
-Following the same concept as \cite{Hai-Xia-Ma:2025}, an output-cluster is said to be $Pure$ if $Purity \geq \frac{2}{3} $ and complete if $Completeness \geq \frac{1}{2} $.
+Purity is also called \textbf{Precision} and completeness \textbf{Sensitivity} and also \textbf{Recall}.
+
+Following the categorical framework of \cite{Hai-Xia-Ma:2025} we define the thresholds:
+
+\begin{itemize}
+	\item Purity Threshold ($\mathcal{P} \geq 2/3$): An output-cluster is defined as Pure if at least 66.7% of its constituent galaxies originate from the same parent dark matter halo. 
+	
+	\item Completeness Threshold ($\mathcal{C} \geq 1/2$): An output-cluster is defined as Complete if it successfully captures at least 50% of the galaxies belonging to the true physical halo (or original group). This ensures that the algorithm has recovered the core structure of the virialized group.
+\end{itemize}
 
 With this concepts we evaluate the following ratios:
   
-\begin{equation} \label{eq:completeness}
-	Fp = \frac{number\_pure\_groups}{predicted\_groups}
+\begin{equation} \label{eq:purity_rate}
+	F_{p} = \frac{N_{pure}}{N_{clusters}}
 \end{equation}.
 
-\begin{equation} \label{eq:completeness}
-	Fr = \frac{number\_pure\_complete\_groups}{predicted\_groups}
-\end{equation}.
-Fr only for complete an pure output-clusters:
-
-\begin{equation} \label{eq:completeness}
-	Fr = \frac{total\_in\_group}{number\_non\_isolated\_galaxies}
+\begin{equation} \label{eq:completeness_rate}
+	F_{c} = \frac{N_{complete}}{N_{clusters}}
 \end{equation}.
 
+Fr only for complete and pure output-clusters:
+% $$R_M = \frac{N_{pure \cap complete}}{N_{total\_clusters}}$$
+\begin{equation} \label{eq:completeness_pure_rate}
+	F_{r} = \frac{N_{complete} + N_{pure}}{N_{original\_groups}}
+\end{equation}.
 
-\section{Applying 2pcf estimators to 2dFGRS datasheet}
 
--- SELECT TOP 10 o.objID, o.ra, o.dec, p.z
-select count(o.objID) 
-FROM photoprimary o INNER JOIN Photoz p ON o.objID = p.objID 
-WHERE
-p.z BETWEEN 0.2 AND 0.4 AND
---o.ra BETWEEN 30 AND 60 AND
-o.ra BETWEEN 165 AND 195 AND
-o.dec BETWEEN 0 AND 50 AND
-(o.dered_r-o.dered_i) < 2 AND
-o.cmodelmag_i-o.extinction_i BETWEEN 17.5 AND 19.9 AND
-(o.dered_r-o.dered_i) - (o.dered_g-o.dered_r)/8. > 0.55 AND
-o.fiber2mag_i < 21.7 AND o.devrad_i < 20. AND
-o.dered_i < 19.86 + 1.60*((o.dered_r-dered_i) - (o.dered_g-dered_r)/8. - 0.80) 
+%\begin{equation} \label{eq:pure_complete_rate}
+%	Fr = \frac{total\_in\_group}{number\_non\_isolated\_galaxies}
+%\end{equation}.
+
+
+\subsection{Application to 2dFGRS catalog} \label{results:2dfgrs}
+
+By applying the success-matching protocol derived from \cite{Hai-Xia-Ma:2025}, we evaluated the performance of each density-based configuration. The table \ref{table:2df} summarizes the ability of each algorithm to recover the underlying group or  halo distribution within the 2dFGRS survey volume.
+
+\begin{table}[]
+% \resizebox{\textwidth}{!}{
+\centering
+\scalebox{0.7}{
+% \setlength{\tabcolsep}{100pt} % Default value: 6pt
+\renewcommand{\arraystretch}{1.5} % Default value: 1
+\begin{tabular}{c c c c c}
+\hline
+\textbf{Algorithm} & \textbf{Hyperparameter} & \textbf{Data Sample} & \textbf{Outcomes Sample} & \textbf{Conclusion}  \\
+\hline
+ DBSCAN & $\begin{matrix} \epsilon = 6 \times  10^{-4} \\ minPts=5 \end{matrix} $ & Non-scaled & $\begin{matrix}P=0.65 \\ C=0.87 \\ R= 0.42 \\ U=21 \end{matrix}$ & Good in cluster detection  \\ \hline
+ 
+ HDBSCAN & - & - & - & Not good in cluster detection. \\  \hline
+ 
+ DPC & $\begin{matrix} \rho = 8.4 \times  10^{-4} \\ \delta = 0.9985 \end{matrix} $  & Non-scaled & - & Good in cluster center detection \\  \hline
+ 
+ sOPTICS &  $\begin{matrix} \epsilon = 11 \times  10^{-5} \\ minPts=5 \end{matrix} $  & Non-scaled & $\begin{matrix} P=0.84 \\C= 0.84 \\ R=0.86 \\ U=12 \end{matrix}$ \\ & Best results \\ \hline
+  
+  DBSCAN & $\begin{matrix} \epsilon = 6 \times  10^{-4} \\ minPts=5 \end{matrix} $ & Scaled & $\begin{matrix}P=0.72 \\ C=0.81 \\ R= 0.41 \\ U=22 \end{matrix}$ & Good in cluster detection  \\ \hline
+ 
+ OPTICS & - & - & - & Good in cluster detection. \\  \hline
+\end{tabular}}
+\caption{Results on 2dFGRS sample.}
+\label{table:2df}
+\end{table}
+
+\subsection{Application to SDSS catalog} \label{results:sdss}
+
+We applied the dentisy-based algorithms to the SDSS catalog shown in section \ref{data:sdss}.
+
+The outcomes are showed in table \cite{table:sdss}. Same results of application in \label{results:2dfgrs} can be shown as well, so sOPTICS is the best fitting algorithm which meets the results showed in \cite{Hai-Xia-Ma:2025}. 
+
+\begin{table}[]
+% \resizebox{\textwidth}{!}{
+\centering
+\scalebox{0.7}{
+% \setlength{\tabcolsep}{100pt} % Default value: 6pt
+\renewcommand{\arraystretch}{1.5} % Default value: 1
+\begin{tabular}{c c c c c}
+\hline
+\textbf{Algorithm} & \textbf{Hyperparameter} & \textbf{Data Sample} & \textbf{Outcomes Sample} & \textbf{Conclusion}  \\
+\hline
+ DBSCAN & $\begin{matrix} \epsilon = 6 \times  10^{-4} \\ minPts=5 \end{matrix} $ & Non-scaled & $\begin{matrix}P=0.65 \\ C=0.87 \\ R= 0.42 \\ U=21 \end{matrix}$ & Good in cluster detection  \\ \hline
+ 
+ HDBSCAN & - & - & - & Not good in cluster detection. \\  \hline
+ 
+ DPC & $\begin{matrix} \rho = 8.4 \times  10^{-4} \\ \delta = 0.9985 \end{matrix} $  & Non-scaled & - & Good in cluster center detection \\  \hline
+ 
+ sOPTICS &  $\begin{matrix} \epsilon = 11.0 \times 10^{-5} \\ minPts=5 \end{matrix} $  & Non-scaled & $\begin{matrix} P=0.84 \\C= 0.84 \\ R=0.86 \\ U=12 \end{matrix}$ \\ & Best results \\ \hline
+  
+  DBSCAN & $\begin{matrix} \epsilon = 6 \times  10^{-4} \\ minPts=5 \end{matrix} $ & Scaled & $\begin{matrix}P=0.72 \\ C=0.81 \\ R= 0.41 \\ U=22 \end{matrix}$ & Good in cluster detection  \\ \hline
+ 
+ OPTICS & - & - & - & Good in cluster detection. \\  \hline
+\end{tabular}}
+\caption{Results on SDSS sample.}
+\label{table:2df}
+\end{table}
+
+\subsection{Application to SDSS Real Space Galaxy Catalogue}
+
+We also applied same density-based algorithms to the SDSS Real Space Galaxy Catalogue as shown article \cite{Shi:2016}.
+
+Once corrected the distorsions we talked in \ref{section:real} all algorithms resulting in a better fitting model detection  compared with the ones shown in the \ref{results:sdss} section which contain space distorsions as showed at \ref{section:real}.
+
+\begin{table}[]
+% \resizebox{\textwidth}{!}{
+\centering
+\scalebox{0.7}{
+% \setlength{\tabcolsep}{100pt} % Default value: 6pt
+\renewcommand{\arraystretch}{1.5} % Default value: 1
+\begin{tabular}{c c c c c}
+\hline
+\textbf{Algorithm} & \textbf{Hyperparameter} & \textbf{Data Sample} & \textbf{Outcomes Sample} & \textbf{Conclusion}  \\
+\hline
+ DBSCAN & $\begin{matrix} \epsilon = 3 \times  10^{-4} \\ minPts=5 \end{matrix} $ & Non-scaled & $\begin{matrix}P=0.83 \\ C=0.92 \\ R= 0.99 \\ U=6 \end{matrix}$ & Good in cluster detection  \\ \hline
+ 
+ HDBSCAN & - & - & - & Not good in cluster detection. \\  \hline
+ 
+ DPC & $\begin{matrix} \rho = 8.5 \times 10^{-4} \\ \delta = 0.9986 \end{matrix} $  & Non-scaled & - & 100\% in cluster center detection \\  \hline
+   
+  DBSCAN & $\begin{matrix} \epsilon = 2.6 \times 10^{-2} \\ minPts=5 \end{matrix} $ & Scaled & $\begin{matrix}P=0.88 \\ C=0.88 \\ R= 0.97 \\ U=7 \end{matrix}$ & Good in cluster detection  \\ \hline
+ 
+ OPTICS & - & Scaled & - & Good in cluster detection. \\  \hline
+\end{tabular}}
+\caption{Results on SDSS Real Space Galaxy Catalogue sample \cite{Shi:2016}.}
+\label{table:real}
+\end{table}
+
+\subsection{Impact of Standardization (results on scaled data)}
+
+While the spatial coordinates were initially defined on a consistent physical, to ensure that our density metrics remained isotropic and independent of the varying scales of the coordinate axes, we implemented a standardization protocol (Z-score normalization).
+
+By transforming the spatial features to have a mean of zero and unit variance—calculated as $z = (x - \mu) / \sigma$—we eliminated the numerical bias inherent in raw coordinate ranges. 
+
+This preprocessing step yielded a measurable increase in cluster detection sensitivity across the 2dFGRS, SDSS, and Real-Space Galaxy catalogues as we can see in tables \label{table:2df}, \label{table:sdss} and \label{table:real}. This confirms that enforcing numerical isotropy is essential for correctly identifying groups in the all geometries.
+
+\section{Conclusions of density-based algorithm appllication on different catalogs}\label{conclusions}
+
+The results of our comparative analysis along different catalogs can be summarized in the following key findings:
+
+\begin{enumerate}
+	\item Superiority of Standardized Data: The application of Z-score normalization was the single most influential factor in improving model performance. By ensuring numerical isotropy, the scaled variants (sHDBSCAN, sDBSCAN, and sOPTICS) consistently outperformed their raw-coordinate counterparts across all metrics ($P$, $C$, $R$, and $U$).
+	
+	\item Best Performance of sOPTICS (sDBSCAN): Among the tested frameworks, sDBSCAN emerged as the most robust model for recovering the underlying halo distribution. It achieved the highest Valid Match Ratios.
+	
+	\item Modifying the distance in an elongated way along the Line of Sight improves the detection as sOPTICS algorithm which fit with \cite{Hai-Xia-Ma:2025}.
+	
+	\item Elbow method: We observed that traditional geometric optimizations, such as the Elbow Method, are unsuitable for clustering detection. As it was said, our results confirm that local density reachability is a more physically accurate proxy for gravitational binding than global variance minimization.
+	
+\end{enumerate}
+
+\section{Applying 2pcf Estimators to the 2dFGRS Dataset}\label{2pcf}
+
+This is another mode to analysis the density of galaxies across the Universe: we will move from a discrete classification ((deciding which galaxy belongs to which group) to statistical distribution (measuring how galaxies "crowd" together across the entire manifold). While clustering algorithms tell where the groups are, the Two-Point Correlation Function (2PCF) deals with the probability of finding galaxies at specific distances from each other.
+
+We created a python notebook based on the dataset shown in section \ref{data:2d}. Loaded the 2dFGRS dataset we take a sample to enable us to compare the distribution in the space of galaxies contained in the sample. By contrasting the 2dFGRS sample with a synthetic Poisson we expect this approach may convey information about the geometry of the matter across the Universe.
+
+One interestring point is the use of scipy.spatial.KDTree which allow to improve the time response and calculations by providing an index in a set of k-dimensional space. This indexing strategy was pivotal for both the density-based cluster extraction and the 2PCF pair-counting, reducing the computational complexity from quadratic to logarithmic scales. This ensured that our hyperparameter grid search remained performant even when processing 3D comoving coordinates across 100 Mpc/h scales.
+
+The obtained results are interestring because we can observe a peak  over the $100h^{-1} Mp$ which can be explained by Baryonic Acoustic Oscillations, this result provides definitive evidence that our density-based clustering methodology recovers the fundamental 'fingerprint' of the early Universe still visible in the galaxy distribution and consistent with  predictions of the $\lambda-CDM$ model.
+
+The BAOs is also one more demonstration of the dark matter presence, sparse in the Universe, shaping it, creating the halos where clusters shown in this study reside.
+
+Finally, our results show that the clusters identified by sDBSCAN and sOPTICS are not random associations, but are the physical manifestations of galaxies residing within the gravitational potential wells of Dark Matter halos, whose distribution was dictated by the sound horizon of the early Universe."
+
+
+
+
  

@@ -193,6 +193,7 @@ print_global_stats <- function(global_stats, sequence_values) {
   print(pretty_print("Pure gr.:", global_stats$pures))
   print(pretty_print("Fr:", global_stats$fr_list))
   print(pretty_print("Fp:", global_stats$fp_list))
+  print(pretty_print("FC:", global_stats$fc_list))
   print(pretty_print("Spurious:", global_stats$spurious))
   print(pretty_print("Bad class:", global_stats$bad_class))
   print(pretty_print("Recovery:", global_stats$recovery))

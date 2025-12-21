@@ -12,7 +12,8 @@ get_initial_stats_frame <- function(){
 		'und_gr'=numeric(),
 		'spurious'=numeric(),
 		'bad_class'=numeric(),
-		'recovery'=numeric()
+		'recovery'=numeric(),
+		'fc_list'=numeric()
 		)
   stats
 }
@@ -25,6 +26,7 @@ calculate_output <- function(mm){
   fp <- number_pure_groups/predicted_groups
   fr <- number_pure_complete_groups / true_groups
   s <- undetected_groups(all)
+  fc <- number_complete_groups / predicted_groups
   c(mean(all$purity), 
     mean(all$completn), 
     length(unique(all$cluster_id)), 
@@ -36,7 +38,7 @@ calculate_output <- function(mm){
     length(s$GROUP_ID), 
     mean(all$spurious), 
     mean(all$bad_class),
-    sum(all$recovery)
+    sum(all$recovery),fc
   )
 }
 
@@ -74,7 +76,7 @@ extract_stats_dbscan <- function (eps_sequence_values, local_res) {
 		    alli[4], alli[5], alli[6], 
 		    alli[7],  alli[8], alli[9], 
 		    alli[10], alli[11], alli[12], 
-		    alli[13])
+		    alli[13], alli[14])
 	}
 	stats
 }
@@ -95,7 +97,7 @@ extract_stats_XI <- function (eps_sequence_values, local_res) {
 		    alli[4], alli[5], alli[6], 
 		    alli[7],  alli[8],alli[9], 
 		    alli[10], alli[11], alli[12], 
-		    alli[13])
+		    alli[13], alli[14])
 	}
 	stats
 }
@@ -118,7 +120,7 @@ extract_stats_hdbscan <- function (eps_sequence_values, points) {
 		    alli[4], alli[5], alli[6], 
 		    alli[7],  alli[8],alli[9], 
 		    alli[10], alli[11], alli[12], 
-		    alli[13])
+		    alli[13], alli[14])
 	}
 	stats
 }
@@ -143,7 +145,7 @@ extract_stats_hdbscan <- function (delta_sequence_values, galaxyDens,
 		    alli[4], alli[5], alli[6], 
 		    alli[7],  alli[8],alli[9], 
 		    alli[10], alli[11], alli[12], 
-		    alli[13])
+		    alli[13], alli[14])
 	}
 	stats
 }
