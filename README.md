@@ -13,6 +13,17 @@ This component is dedicated to the evaluation of all density-based algorithms un
  * Galaxy Redshift Survey (2dFGRS).
 
  * Sloan Digital Sky Survey Data Release 7 (SDSS-DR7).
-  
+
+  # How execute
+  The project contains all transformation of original datafiles and 
+  Once project is downloaded, you have to set an environment variable:
+  PROJECT_TFM
+  This variable must to point to the tfm folder.
+  1. Execute a notebook: There are several python notebook, the ones:
+     - $PROJECT_TFM/python/notebook/notebook-2df.ipynb : contains the execution for the 2PCF application and estimators application.
+     - $PROJECT_TFM/python/notebook/ImportXXXX.ipynb are dedicated to transform the raw dataset to final dataset, are not neccesary to execute.
+  2. Execute R-notebook: if you set properly the $PROJECT_TFM variable, R-Studio must be able to execute ahy of the: "CARLOS_TORO_TFM - XXX.Rmd" files, anyway there exists a HTML for each one.
+  3. 
+       
  * Re-Real Space SDSS-DR7.
 
