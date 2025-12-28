@@ -336,6 +336,8 @@ all <- execute_stats(mm, optics)
 print_stats(all)
 ```
 
+This algorithm do not offer good results in cluster detection and will not be used in this study.
+
 ## DBSCAN
 
 We can directly apply extractDBSCAN on the OPTICS model.

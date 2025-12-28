@@ -238,11 +238,11 @@ get_elements_in_m5_groups <- function(mm){
 ```
 
 ```{r}
-tt<-sqldf(c("
-       UPDATE mm
-       set group_id=0
-       WHERE group_id NOT IN (select distinct(group_id) from mm5)
-       ", "select * from main.mm"))
+#tt<-sqldf(c("
+#       UPDATE mm
+#       set group_id=0
+#       WHERE group_id NOT IN (select distinct(group_id) from mm5)
+#       ", "select * from main.mm"))
 ```
 
 Then use it to find the target data:
@@ -283,13 +283,13 @@ boxplot(hhh$members, main="Boxplot of num of members in groups")
 We finally update the groups in order to get the final target dataset:
 
 ```{r}
-temp <- suppressWarnings(sqldf(c("
-      update mm set GROUP_ID=0
- where 
-       GROUP_ID not in (select distinct(GROUP_ID) from mm5)", "select * from main.mm")))
-temp
+#temp <- suppressWarnings(sqldf(c("
+#      update mm set GROUP_ID=0
+# where 
+#       GROUP_ID not in (select distinct(GROUP_ID) from mm5)", "select * from main.mm")))
+#temp
 
-mm_real <- temp
+#mm_real <- temp
 ```
 
 Lets take a look at the complete target sample distribution in the space:
@@ -633,11 +633,11 @@ for (rho in rhos){
 custom_heatmap(matrix_data, deltas, rhos, xTitle = "rho", yTitle = "delta", numColors = 11)
 ```
 
-we can see , all groups-center are detected with DPC for values $\delta=0.9986$ and $\rho=0.00084$. We can obtain them as follows
+we can see , all groups-center are detected with DPC for values $\delta=0.9986$ and $\rho=0.00085$. We can obtain them as follows
 
 ```{r}
 rho=0.9986
-delta=0.00084
+delta=0.00085
 galaxyClusters <- findClusters(galaxyDens, rho=rho, delta=delta)
 peaks <- mm[galaxyClusters$peak,]
 l <- length(peaks[peaks$GROUP_ID>0 &  !is.na(peaks$GROUP_ID), c('GROUP_ID')])
@@ -785,7 +785,7 @@ The bests results obtained with each method:
 +-------------------------------+-------------+---------------------------------+--------------------------------------------------------------------------+
 | DPC                           | Non-scaled  | 100% in groups-center detection | Good in group center detection, but not in clustering the whole dataset. |
 |                               |             |                                 |                                                                          |
-|                               |             |                                 | $\delta=0.00084$ and $\rho=0.9986$                                       |
+|                               |             |                                 | $\delta=0.00085$ and $\rho=0.9986$                                       |
 +-------------------------------+-------------+---------------------------------+--------------------------------------------------------------------------+
 | OPTICS                        | Scaled      | \-                              | Good in cluster reachability plot                                        |
 +-------------------------------+-------------+---------------------------------+--------------------------------------------------------------------------+
