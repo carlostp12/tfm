@@ -166,9 +166,10 @@ undetected_groups <- function(dataset){
 print_stats <- function(all_data) {
   print(paste("Mean purity", mean(all_data$purity)))
   print(paste("Mean completness", mean(all_data$completn)))
+  print(paste("Sum. recovery ", sum(all_data$recovery)))
   s<- undetected_groups(all_data)
   print(paste("Undetected groups", length(s$GROUP_ID), "out of", true_groups))
-  print(paste("Detected real groups", (true_groups-length(s$GROUP_ID)), "out of", true_groups))
+  print(paste("Detected pure and complete groups", length(all[all$is_pur & all$is_comp, ]), " out of", true_groups))
 }
 # Pretty print a vector preceded by a title
 pretty_print <- function (title, avector= c()){
@@ -191,6 +192,7 @@ print_global_stats <- function(global_stats, sequence_values) {
   print(pretty_print("Und. Groups", global_stats$und_gr))
   print(pretty_print("Complete gr.:", global_stats$completes))
   print(pretty_print("Pure gr.:", global_stats$pures))
+  print(pretty_print("P.+ C. gr.:", global_stats$pure_complet))
   print(pretty_print("Fr:", global_stats$fr_list))
   print(pretty_print("Fp:", global_stats$fp_list))
   print(pretty_print("FC:", global_stats$fc_list))

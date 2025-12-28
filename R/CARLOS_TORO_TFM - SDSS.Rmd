@@ -163,7 +163,7 @@ There is an initial preprocessing of data-file in order to obtain proper distanc
 
 Take a sample bounded by minPts = 5 and RA and DEC:
 
-$$RA \in [90, 1500] h,\, DEC \in [15, 25] º,\, \,and\,\, z \lt max\_redshift$$
+$$RA \in [90, 150] h,\, DEC \in [15, 25] º,\, \,and\,\, z \lt max\_redshift$$
 
 Then we take the initial values and take a look at the remaining distribution:
 
@@ -495,8 +495,9 @@ In fact we can create a heat-map for $\rho$ and $\delta$ hyper-parameters:
 rhos <- seq(0.9980, 0.999, 0.0001)
 deltas <- seq(0.00075, 0.00085, 0.00001)
 
+ll <-  length(deltas)
 j<-1
-i<-1
+i<-ll
 matrix_data=matrix(ncol=length(rhos), nrow = length(deltas)) 
 for (rho in rhos){
 	for (delta in deltas){
@@ -505,10 +506,10 @@ for (rho in rhos){
         l <- length(unique(peaks$GROUP_ID))
         #print(min(l/true_groups, true_groups/l))
         matrix_data[i, j] <- min(l/true_groups, true_groups/l)
-        i <- i+1
+        i <- i-1
     }
     j <- j+1
-    i<-1
+    i<-ll
 }
 
 

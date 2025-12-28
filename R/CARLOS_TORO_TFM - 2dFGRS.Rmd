@@ -161,7 +161,7 @@ There is an initial pre-processing of data-file in order to obtain proper distan
 
 Take a sample bounded by minPts = 5 and in RA and DEC:
 
-$$RA \in [0, 30]h,\, DEC \in [-36, -25]º,\, \,and\,\, z \lt max\_redshift$$
+$$RA \in [0, 2]h,\, DEC \in [-36, -25]º,\, \,and\,\, z \lt max\_redshift$$
 
 Then we take the initial values and take a look at the remaining distribution:
 
@@ -491,8 +491,10 @@ In fact we can create a heat-map for $\rho$ and $\delta$ hyper-parameters:
 rhos <- seq(0.9980, 0.999, 0.0001)
 deltas <- seq(0.0008, 0.0009, 0.00001)
 
+ll <-  length(deltas)
 j<-1
-i<-1
+i<-ll
+
 matrix_data=matrix(ncol=length(rhos), nrow = length(deltas)) 
 for (rho in rhos){
 	for (delta in deltas){
@@ -501,22 +503,23 @@ for (rho in rhos){
         l <- length(unique(peaks$GROUP_ID))
         #print(min(l/true_groups, true_groups/l))
         matrix_data[i, j] <- min(l/true_groups, true_groups/l)
-        i <- i+1
+        #matrix_data[j, i] <- min(l/true_groups, true_groups/l)
+        i <- i-1
     }
     j <- j+1
-    i<-1
+    i<-ll
 }
 
 
 custom_heatmap(matrix_data, deltas, rhos, xTitle = "rho", yTitle = "delta", numColors = 11)
 ```
 
-In which case, we can see that $\delta=0.00084$ and $\rho=0.9985$ produce the best results with a 97% of group-centers detection.
+In which case, we can see that \$\\delta=0.00083\$\$ and $\rho=0.9985$ produce the best results with a 97% of group-centers detection.
 
 ## Output-clusters visualization
 
 ```{r}
-galaxyClusters <- findClusters(galaxyDens, rho=0.9985, delta=0.00084)
+galaxyClusters <- findClusters(galaxyDens, rho=0.9985, delta=0.00083)
 peaks <- mm[galaxyClusters$peaks,]
 plot3d(peaks$x, peaks$y, peaks$z, col = peaks$GROUP_ID+1, 
          size = 3, xlab = "X", ylab = "Y", zlab = "Z")
@@ -798,7 +801,7 @@ The bests results obtained with each method we summarize in next table:
 +-------------------------------+----------------+-----------------------------+--------------------------------------------------------------------------+
 | OPTICS Xi hierarchical method | Non-scaled     | Not applicable.             | Not valuable result were found.                                          |
 +-------------------------------+----------------+-----------------------------+--------------------------------------------------------------------------+
-| DBSCAN                        | Non-scaled     | P: 0.65                     | Good in cluster detection                                                |
+| DBSCAN                        | Non-scaled     | P: 0.65                     | Good in cluster detection but low recovery.                              |
 |                               |                |                             |                                                                          |
 |                               |                | C: 0.87                     |                                                                          |
 |                               |                |                             |                                                                          |
@@ -833,7 +836,7 @@ The bests results obtained with each method we summarize in next table:
 
 # Executive summary
 
-In conclusion. We took for this study a sample from the 2dFGRS catalog and selected 6173 objects within an area between 0 and 1h in RA and -25 and -36º in DEC. We tried several methods in groups detecting selecting groups with a minimum of 5 elements (galaxies), we got 95 groups.
+In conclusion. We took for this study a sample from the 2dFGRS catalog and selected 6173 objects within an area between 0 and 2h in RA and -25 and -36º in DEC. We tried several methods in groups detecting selecting groups with a minimum of 5 elements (galaxies), we got 95 groups.
 
 We can stand out the following points:
 
@@ -845,6 +848,8 @@ We can stand out the following points:
 
 Finally we compare the original with the best clustering obtained in this study:
 
++--------------------------------+--------------------------------------+
 | Actual groups distribution     | Best cluster detection with sOPTICS. |
-|--------------------------------|--------------------------------------|
++================================+======================================+
 | ![](images/paste-500A6000.png) | ![](images/paste-2176DF96.png)       |
++--------------------------------+--------------------------------------+

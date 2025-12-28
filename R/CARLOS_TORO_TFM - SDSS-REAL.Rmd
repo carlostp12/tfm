@@ -611,8 +611,10 @@ The best detected until now was the
 rhos <- seq(0.9980, 0.999, 0.0001)
 deltas <- seq(0.0008, 0.0009, 0.00001)
 
+ll <-  length(deltas)
 j<-1
-i<-1
+i<-ll
+
 matrix_data=matrix(ncol=length(rhos), nrow = length(deltas)) 
 for (rho in rhos){
     for (delta in deltas){
@@ -621,10 +623,10 @@ for (rho in rhos){
         l <- length(unique(peaks$GROUP_ID))
         #print(min(l/true_groups, true_groups/l))
         matrix_data[i, j] <- min(l/true_groups, true_groups/l)
-        i <- i+1
+        i <- i-1
     }
     j <- j+1
-    i<-1
+    i<-ll
 }
 
 
