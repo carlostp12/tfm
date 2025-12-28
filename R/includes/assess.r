@@ -1,5 +1,20 @@
 
 ###############################################################################
+#	Group is real-group
+###############################################################################
+group_is_real <- function(group_id){
+	ttotal<-sqldf(sprintf("
+	    select 
+	      count(GROUP_ID) as how_many
+			from 
+			  mm5
+			where 
+	       GROUP_ID =%s", group_id))
+#	list('how_many' = ttotal$how_many)
+	return (ttotal$how_many>0)
+}
+
+###############################################################################
 #	Number of elements in a given output-cluster
 ###############################################################################
 calculate_count_of_cluster <- function(cluster_id, dataset){
@@ -93,7 +108,8 @@ calculate_stats <- function(cluster_id, dataset) {
 		'spurious' = spurious,
 		'bad_classified' = bad_classified,
 		'is_pure' = ifelse(purity>=0.666, 1, 0),
-		'is_complete' = ifelse(completeness >= 0.5, 1, 0)
+		'is_complete' = ifelse(completeness >= 0.5, 1, 0),
+		'is_real' = group_is_real(group_id)
 	   )
 }
 
@@ -121,7 +137,8 @@ execute_stats <- function(mm, blo_scan){
 		'bad_class'=numeric(),
 		'is_pur'=integer(),
 		'is_comp'=integer(),
-		'recovery'=numeric()
+		'recovery'=numeric(),
+		'is_real'=integer()
 		)
 	for(r in cluster_results$cluster){
 	  if(r != 0) {
@@ -140,7 +157,8 @@ execute_stats <- function(mm, blo_scan){
 				bb$is_complete,
 				ifelse(bb$is_pure & bb$is_complete,
 				       bb$total_in_group/number_non_isolated_galaxies,
-				       0 ))
+				       0 ),
+				bb$is_real)
 		}
 		#print(r)
 	}
@@ -170,6 +188,7 @@ print_stats <- function(all_data) {
   s<- undetected_groups(all_data)
   print(paste("Undetected groups", length(s$GROUP_ID), "out of", true_groups))
   print(paste("Detected pure and complete groups", length(all[all$is_pur & all$is_comp, ]), " out of", true_groups))
+  print(paste("Detected real groups ", sum(all_data$is_real), " out of", true_groups))
 }
 # Pretty print a vector preceded by a title
 pretty_print <- function (title, avector= c()){
@@ -193,6 +212,7 @@ print_global_stats <- function(global_stats, sequence_values) {
   print(pretty_print("Complete gr.:", global_stats$completes))
   print(pretty_print("Pure gr.:", global_stats$pures))
   print(pretty_print("P.+ C. gr.:", global_stats$pure_complet))
+  print(pretty_print("Real groups:", global_stats$real_list))
   print(pretty_print("Fr:", global_stats$fr_list))
   print(pretty_print("Fp:", global_stats$fp_list))
   print(pretty_print("FC:", global_stats$fc_list))

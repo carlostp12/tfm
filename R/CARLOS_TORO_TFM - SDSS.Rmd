@@ -103,10 +103,6 @@ dt <- read.csv(file)
 str(dt)
 ```
 
-```{r}
-
-```
-
 # Generic functions for assessments
 
 ## Functions to asses outcomes
@@ -399,7 +395,7 @@ plot_purity_completeness(
   x_stats$completeness_list, 
   x_stats$recovery,
   c('Purity', 'Completeness', 'Recovery'),
-  "Purity/completeness on not scaled data",
+  "Purity/completeness on raw data",
   seleced_eps, 'eps', 'Percentage'
 )
 ```
@@ -410,12 +406,12 @@ This chart shows that optimal point is around $0.00037$. Is at this value where 
 
 plot_purity_completeness(
   eps_sequence_test, 
-  x_stats$pures/true_groups, 
+  x_stats$real_list/true_groups, 
   x_stats$und_gr/true_groups, 
   x_stats$pure_complet/true_groups,
-  c('Pure groups', 'Undetected gr.', 'Pure + Complet.'),
-  "Group global group purity and undetected stats on not scaled data",
-  seleced_eps, 'eps', 'Percentage'
+  c('Detected', 'Undetected gr.', 'Pure + Complet.'),
+  "Group global % detection stats on raw data",
+  seleced_eps , 'eps', 'Percentage'
 )
 ```
 
@@ -425,11 +421,11 @@ According with previous chart, the optimal value is $\epsilon = 6.10^{4}$. Given
 plot_purity_completeness(
   eps_sequence_test, 
   x_stats$und_gr,
-  x_stats$group_list, 
-  true_groups - x_stats$und_gr,
-  c('Undetected', 'Groups', 'Detected'),
-  "Total purity and completeness on scaled data",
-   seleced_eps, 'eps', 'Groups number'
+  x_stats$real_list, 
+  true_groups - 0,
+  c('Undetected', 'Groups', 'True groups'),
+  "Total detection on raw data",
+   seleced_eps , 'eps', 'Groups number'
 )
 ```
 
@@ -559,31 +555,31 @@ The same plots before
 
 ```{r}
 seleced_eps <- 0.035
-plot_purity_completeness(
-    eps_sequence_test, 
-    x_stats$purity_list,
-    x_stats$completeness_list,
-    x_stats$recovery, 
-    c('Purity', 'Completeness', 'Recovery'),
-    "Group purity and undetected stats on not scaled data",
-    seleced_eps, 'eps', 'Percentage'
-)
 
+plot_purity_completeness(
+  eps_sequence_test, 
+  x_stats$purity_list, 
+  x_stats$completeness_list, 
+  x_stats$recovery,
+  c('Purity', 'Completeness', 'Recovery'),
+  "Purity/completeness on scaled data",
+  seleced_eps, 'eps', 'Percentage'
+)
 ```
 
 ```{r}
 plot_purity_completeness(
   eps_sequence_test, 
   x_stats$und_gr,
-  x_stats$group_list, 
-  true_groups - x_stats$und_gr,
-  c('Undetected', 'Groups', 'Detected'),
-  "Purity and completeness on scaled data",
-   seleced_eps, 'eps', 'Groups number'
+  x_stats$real_list, 
+  true_groups - 0,
+  c('Undetected', 'Groups', 'True groups'),
+  "Total detection on scaled data",
+   seleced_eps , 'eps', 'Groups number'
 )
 ```
 
-## Hyperparameter tunning
+## Elbow method
 
 We have selected that minPts = min_members, which is a reasonable value for interpreting a group / clustering.
 
@@ -600,7 +596,7 @@ In addition are data belonging to actual clusters with more than min_members mem
 
 We can infer that optimal value is content within the interval (0.0023, 0.0033).
 
-## Undetected original groups
+## Detected/Undetected original groups
 
 The element whose groups were not detected are:
 
@@ -698,10 +694,10 @@ seleced_eps <- 0.0001
 plot_purity_completeness(
   eps_sequence_test, 
   sx_stats$purity_list, 
-  sx_stats$completeness_list,
+  sx_stats$completeness_list, 
   sx_stats$recovery,
   c('Purity', 'Completeness', 'Recovery'),
-  'Purity Completeness on Slos data',
+  "Purity/completeness on sLOS data",
   seleced_eps, 'eps', 'Percentage'
 )
 ```
@@ -714,13 +710,13 @@ Finally, for groups:
 
 plot_purity_completeness(
   eps_sequence_test, 
-  sx_stats$pures/true_groups, 
-  sx_stats$pure_complet/true_groups, 
-  sx_stats$completes/true_groups,  
-  c('Purity', 'Completeness', 'Pur.+Comp.'),
-  "Purity and completeness on scaled data",
-  seleced_eps, 'eps', 'Percentage'
-  )
+  sx_stats$real_list/true_groups, 
+  sx_stats$und_gr/true_groups, 
+  sx_stats$pure_complet/true_groups,
+  c('Detected', 'Undetected gr.', 'Pure + Complet.'),
+  "Group global % detection stats on sLOS data",
+  seleced_eps , 'eps', 'Percentage'
+)
 
 ```
 
@@ -728,13 +724,12 @@ plot_purity_completeness(
 plot_purity_completeness(
   eps_sequence_test, 
   sx_stats$und_gr,
-  sx_stats$group_list, 
-  true_groups - sx_stats$und_gr,
-  c('Undetected', 'Groups', 'Detected'),
-  "Purity and completeness on scaled data",
-   seleced_eps, 'eps', 'Groups number'
+  sx_stats$real_list, 
+  true_groups - 0,
+  c('Undetected', 'Groups', 'True groups'),
+  "Total detection on sLOS data",
+   seleced_eps , 'eps', 'Groups number'
 )
-
 ```
 
 Detected and undetected groups:

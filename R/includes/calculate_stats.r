@@ -13,7 +13,8 @@ get_initial_stats_frame <- function(){
 		'spurious'=numeric(),
 		'bad_class'=numeric(),
 		'recovery'=numeric(),
-		'fc_list'=numeric()
+		'fc_list'=numeric(),
+		'real_list'=numeric()
 		)
   stats
 }
@@ -38,7 +39,7 @@ calculate_output <- function(mm){
     length(s$GROUP_ID), 
     mean(all$spurious), 
     mean(all$bad_class),
-    sum(all$recovery),fc
+    sum(all$recovery),fc,sum(all$is_real)
   )
 }
 
@@ -76,7 +77,7 @@ extract_stats_dbscan <- function (eps_sequence_values, local_res) {
 		    alli[4], alli[5], alli[6], 
 		    alli[7],  alli[8], alli[9], 
 		    alli[10], alli[11], alli[12], 
-		    alli[13], alli[14])
+		    alli[13], alli[14], alli[15])
 	}
 	stats
 }
@@ -97,7 +98,7 @@ extract_stats_XI <- function (eps_sequence_values, local_res) {
 		    alli[4], alli[5], alli[6], 
 		    alli[7],  alli[8],alli[9], 
 		    alli[10], alli[11], alli[12], 
-		    alli[13], alli[14])
+		    alli[13], alli[14], alli[15])
 	}
 	stats
 }
@@ -120,7 +121,7 @@ extract_stats_hdbscan <- function (eps_sequence_values, points) {
 		    alli[4], alli[5], alli[6], 
 		    alli[7],  alli[8],alli[9], 
 		    alli[10], alli[11], alli[12], 
-		    alli[13], alli[14])
+		    alli[13], alli[14], alli[15])
 	}
 	stats
 }
@@ -145,7 +146,7 @@ extract_stats_hdbscan <- function (delta_sequence_values, galaxyDens,
 		    alli[4], alli[5], alli[6], 
 		    alli[7],  alli[8],alli[9], 
 		    alli[10], alli[11], alli[12], 
-		    alli[13], alli[14])
+		    alli[13], alli[14], alli[15])
 	}
 	stats
 }

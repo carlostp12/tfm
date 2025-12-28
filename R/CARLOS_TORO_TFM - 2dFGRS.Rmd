@@ -396,7 +396,7 @@ plot_purity_completeness(
   x_stats$completeness_list, 
   x_stats$recovery,
   c('Purity', 'Completeness', 'Recovery'),
-  "Purity/completeness on not scaled data",
+  "Purity/completeness on raw data",
   seleced_eps, 'eps', 'Percentage'
 )
 ```
@@ -407,11 +407,11 @@ This chart shows that optimal point is around $0.0006$. Is at this value where c
 
 plot_purity_completeness(
   eps_sequence_test, 
-  x_stats$pures/true_groups, 
+  x_stats$real_list/true_groups, 
   x_stats$und_gr/true_groups, 
   x_stats$pure_complet/true_groups,
-  c('Purity', 'Undetected gr.', 'Pure + Complet.'),
-  "Group global group purity and undetected stats on not scaled data",
+  c('Detected', 'Undetected gr.', 'Pure + Complet.'),
+  "Group global % detection stats on raw data",
   seleced_eps , 'eps', 'Percentage'
 )
 ```
@@ -422,10 +422,10 @@ For groups detection, we have:
 plot_purity_completeness(
   eps_sequence_test, 
   x_stats$und_gr,
-  x_stats$group_list, 
-  true_groups - x_stats$und_gr,
-  c('Undetected', 'Groups', 'Detected'),
-  "Total purity and completeness on scaled data",
+  x_stats$real_list, 
+  true_groups - 0,
+  c('Undetected', 'Groups', 'True groups'),
+  "Total detection on raw data",
    seleced_eps , 'eps', 'Groups number'
 )
 ```
@@ -575,30 +575,29 @@ The same plots before
 ```{r}
 seleced_eps <- 0.04
 plot_purity_completeness(
-    eps_sequence_test, 
-    x_stats$purity_list,
-    x_stats$completeness_list,
-    x_stats$recovery, 
-    c('Purity', 'Completeness', 'Recovery'),
-    "Group purity and undetected stats on not scaled data",
-    seleced_eps, 'eps', 'Percentage'
+  eps_sequence_test, 
+  x_stats$purity_list, 
+  x_stats$completeness_list, 
+  x_stats$recovery,
+  c('Purity', 'Completeness', 'Recovery'),
+  "Purity/completeness on scaled data",
+  seleced_eps, 'eps', 'Percentage'
 )
-
 ```
 
 ```{r}
 plot_purity_completeness(
   eps_sequence_test, 
   x_stats$und_gr,
-  x_stats$group_list, 
-  true_groups - x_stats$und_gr,
-  c('Undetected', 'Groups', 'Detected'),
-  "Purity and completeness on scaled data",
-   seleced_eps, 'eps', 'Groups number'
+  x_stats$real_list, 
+  true_groups - 0,
+  c('Undetected', 'Groups', 'True groups'),
+  "Total detection on scaled data",
+   seleced_eps , 'eps', 'Groups number'
 )
 ```
 
-## Hyper-parameter tunning by the elbow method
+## Elbow method 
 
 We have selected that minPts = min_members, which is a reasonable value for interpreting a group / clustering.
 
@@ -615,7 +614,7 @@ In addition are data belonging to actual clusters with more than min_members mem
 
 We can infer that optimal value is content within the interval (0.0023, 0.0033).
 
-## Undetected original groups
+## Detected/Undetected original groups
 
 The element whose groups were not detected are:
 
