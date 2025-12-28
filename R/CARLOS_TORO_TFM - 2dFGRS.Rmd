@@ -714,10 +714,10 @@ seleced_eps <- 0.000108
 plot_purity_completeness(
   eps_sequence_test, 
   sx_stats$purity_list, 
-  sx_stats$completeness_list,
+  sx_stats$completeness_list, 
   sx_stats$recovery,
   c('Purity', 'Completeness', 'Recovery'),
-  'Purity Completeness on Slos data',
+  "Purity/completeness on sLOS data",
   seleced_eps, 'eps', 'Percentage'
 )
 ```
@@ -730,13 +730,13 @@ Finally, for groups detection:
 
 plot_purity_completeness(
   eps_sequence_test, 
-  sx_stats$pures/true_groups, 
-  sx_stats$pure_complet/true_groups, 
-  sx_stats$completes/true_groups,  
-  c('Purity', 'Completeness', 'Pur.+Comp.'),
-  "Purity and completeness on scaled data",
-  seleced_eps, 'eps', 'Percentage'
-  )
+  sx_stats$real_list/true_groups, 
+  sx_stats$und_gr/true_groups, 
+  sx_stats$pure_complet/true_groups,
+  c('Detected', 'Undetected gr.', 'Pure + Complet.'),
+  "Group global % detection stats on sLOS data",
+  seleced_eps , 'eps', 'Percentage'
+)
 
 ```
 
@@ -744,11 +744,11 @@ plot_purity_completeness(
 plot_purity_completeness(
   eps_sequence_test, 
   sx_stats$und_gr,
-  sx_stats$group_list, 
-  true_groups - sx_stats$und_gr,
-  c('Undetected', 'Groups', 'Detected'),
-  "Purity and completeness on scaled data",
-   seleced_eps, 'eps', 'Groups number'
+  sx_stats$real_list, 
+  true_groups - 0,
+  c('Undetected', 'Groups', 'True groups'),
+  "Total detection on sLOS data",
+   seleced_eps , 'eps', 'Groups number'
 )
 
 ```
