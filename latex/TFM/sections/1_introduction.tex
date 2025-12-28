@@ -1,3 +1,4 @@
+\numberwithin{section}{chapter}
 \phantomsection
 \pagestyle{fancy}
 
@@ -86,7 +87,7 @@ https://gax.sjtu.edu.cn/data/Group.html
 
 The Analysis Stage will utilize an iterative methodology dedicated to enhancing the robustness and accuracy of the model outputs. All models employed in this stage will consist of unsupervised algorithms, with a particular focus on density-based clustering techniques to identify structures and outliers within the data.
 
-To evaluate the performance of these models, the following criteria will be followed:
+To evaluate the performance of these models, a traditional criteria will be followed (see section \label{sect:aplication} for more details):
 
 \begin{itemize}
     \item {Detected Clusters}: clusters successfully classified (often referred to as True Positives at the group level).
@@ -102,7 +103,7 @@ To evaluate the performance of these models, the following criteria will be foll
 	\item {External Data Classified as Members}: individual data points (galaxies) not belonging to any actual group but erroneously classified inside a detected output-cluster often referred to as False Positives at the individual member level).
 \end{itemize}
 
-The computational work for this study will primarily utilize Python, with supplementary analysis performed using R.
+We utilize both Python and R to execute the various stages of this study. Python handles the data management and statistical estimation of the two-point correlation function. Meanwhile, the implementation and performance assessment of the density-based clustering frameworks are carried out in R, ensuring a robust statistical analysis of the galaxy group distributions.
 
 \section{Schedule}
 

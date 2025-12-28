@@ -1,0 +1,174 @@
+\phantomsection
+\pagestyle{fancy}
+
+\chapter{Results, conclusions and future works}
+\onehalfspacing
+%\addcontentsline{toc}{chapter}{State_of_art}
+%\section{Introduction}
+
+In this section provides a brief synthesis of the research, demonstrating how the combination of R-based density clustering and Python-based statistical estimators effectively maps the large-scale structure of the Universe.
+
+\section{Results of application density-based algorithms}
+\subsection{2dFGRS sample} \label{results:2dfgrs}
+
+By applying the success-matching protocol derived from Section \label{sect:aplication} and  \cite{Hai-Xia-Ma:2025}, we evaluated the performance of each density-based configuration. The table \ref{table:2df} summarizes the ability of each algorithm to recover the underlying group or  halo distribution within the 2dFGRS survey volume. Notably, sOPTICS achieved the highest Recovery ($\mathcal{R}$) rates. While other algorithms as DBSCAN demonstrated acceptable in Purity or Completeness rates, they proved less effective overall due to significantly lower Recovery rates, failing to identify a representative fraction of the total group population.
+
+
+\begin{table}[]
+% \resizebox{\textwidth}{!}{
+\centering
+\scalebox{0.7}{
+% \setlength{\tabcolsep}{100pt} % Default value: 6pt
+\renewcommand{\arraystretch}{1.5} % Default value: 1
+\begin{tabular}{c c c c c}
+\hline
+\textbf{Algorithm} & \textbf{Hyperparameter} & \textbf{Data Sample} & \textbf{Outcomes Sample} & \textbf{Conclusion}  \\
+\hline
+ DBSCAN & $\begin{matrix} \epsilon = 6 \times  10^{-4} \\ minPts=5 \end{matrix} $ & Non-scaled & $\begin{matrix}P=0.65 \\ C=0.87 \\ R= 0.42 \\ U=21 \end{matrix}$ &  $\begin{matrix} \text{Reasonable cluster detection.} \\ \text{ Low recovery\-rate.} \end{matrix}$  \\ \hline
+ 
+ HDBSCAN & - & - & - & Not good in cluster detection. \\  \hline
+ 
+ DPC & $\begin{matrix} \rho = 8.3 \times  10^{-4} \\ \delta = 0.9985 \end{matrix} $  & Non-scaled & - & Good in cluster center detection \\  \hline
+ 
+ sOPTICS &  $\begin{matrix} \epsilon = 11 \times  10^{-5} \\ minPts=5 \end{matrix} $  & Non-scaled & $\begin{matrix} P=0.84 \\C= 0.84 \\ R=0.86 \\ U=12 \end{matrix}$ \\ & Best results \\ \hline
+  
+  DBSCAN & $\begin{matrix} \epsilon = 6 \times  10^{-4} \\ minPts=5 \end{matrix} $ & Scaled & $\begin{matrix}P=0.72 \\ C=0.81 \\ R= 0.41 \\ U=22 \end{matrix}$ &  $\begin{matrix} \text{Acceptable cluster detection.} \\ \text{ Low recovery\-rate.} \end{matrix}$  \\ \hline
+ 
+ OPTICS & - & - & - & Good in reachability plot. \\  \hline
+\end{tabular}}
+\caption{Results on 2dFGRS sample.}
+\label{table:2df}
+\end{table}
+
+\subsection{SDSS sample} \label{results:sdss}
+
+Density-based algorithms to the SDSS catalog shown in section \ref{data:sdss}.
+
+The results of the analysis are summarized in Table \ref{table:sdss}. Comparable performance trends are observed in the application to the 2dFGRS catalog (Section \ref{results:2dfgrs}). Across both datasets, sOPTICS emerges as the most effective algorithm, demonstrating the highest alignment with the benchmark results reported by \cite{Hai-Xia-Ma:2025}. Its success is attributed to its ability to resolve the complex density profiles of galaxy groups within the reconstructed cosmic web.
+
+\begin{table}[]
+% \resizebox{\textwidth}{!}{
+\centering
+\scalebox{0.7}{
+% \setlength{\tabcolsep}{100pt} % Default value: 6pt
+\renewcommand{\arraystretch}{1.5} % Default value: 1
+\begin{tabular}{c c c c c}
+\hline
+\textbf{Algorithm} & \textbf{Hyperparameter} & \textbf{Data Sample} & \textbf{Outcomes Sample} & \textbf{Conclusion}  \\
+\hline
+ DBSCAN & $\begin{matrix} \epsilon = 3.7 \times  10^{-4} \\ minPts=5 \end{matrix} $ & Non-scaled & $\begin{matrix}P=0.68 \\ C=0.68 \\ R= 0.25 \\ U=30 \end{matrix}$ & $\begin{matrix} \text{Reasonable cluster detection.} \\ \text{ Low recovery\-rate.} \end{matrix}$ \\ \hline
+ 
+ HDBSCAN & - & - & - & Not suitable in cluster detection. \\  \hline
+ 
+ DPC & $\begin{matrix} \rho = 8.0 \times  10^{-4} \\ \delta = 0.9985 \end{matrix} $  & Non-scaled & - & Good in cluster center detection \\  \hline
+ 
+ sOPTICS &  $\begin{matrix} \epsilon = 11.0 \times 10^{-5} \\ minPts=5 \end{matrix} $  & Non-scaled & $\begin{matrix} P=0.82 \\C= 0.72 \\ R=0.69 \\ U=12 \end{matrix}$ & Best results \\ \hline
+  
+ DBSCAN & $\begin{matrix} \epsilon = 6 \times  10^{-4} \\ minPts=5 \end{matrix} $ & Scaled & $\begin{matrix}P=0.69 \\ C=0.69 \\ R= 0.57 \\ U=16 \end{matrix}$ &  $\begin{matrix} \text{Good in cluster detection.} \\ \text{ Low recovery\-rate.} \end{matrix}$  \\ \hline
+ 
+ OPTICS & - & - & - & Good in reachability plot. \\  \hline
+\end{tabular}}
+\caption{Results on SDSS sample.}
+\label{table:sdss}
+\end{table}
+
+\subsection{SDSS Real Space Galaxy sample}
+
+Finally, the applied same density-based algorithms were applied to the SDSS Real Space Galaxy Catalogue as shown article \cite{Shi:2016} which results are shwon in the table \ref{table:real}.
+
+Following the correction of the distortions detailed in Section \ref{section:real}, all algorithms exhibited significantly improved performance in halo detection. This represents a marked enhancement over the results presented in Section \ref{results:sdss}, where the presence of redshift space distortions hindered the algorithms' ability to accurately reconstruct physical structures.
+
+It is important to note that the application of sLOS (scaled Line-of-Sight) algorithms is unnecessary within this framework. Since the Re-Real space reconstruction already accounts for and mitigates line-of-sight distortions.
+
+\begin{table}[]
+% \resizebox{\textwidth}{!}{
+\centering
+\scalebox{0.7}{
+% \setlength{\tabcolsep}{100pt} % Default value: 6pt
+\renewcommand{\arraystretch}{1.5} % Default value: 1
+\begin{tabular}{c c c c c}
+\hline
+\textbf{Algorithm} & \textbf{Hyperparameter} & \textbf{Data Sample} & \textbf{Outcomes Sample} & \textbf{Conclusion}  \\
+\hline
+ DBSCAN & $\begin{matrix} \epsilon = 3 \times  10^{-4} \\ minPts=5 \end{matrix} $ & Non-scaled & $\begin{matrix}P=0.83 \\ C=0.92 \\ R= 0.99 \\ U=6 \end{matrix}$ &  $\begin{matrix} \text{Worked in cluster detection} \\ \text{ and recovery-rate.} \end{matrix}$  \\ \hline
+ 
+ HDBSCAN & - & - & - & Not good in cluster detection. \\  \hline
+ 
+ DPC & $\begin{matrix} \rho = 8.5 \times 10^{-4} \\ \delta = 0.9986 \end{matrix} $  & Non-scaled & - & 100\% in cluster center detection \\  \hline
+   
+  DBSCAN & $\begin{matrix} \epsilon = 2.6 \times 10^{-2} \\ minPts=5 \end{matrix} $ & Scaled & $\begin{matrix}P=0.88 \\ C=0.88 \\ R= 0.97 \\ U=7 \end{matrix}$ & Good in cluster detection  \\ \hline
+ 
+ OPTICS & - & Scaled & - & Good in cluster detection. \\  \hline
+\end{tabular}}
+\caption{Results on SDSS Real Space Galaxy Catalogue sample.}
+\label{table:real}
+\end{table}
+
+\subsection{Impact of Standardization (results on scaled data)}
+
+While the spatial coordinates were initially defined on a consistent physical, to ensure that our density metrics remained isotropic and independent of the varying scales of the coordinate axes, a standardization protocol (Z-score normalization) was implemented, then OPTICS and DBSCAN were applied again.
+
+By transforming the spatial features to have a mean of zero and unit variance—calculated as 
+$$z = \frac{x - \mu} {\sigma}$$
+
+ the numerical bias inherent in raw coordinate ranges is eliminated. 
+
+This preprocessing step yielded a measurable increase in cluster detection sensitivity across the 2dFGRS, SDSS, and Real-Space Galaxy catalogues in OPTICS and DBSCAN algorithms as we can see in tables \label{table:2df}, \label{table:sdss} and \label{table:real}. This confirms that enforcing numerical isotropy is essential for correctly identifying groups in the all geometries.
+
+\section{Results on two-point correlation function (2pcf) on 2dFGRS sample}\label{2pcf2}
+
+A python notebook based on the dataset shown in section \ref{data:2d} is created. A representative sample from the 2dFGRS catalog was extracted to analyze its spatial distribution. By contrasting the empirical 2dFGRS data with a synthetic Poisson distribution, this approach may convey information about the geometry of the matter across the Universe.
+
+	\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\textwidth]{./figs/estimators1.jpg}
+	\caption{Natural and Hamilton estimators} on 2dFGRS sample.
+	\label{fig:estimators1}
+	\end{figure}
+	
+One important point is the use of scipy.spatial.KDTree package, which allow to improve the time response and calculations by providing an index in a set of k-dimensional space. This indexing strategy was pivotal for the 2PCF pair-counting, reducing the computational complexity from quadratic to logarithmic scales. This ensured that our hyperparameter grid search remained performant even when processing 3D comoving coordinates across $400 h^{-1} Mp$ scales.
+
+The estimators presented in \ref{2pcf1} were successfully applied to this sample and the obtained results show a peak of density over the $100h^{-1} Mp$ (see figures \label{fig:estimators1} and \label{fig:estimators2}). Such peaks can be explained by the Baryonic Acoustic Oscillations (BAO), providing a definitive evidence that this methodology recovers the fundamental 'fingerprint' of the early Universe still visible in the galaxy distribution and consistent with  predictions of the $\lambda-CDM$ model.
+
+While a comprehensive discussion of Baryon Acoustic Oscillations (BAO) lies beyond the scope of this analysis, they provide further empirical evidence for the existence of dark matter. By establishing the initial density fluctuations in the early Universe, dark matter acted as a gravitational scaffold, driving the formation of the virialized halos where the galaxy clusters identified in this study reside.
+
+Finally, these results show galaxies are not sparsed at random positions across the Universe, instead they lie in associated groups and clusters identified by sDBSCAN and sOPTICS. They are the physical manifestations gravitational wells of Dark Matter halos, whose distribution was dictated by the sound horizon of the early Universe."
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\textwidth]{./figs/estimators2.jpg}
+\caption{ David \& Peebels and Landy \& Szalay estimators} for 2dFGRS sample.
+\label{fig:estimators2}
+\end{figure}
+
+\section{Conclusions}\label{conclusions}
+
+The results of the comparative analysis along different samples and density analysis presented in this study can be summarized in the following key findings:
+
+\begin{enumerate}
+	
+	\item Elbow method: It was observed that traditional geometric optimizations, such as the Elbow Method, are unsuitable for clustering detection. As it was said, our results confirm that local density reachability is a more physically accurate proxy for gravitational binding than global variance minimization.
+	
+%SS	\item Primacy of physical ground truth: statistical heuristics such as Elbow Method do not match with the morphology of the cosmic web. Adopting the Halo-based group distribution as a physical ground truth, we achieved a more robust recovery in DBSCAN and OPTICS.
+	
+	\item \textbf{OPTICS and DBSCAN} can effectively recover the galaxy groups with reasonable Purity ($\mathcal{P}$) and Completeness ($\mathcal{C}$) but theu yield to low values in Recovery ($\mathcal{R}$).These results are consistent with findings in the literature, such us \cite{Hai-Xia-Ma:2025} and can be attributed to fundamental observational limitations. Specifically, inherent survey challenges and the Redshift-Space Distortions (RSD) detailed in Section \ref{challenges} create structural biases that density-based algorithms alone cannot fully mitigate.
+	
+	\item \textbf{Better performance} of algorithms based on modified distances along the Line of Sight (SLOS) such as sOPTICS and sDBSCAN: among the tested frameworks, sDBSCAN emerged as the most robust model for recovering the underlying halo distribution. It achieved the highest valid match Ratios in $\mathcal{P}$, $\mathcal{C}$ and $\mathcal{R}$, these results confirm the obtained in \cite{Hai-Xia-Ma:2025}.
+	
+	\item \textbf{Slightly Superiority of Standardized Data}: The application of Z-score normalization is not an influential factor in improving model performance for OPTICS and DBSCAN. This is true for all metrics such as ($\mathcal{P}$, $\mathcal{C}$, $\mathcal{R}$, and $\mathcal{U}$).
+	
+	\item \textbf{Re-Real space}: The transition from redshift space to Re-Real space proved essential for accurate structure identification. By correcting for Kaiser and Finger-of-God (FoG) distortions, we significantly reduced the "smearing" of clusters along the line of sight. This correction directly led to higher Purity ($\mathcal{P}$) and Completeness ($\mathcal{C}$) across all evaluated density-based algorithms.
+	
+	\item \textbf{The Two-Point Correlation Function(2PCF)}: served as a vital statistical validator. The departure of the 2dFGRS sample from the synthetic Poisson baseline provided a quantitative measure of the "crowding" or clustering signal, confirming that our identified groups reside within the high-probability density peaks predicted by $\Lambda$CDM cosmology.
+	
+\end{enumerate}
+
+\section{Future works}\label{future}
+	All methodologies developed in this study provide a foundation for several promising avenues of research:
+\begin{enumerate}	
+	\item \textbf{Next-Generation Surveys}: While this study utilized the 2dFGRS and SDSS (DR7) catalogs, the computational efficiency of the Density Peak Clustering (DPC) and HDBSCAN frameworks makes them ideal candidates for larger, higher-redshift datasets. Applying these algorithms to the Dark Energy Spectroscopic Instrument (DESI) or the Euclid mission data will allow for a more precise mapping of the cosmic web across cosmic time.
+	
+	\item \textbf{Machine Learning (ML) Neural Networks (NN)}: Future iterations could move beyond traditional clustering by with Neural Networks(NNs). The Graph ones (GNNs) can be used by treating galaxies as nodes in a graph and their gravitational bonds as edges, we can potentially automate the "Re-Real" space correction process.
+	
+	\item \textbf{Multi-Wavelength Data}: Another  significant next step would be the cross-correlation of our density-based clusters with X-ray (eROSITA) or Sunyaev-Zeldovich (SZ) effect maps.
+\end{enumerate}	

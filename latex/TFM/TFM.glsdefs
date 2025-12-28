@@ -1,0 +1,28 @@
+\glsdefs@newdocentry{Blackbox}%
+{%
+name={Blackbox models},%
+sort={blackbox},%
+type={main},%
+first={Blackbox models},%
+firstplural={Blackbox modelss},%
+text={Blackbox models},%
+plural={Blackbox modelss},%
+description={--- In system identification, the term \emph {blackbox} modelling refers to the process of modelling a system through non-parametric techniques.},%
+descriptionplural={--- In system identification, the term \emph {blackbox} modelling refers to the process of modelling a system through non-parametric techniques.},%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={},%
+longplural={},%
+short={},%
+shortplural={},%
+counter={page},%
+parent={},%
+%
+}%
+

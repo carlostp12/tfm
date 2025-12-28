@@ -1,16 +1,16 @@
 \phantomsection
 \pagestyle{fancy}
 
-\chapter{State of the art}
+\chapter{State of the art}\label{sec:State_of_art}
 \onehalfspacing
 %\addcontentsline{toc}{chapter}{State_of_art}
 %\section{Introduction}
 
-This chapter serves to establish the current academic context for the research area addressed by this work. This is achieved by first defining the target objects—galaxy clusters and groups—and subsequently providing a comprehensive overview of the redshift surveys that furnish the requisite data. The chapter concludes with a concise review of the Machine Learning techniques, particularly the unsupervised algorithms, that will be applied throughout this study.
+This chapter establishes the academic context for the research area addressed in this work. It begins by defining the primary subjects of study—galaxy clusters and groups —followed by a comprehensive overview of the redshift surveys that provide the necessary data. Furthermore, it details the redshift-distance relation as a mechanism for converting redshifts into physical distances using modern cosmological models. The chapter also introduces the two-point correlation function, which provides a statistical framework for analyzing matter density. Finally, it concludes with a concise review of the unsupervised Machine Learning techniques utilized throughout this study.
 
-\section{Galaxy groups and clusters: Target objects for structure identification}
+\section{Galaxy groups and clusters: Primary targets for structural identification}
 
-Galaxy groups \ref{fig:group} and clusters \ref{fig:cluster} are the largest gravitationally structures in the Universe and are crucial probes of the underlying cosmic dark matter density field. They both consist in dark matter halos containing multiple galaxies, their distinction is typically based on mass and membership:
+Galaxy groups and clusters \ref{fig:cluster} are the largest gravitationally structures in the Universe and are crucial probes of the underlying cosmic dark matter density field. They both consist of dark matter halos containing multiple galaxies, their distinction is typically based on mass and membership:
 
 \begin{enumerate}
 
@@ -20,22 +20,29 @@ Galaxy groups \ref{fig:group} and clusters \ref{fig:cluster} are the largest gra
 	
 \end{enumerate}
 
-\begin{figure}
-\centering
-\begin{minipage}{.5\textwidth}
-  \centering
-  \includegraphics[width=.4\linewidth]{./figs/image_future.jpg}
-  \caption{Future group image}
-  \label{fig:group}
-\end{minipage}%
-\begin{minipage}{.5\textwidth}
-  \centering
-  \includegraphics[width=.4\linewidth]{./figs/image_future.jpg}
-  \caption{Future cluster image}
-  \label{fig:cluster}
-\end{minipage}
-\end{figure}
+%\begin{figure}
+%\centering
+%\begin{minipage}{.5\textwidth}
+%  \centering
+%  \includegraphics[width=.5\linewidth]{./figs/M33_2.jpg}
+%  \caption{M33 the $3^{th}$ galaxy in mass in our local group. Source \cite{eso:2025}}
+%  \label{fig:group}
+%\end{minipage}%
+%\begin{minipage}{.5\textwidth}
+%  \centering
+%  \includegraphics[width=.5\linewidth]{./figs/virgo_cluster.jpg}
+%  \caption{Portion of Virgo cluster. Source \cite{eso:2025}}
+%  \label{fig:cluster}
+%\end{minipage}
+%\end{figure}
 
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=.75\linewidth]{./figs/virgo_cluster.jpg}
+  \caption{Portion of Virgo cluster}. Source \cite{eso:2025}
+  \label{fig:cluster}
+\end{figure}
 
 Because both groups and clusters exhibit diverse morphologies and spatial shapes, the subsequent analysis —detailed in Section \ref{unsupervised_methods}— employs unsupervised density-based algorithms. These methods are the most suitable approach for the clustering analysis due to their capacity to effectively fit structures with arbitrary geometries.
 
@@ -43,11 +50,10 @@ Because both groups and clusters exhibit diverse morphologies and spatial shapes
 
 	\begin{figure}[h]
 	\centering
-	\includegraphics[width=0.5\textwidth]{./figs/survey_2dmap_small.jpg}
-	\caption{2dfGRS sky coverage}{Source \cite{Colless:2001}.}
+	\includegraphics[width=0.75\textwidth]{./figs/survey_2dmap_small-old2.jpg}
+	\caption{2dfGRS sky coverage}. Source \cite{Colless:2001}.
 	\label{fig:2dfGRS}
 	\end{figure}
-	
 	
 Spectroscopic surveys are fundamental projects in astronomy and cosmology that collect and analyze the spectrum of light from a large number of celestial objects over a wide area of the sky. By splitting the light into its constituent wavelengths, these surveys acquire a vast amount of detailed physical information for each object.
 
@@ -65,8 +71,8 @@ We are fortunate that, nowadays, we have access to data from several major astro
 
 	\begin{figure}[h]
 	\centering
-	\includegraphics[width=0.5\textwidth]{./figs/SSO_2.jpg}
-	\caption{Australian Astronomical Observatory (AAO)}{Source \cite{aao:2000}.}
+	\includegraphics[width=0.75\textwidth]{./figs/SSO_2.jpg}
+	\caption{Australian Astronomical Observatory (AAO)}. Source \cite{aao:2000}.
 	\label{fig:aao}
 	\end{figure}
 	
@@ -78,24 +84,24 @@ The Sloan Digital Sky Survey (SDSS) \cite{sdss:2000} began collecting data in 20
 
 	\begin{figure}[h]
 	\centering
-	\includegraphics[width=0.5\textwidth]{./figs/apo_wide.jpg}
-	\caption{SDSS Data release 7 sky coverage}{Source \cite{aao:2000}.}
+	\includegraphics[width=0.8\textwidth]{./figs/apo_wide.jpg}
+	\caption{Apache Point Observatory in New Mexico.} Source \cite{aao:2000}.
 	\label{fig:sdss}
 	\end{figure}
 	
-The SDSS has progressed through several phases (SDSS-I, II, III, IV, and the current SDSS-V), with each phase introducing new scientific goals and technological advancements. For this work we will use the modelC petrosian magnitude data realease 7 (DR7) which contains 639359 galaxy entries. This release offers coverage for approximatyely one quarter of the sky sphere, predominantely in the nothern galactic cap as illustrated in figure \ref{fig:dr7}. Groups constructed are drawn up from \cite{Yang:2007}.
+The SDSS has progressed through several phases (SDSS-I, II, III, IV, and the current SDSS-V), with each phase introducing new scientific goals and technological advancements. For this work the modelC petrosian magnitude data realease 7 (DR7) will be used, which contains 639359 galaxy entries. This release offers coverage for approximatyely one quarter of the sky sphere, predominantely in the nothern galactic cap as illustrated in figure \ref{fig:dr7}. Groups constructed are drawn up from \cite{Yang:2007}.
 
 	\begin{figure}[h]
 	\centering
-	\includegraphics[width=0.5\textwidth]{./figs/SDSSDR7-coverage.jpg}
-	\caption{SDSS Data release 7 sky coverage}{Source \cite{Yang:2007}.}
+	\includegraphics[width=0.85\textwidth]{./figs/SDSSDR7-coverage2.jpg}
+	\caption{SDSS Data release 7 sky coverage.} Source \cite{Yang:2007}.
 	\label{fig:dr7}
 	\end{figure}
 
 
-\subsection{Inherent challenges associated with survey-collected data}
+\subsection{Inherent challenges associated with survey-collected data} \label{challenges}
 
-Beyond the substantial logistical and resource constraints associated with constructing and operating large-scale astronomical facilities, all galaxy redshift surveys are subject to a distinct set of fundamental systematic and technical challenges. They can be broadly categorized into those arising from by instrumental and observational limitations, and those derived from subsequent collecting data and analysis. Among these, we can cite the following:
+Beyond the substantial logistical and resource constraints associated with constructing and operating large-scale astronomical facilities, all galaxy redshift surveys are subject to a distinct set of fundamental systematic and technical challenges. They can be broadly categorized into those arising from instrumental and observational limitations, and those derived from subsequent collecting data and analysis:
 
 \begin{enumerate}
 	\item Observational and measurement errors: produced by instrumental limitations due long time exposures, observing faint objects in high redshifts where long integration times are required to achieve an adequate signal-to-noise ratio (SNR). Additional noise is introduced by environmental factors, such as atmospheric distortion (seeing) or the inherent difficulty of performing accurate sky subtraction during data processing.
@@ -107,7 +113,7 @@ Beyond the substantial logistical and resource constraints associated with const
 
 \subsection{Galaxy cluster/group catalog}
 
-In order to validate and assess the performance of a constructed galaxy clustering model, it is necessary to compare the results from the target galaxy catalog (the data being clustered) against a well-established, pre-existing group/cluster catalog (the ground truth). For this work, we employ the catalog result obtained by the halo-based group finder developed by in \cite{Yang:2007}. This method is specifically optimized for grouping galaxies residing in the same dark matter halo and and utilizes an iterative approach based on an adaptive filter modeled after the general properties of dark matter halos (see \cite{Yang:2007}) for full details).
+In order to validate and assess the performance of a constructed galaxy clustering model, it is necessary to compare the results from the target galaxy catalog (the data being clustered) against a well-established, pre-existing group/cluster catalog (the ground truth). For this work was employed the catalog result obtained by the halo-based group finder developed by in \cite{Yang:2007}. This method is specifically optimized for grouping galaxies residing in the same dark matter halo and and utilizes an iterative approach based on an adaptive filter modeled after the general properties of dark matter halos (see \cite{Yang:2007}) for full details).
 
 The halo-based group finder was successfully applied to the galaxy catalogs from both the 2dFGRS and the SDSS (Data Release 7). This valuable group catalog is publicly accessible and can be downloaded from \cite{groups:2000}.
 
@@ -128,7 +134,7 @@ Where $V, H_{0}, D$ are respectively, the velocity, Hubble constant and distance
 
 Where $\Omega_{r0}, \_, \Omega_{m0}, \_ \Omega_{\Lambda 0}$ represents the density parameters for radiation, mass and dark energy (respectively) in the present epoch $z=0$.
 
-The specific form of equation \ref{eq:2} may vary according to the chosen cosmological model. In this work we assume the values of the $\Lambda\text{CDM}$, according to \cite{Cepa:2023}:
+The specific form of equation \ref{eq:2} may vary according to the chosen cosmological model. In this work it is assumed the values of the $\Lambda\text{CDM}$, according to \cite{Cepa:2023}:
 
 \begin{equation} \label{eq:3}
  \Omega_{r0} = 0.0001, \,\, \Omega_{m0} = 0.3 , \,\, \Omega_{\Lambda 0} = 0.7.
@@ -136,7 +142,7 @@ The specific form of equation \ref{eq:2} may vary according to the chosen cosmol
 
 \subsection{Real space galaxy catalog}\label{section:real}
 
-Redshift surveys suffer distortions that ate primarily categorized into two distinct sets:
+Redshift surveys suffer distortions that are primarily categorized into two distinct sets:
 
 \begin{enumerate}
 	\item FOG (Finger Of God): reduction in the correlation produced on small scales by the virialized motion of galaxies within the dark matter halos.
@@ -153,7 +159,7 @@ The observed redshift ($z_{\text{obs}}$) of a galaxy is a combination of the cos
  z_{obs} = z_{cos} + z_{pec} = z_{cos} + \frac{v_{pec}}{c}(1+z_{cos}).
 \end{equation}.
 
-And then for $v_{\text{pec}}$ we have:
+And then for $v_{\text{pec}}$:
 
 \begin{equation} \label{eq:5}
  v_{pec} = v_{cen} + v_{\sigma}.
@@ -171,20 +177,65 @@ Roughly speaking $v_{cen}$ is the manifestation of  $z_{Kaiser}$, whereas FOG ef
 
 Following the methodology proposed in \cite{Shi:2016}, the authors define several coordinate spaces by utilizing Equations \ref{eq:4}, \ref{eq:5}, and \ref{eq:7} to recalculate the positions (Equation \ref{eq:2}) in each space.
 
-For the present study, we will utilize the coordinate system referred to as the Real space which when reconstructted based on correcting redshift space distortions is called \textbf{Re-Real space} \cite{Shi:2016}. This space is particularly relevant as it incorporates the effects of both the Kaiser and FOG distortions.
+Based on these coordinate frameworks, a transformation is applied to the original redshift-space data to obtain a new system known as \textbf{Re-Real space} \cite{Shi:2016}. This space is particularly relevant as it mitigates the impact of both Kaiser and Finger-of-God (FoG) distortions. In this study, the adoption of Re-Real space is fundamental to improving the performance of density-based algorithms, as it restores the physical isotropy of galaxy groups.
 
-Employing this approach yields a modified catalog where the new redshift values effectively transform the coordinate space, as illustrated in Figure \ref{fig:real} . We will use this Re-Real space dataset to thoroughly investigate how this transformation influences the resulting clustering of galaxies.
+Employing this approach yields a modified catalog where the new redshift values effectively transform the coordinate space, as illustrated in Figure \ref{fig:real}. By using this Re-Real space dataset will help to thoroughly investigate how this transformation influences the resulting clustering of galaxies.
 
 	\begin{figure}[h]
 	\centering
-	\includegraphics[width=0.7\textwidth]{./figs/real_space.jpg}
-	\caption{SDSS-DR7: In the left-hand side a sample of SDSS in the redshift space. The right-hand side shows SDSS in Re-Real space}{Source \cite{Shi:2016}.}
+	\includegraphics[width=0.85\textwidth]{./figs/real_space.jpg}
+	\caption{The Re-Real space.} In the left-hand side a sample of SDSS in the redshift space. The right-hand side shows SDSS in Re-Real space. Source \cite{Shi:2016}.
 	\label{fig:real}
 	\end{figure}
 	
+\section{The two-point correlation function: a statistical point of view in density analysis}\label{2pcf1}
+
+An alternative approach to investigating the cosmic galaxy density field is through the two-point correlation function (2PCF). This statistic provides a robust measure for quantifying the spatial clustering of a galaxy distribution by determining the excess probability of finding a pair of objects at a given separation scale, $r$, compared to a random (Poisson) distribution.
+
+Unlike clustering algorithms which performs a discrete classification (deciding which galaxy belongs to which group), 2PCF offers a global statistical analysis of the distribution (measuring how galaxies "crowd" together across the entire manifold). This is done by quantify the probability of finding galaxy pairs at specific separation scales across the cosmic manifold.
+
+The two-point correlation function $\xi(r)$ and the power spectrum, $P(k)$, form a Fourier transform pair, representing the clustering signal in real and spectral space, respectively. While $\xi(r)$ provides an intuitive measure of spatial separations, the power spectrum is the standard framework for characterizing the primordial density fluctuations observed in the Cosmic Microwave Background (CMB).x
+
+According to \cite{Peebels:1980}, if one pick a galaxy at random, the probability ($dP$) of finding another galaxy at a distance $r$ within a small volume $dV$ is given by:
+
+$$dP = \bar{n}^2 [1 + \xi(r)] dV_1 dV_2$$
+
+Where $\bar{n}$ is the mean number density of galaxies in the survey and $\xi(r)$ is the correlation function.
+
+The value of $\xi(r)$ tells us how the galaxies "feel" each other at different scales \cite{Peebels:1980}: 
+\begin{enumerate}
+	\item $\xi(r) > 0$ (Clustering): You are more likely to find a pair of galaxies at that distance than you would by pure chance. On small scales, gravity pulls galaxies together, making this value high.
+	
+	\item$\xi(r) = 0$ (Randomness): The distribution is perfectly random (like static on a TV).
+	
+	\item $\xi(r) < 0$ (Anti-clustering): Galaxies are "repelling" each other or are more spread out than a random distribution.
+\end{enumerate}	
+
+Drawing on the comparative analysis provided by \cite{Kerscher:2000}, four distinct estimators to quantify the clustering signal was implemented in this work. They are:
+
+Natural:
+\begin{equation} \label{eq:43}
+	\widehat{\xi} _{N}= \frac{DD}{RR} - 1
+\end{equation}.
+
+Davids and Peebels:
+\begin{equation} \label{eq:41}
+	\widehat{\xi} _{DP}= \frac{DD}{DR} - 1
+\end{equation}.
+
+Hamilton:
+\begin{equation} \label{eq:42}
+	\widehat{\xi} _{Ha}= \frac{DD \, RR}{DR^2}
+\end{equation}.
+
+Landy and Szalay:
+\begin{equation} \label{eq:44}
+	\widehat{\xi} _{LS}= \frac{DD -2DR + RR}{RR}
+\end{equation}.
+	
 \section{Machine Learning applied to cosmology}
 
-We will present a brief description of Machine Learning algorithms emphasizing those used in this work.
+A brief description of Machine Learning algorithms will be described, emphasizing those used in this work.
 
 \subsection{Supervised methods}
 
@@ -194,7 +245,7 @@ A subset is taken from the original dataset, the so called training data \( Z_i 
 
 The input to any supervised algorithm consists of independent variables (or features), and the output comprises the dependent variables (or target variables). Supervised algorithms leverage the information within the training data to learn the intricate relationships between these input and target variables.
 
-However, a detailed discussion of supervised methods is not the scope of this work. We are not interested in making target predictions; instead, our objective is to identify patterns and structure within the data distribution, which will subsequently inform the spatial distribution of matter within a dimensional space.
+However, a detailed discussion of supervised methods is not the scope of this work. Tnstead, The objective is to identify patterns and structure within the data distribution, which will subsequently inform the spatial distribution of matter within a dimensional space.
 
 \subsection{Unsupervised methods}\label{unsupervised_methods}
 
@@ -202,7 +253,8 @@ Unsupervised learning focuses on analysis and modeling of data that lack output 
 
 Formally, the input consists of a set of observations (or data points) where the feature matrix $X$ is given by $X = (X_1, \dots, X_n)^T$. The primary objective is to learn the underlying distribution or to find meaningful representations from these input variables without any prior guidance.
 
-From the unsupervised methods set we have: clustering and segmentation. These methods work based on distance and similarity patterns and can be divided as follows:
+Clustering and segmentation belong to Unsupervised methods, that work based on distance and similarity patterns can be divided as follows:
+
 \begin{itemize}
 	\item \textit{Hierarquical}: this method creates successive partitions of data and a hierarchical tree, called a dendrogram. Examples include agglomerative clustering. 
 	\item \textit{Partitional}: an initial set of clusters must be set in advance, the set is improved on an iterative proccess. Example $k$-means.
@@ -217,9 +269,10 @@ From the unsupervised methods set we have: clustering and segmentation. These me
 	
 	Conversely, many hierarchical and partitional algorithms rely on strong assumptions about the data's structure. For instance, the $k$-means algorithm requires the number of clusters ($k$) to be predefined and implicitly assumes that the clusters follow a globular or spherical shape (often analogous to a Gaussian probability distribution). This inherent bias makes them unsuitable for astronomical data, where the spatial distribution of matter is expected to exhibit arbitrary, non-spherical geometries—such as linear filaments, stellar-like distributions, or complex polygonal structures. Thus, these restrictive methods are not appropriate for our analysis.
 	
-	For this study, we have selected three representative density-based algorithms: OPTICS, DBSCAN, and HDBSCAN. The following section will provide a detailed overview of each method.
+	For this study, a set of representative density-based algorithms: OPTICS, DBSCAN, HDBSCAN and DPC. The following section will provide a detailed overview of the mathematical foundations and operational characteristics of each.
 	
 \subsection{OPTICS}\label{optics}
+
 	Namely Ordering Points to Identify Cluster Structure: is a density-based, unsupervised algorithm. Its primary mechanism involves ordering the data points based on their reachability distance relative to a specified density threshold.
 	
 	The output of OPTICS is not a finalized set of clusters but rather a visual tool called the reachability plot (or reachability-distance graph). This plot encodes the density structure of the dataset, from which clusters of varying density and hierarchy can be later extracted.
@@ -245,12 +298,12 @@ From the unsupervised methods set we have: clustering and segmentation. These me
 	
 	\begin{figure}[h]
 	\centering
-	\includegraphics[width=0.5\textwidth]{./figs/core-distance.jpg}
-	\caption{Core and reachability distances}{Source \cite{Rhys:2020}.}
+	\includegraphics[width=0.75\textwidth]{./figs/core-distance.jpg}
+	\caption{Core and reachability distances}. Source \cite{Rhys:2020}.
 	\label{fig:optics_figure}
 	\end{figure}
 	
-	Note that reachability-distance is only defined with respect to a core-point. We can see an illustrative example of both core-distance and reachability-distance in the figure \ref{fig:optics_figure}.
+	Note that reachability-distance is only defined with respect to a core-point. See the \ref{fig:optics_figure} for an illustrative example of both core-distance and reachability-distance in the figure .
 
 	OPTICS work by setting up two mandatory parameters: 
 	
@@ -261,8 +314,8 @@ From the unsupervised methods set we have: clustering and segmentation. These me
 	
 	\begin{figure}[h]
 	\centering
-	\includegraphics[width=0.5\textwidth]{./figs/reach1.png}
-	\caption{An example of data set in plane \( \mathbb{R}^2\).}
+	\includegraphics[width=0.8\textwidth]{./figs/reach3.jpg}
+	\caption{An example of data set in \( \mathbb{R}^2\).}
 	\label{fig:reach1}
 	\end{figure}
 	
@@ -294,7 +347,7 @@ Given a dataset $S$, a minimum number of points $\text{MinPts}$, and a neighborh
 		\item The point $p$ is \textit{density-connected} to a point $q$ with respect to Eps and MinPts if there exists third point o such that both $p$ and $q$ are density-reachable from o.
 \end{itemize}
 
-The figure \ref{fig:density} illustrates both concepts: density-connectivity and density-reachablability.
+The figure \ref{fig:density} illustrates both concepts: density-connectivity and density-reachability.
 
 Then a cluster $C$ is a subset of S satisfying:
 
@@ -305,8 +358,8 @@ Then a cluster $C$ is a subset of S satisfying:
 
 	\begin{figure}[h]
 	\centering
-	\includegraphics[width=0.7\textwidth]{./figs/density.jpg}
-	\caption{Left: density reachablability. Right: density connectivity}{Source \cite{Rhys:2020}.}
+	\includegraphics[width=0.75\textwidth]{./figs/density.jpg}
+	\caption{Density Reachability and Density Ronnectivity}: Left: density reachability. Right: density connectivity. Source \cite{Rhys:2020}.
 	\label{fig:density}
 	\end{figure}
 	
@@ -328,7 +381,7 @@ The DBSCAN algorithm initiates cluster discovery by selecting an arbitrary, unvi
 		
 It is important to note that if $p$ is a border-point of a cluster $C$, it will eventually be reached during the expansion phase from a core point of $C$ and correctly assigned to the cluster. The algorithm concludes once every point has been processed and assigned either to a cluster or to the noise-point set.
 
-We will present a DBSCAN implementation in following pseudo-code:
+A DBSCAN implementation in following pseudo-code is present at next:
 
 \begin{algorithm}[H]
 \SetKwInOut{Input}{Input}
@@ -388,21 +441,22 @@ $C \leftarrow 0$ \tcp{Cluster counter}
 
 As mentioned, the algorithm takes an unvisited point $p$ and evaluates its eps-neighborhood througth the function \textit{RegionQuery}, if it contains fewer than MinPts points $p$ is labeled as noise. Otherwise $p$ is labeled as core point algorithm expand the cluster througth the \textit{ExpandCluster} function.
 
-\subsection{sLOS: sOPTICS Modifying the distance}\label{section:slos}
+\subsection{sOPTICS: Modifying the distance}\label{section:slos}
 
-There is a direct application from \cite{Hai-Xia-Ma:2025} which works by modifing the distance along de line of sight as shown at \ref{fig:slos}. This distorsion is the same referred as $FOG$ in the section \ref{section:real} 
-
-This algorithm works with a normal OPTICS but the distance has been modified by a new one wich work as follows:
-Given two point u and v the usual Euclidean distance is calculated as
+Following the application proposed by \cite{Hai-Xia-Ma:2025} a modification to the distance along de line of sight as illustrated in figure \ref{fig:slos}. This adjustment is specifically designed to mitigate the distorsion referred as \textit{Finger-of-God} $FOG$ in the section \ref{section:real}. The algorithm remains as a standard OPTICS but the distance has been modified by a new one wich work as follows, given two point $u$ and $v$ the usual Euclidean distance is calculated as:
 
 \begin{equation} \label{eq:10}
  D^2 (u,v)=\sum_{i=1}^{3} (u_i-v_i)^2.
 \end{equation}.
-Instead, a new version of distance concept is created by calculate the so called Ellongated Euclidean Distance as
+
+Instead, a new version of distance concept is created by calculate the so called Ellongated Euclidean Distance as:
+
 \begin{equation} \label{eq:11}
  D_{Elongated}^2 (u,v, sLos)= d_{traverse}^2 (u,v) + d_{sLOS}^2 (u,v, sLos) 
 \end{equation}.
+
 Where 
+
 \begin{equation} \label{eq:12}
  d_{sLOS} (u,v, sLos) = sLOS*\frac{\sum_{i=1}^{3} (u_i-v_i)u_i}{\sqrt{\sum_{i=1}^{3}u_i^2}}
 \end{equation}.
@@ -417,15 +471,13 @@ Figure \ref{fig:slos} illustrates the elongated Euclidean distance’s effect on
 
 	\begin{figure}[h]
 	\centering
-	\includegraphics[width=0.75\textwidth]{./figs/slos.jpg}
-	\caption{Illustration of how sLos algorithm works elongating the line of sigth} {Source \cite{Hai-Xia-Ma:2025}.}
+	\includegraphics[width=0.8\textwidth]{./figs/slos2.jpg}
+	\caption{Deformation along the line-of-sight}: Illustration of how sLos algorithm works elongating the line of sigth. Source \cite{Hai-Xia-Ma:2025}.
 	\label{fig:slos}
 	\end{figure}
-
-
 \subsection{HDBSCAN}
 
-This is other option to perform unsupervised density-based clustering.
+This is another option to perform unsupervised density-based clustering.
 
 HDBSCAN (Hierarchical Density-Based Spatial Clustering of Applications with Noise) is an extension of DBSCAN that transforms the density-based approach into a hierarchical clustering algorithm. It requires only one mandatory parameter: $min\_cluster\_size$ (which is equivalent to $minPts$ or the minimum size of a dense region).
 
@@ -437,7 +489,7 @@ $$ mreach(p,\,q) = max{core-dist(p), \, core-dist(q), \, dist(p, q)}$$
 	\begin{figure}[h]
 	\centering
 	\includegraphics[width=0.65\textwidth]{./figs/MST.jpg}
-	\caption{Minimium Spanning Tree ($MSP$}{Source \cite{hdbscan:2000}.}
+	\caption{Minimium Spanning Tree ($MSP$)}. Source \cite{hdbscan:2000}.
 	\label{fig:mst}
 	\end{figure}
 	
@@ -455,7 +507,7 @@ The final clusters are extracted from this condensed dendrogram \ref{fig:tree} b
 	\begin{figure}[h]
 	\centering
 	\includegraphics[width=0.65\textwidth]{./figs/hbclusters.jpg}
-	\caption{Condensed tree from HDBSCAN} {Source \cite{hdbscan:2000}.}
+	\caption{Condensed tree from HDBSCAN}. Source \cite{hdbscan:2000}.
 	\label{fig:tree}
 	\end{figure}
 	
@@ -465,7 +517,7 @@ The strength of HDBSCAN is its adaptability, this can result in a defect because
 
 \subsection{Density Peaks Clustering (DPC)}
 
-Density Peaks Clustering (DPC) is a newer (proposed in 2014) density-based algorithm, By analyzing the Decision Diagram ($\rho$ vs $\delta$), we expect to be able to isolate cluster cores from the background field population.
+Density Peaks Clustering (DPC) is a newer (proposed in 2014) density-based algorithm, By analyzing the Decision Diagram ($\rho$ vs $\delta$), one expect to be able to isolate cluster cores from the background field population.
 
 The Density Peak Clustering (DPC) algorithm operates under the fundamental assumption that cluster centers correspond to points where the local density attains its maximum. A critical distinguishing characteristic is that each center is separated by a considerable distance from all other centers, while being immediately surrounded by points of comparatively lower local density. Therefore, two quantities are calculated for each point, $p_i$, in the dataset:
 
@@ -477,55 +529,34 @@ The Density Peak Clustering (DPC) algorithm operates under the fundamental assum
 	
 Following the computation of both parameters, a diagram as presented in figure \ref{fig:mst} can be utilized to establish appropriate thresholds for $\rho$ and $\delta$ in order to select the points which represent centers for each clusters$\delta$. This process allows for the identification of points representing the center of each cluster. DPC excels at cluster center detection because these selected points inherently correspond to locations where the local density reaches its maximum.
 
-\begin{figure}
-\centering
-\begin{minipage}{.5\textwidth}
-  \centering
-  \includegraphics[width=.8\linewidth]{./figs/dpc_11.jpg}
-  \caption{Different colors correspond to different clusters.}
-  \label{fig:group}
-\end{minipage}%
-\begin{minipage}{.5\textwidth}
-  \centering
-  \includegraphics[width=.8\linewidth]{./figs/dpc_12.jpg}
-  \caption{(B) Decision graph for data}{Source \cite{DPC:2014}.}
-  \label{fig:cluster}
-\end{minipage}
-\end{figure}
+%\begin{figure}
+%\centering
+%\begin{minipage}{.5\textwidth}
+%  \centering
+%  \includegraphics[width=.8\linewidth]{./figs/dpc_11.jpg}
+%  \caption{Different colors correspond to different clusters.}
+%  \label{fig:group}
+%\end{minipage}%
+%\begin{minipage}{.5\textwidth}
+%  \centering
+%  \includegraphics[width=.8\linewidth]{./figs/dpc_12.jpg}
+%  \caption{(B) Decision graph for data. Source \cite{DPC:2014}.}
+%  \label{fig:cluster}
+%\end{minipage}
+%\end{figure}
 
-Then we can select $\rho = \rho_{0}$ and $\delta = _{0}$ to obtains centers for clusters:
+Then it is possible to select $\rho = \rho_{0}$ and $\delta = _{0}$ to obtains centers for clusters:
  
 	\begin{figure}[h]
 	\centering
 	\includegraphics[width=0.7\textwidth]{./figs/dpc_3.jpg}
-	\caption{ $\rho = \rho_{0}$ and $\delta = \delta_{0}$ inside decision graph: Points with a high local density (located on the right side of the x-axis). Points that are far from any other point with a higher density (located at the top of the y-axis).}{Source \cite{DPC:2014}.}
+	\caption{Inside decision graph: $\rho = \rho_{0}$ and $\delta = \delta_{0}$ }: Points with a high local density (located on the right side of the x-axis). Points that are far from any other point with a higher density (located at the top of the y-axis). Source \cite{DPC:2014}.
 	\label{fig:mst}
 	\end{figure}
-	
-\section{The two-point correlation function: a statistical point of view in density analysis}
 
-An alternative approach to investigating the cosmic galaxy density field is through the two-point correlation function (2PCF). This statistic provides a robust measure for quantifying the spatial clustering of a galaxy distribution by determining the excess probability of finding a pair of objects at a given separation scale, $r$, relative to a random (Poisson) distribution.
-
-The two-point correlation function $\xi(r)$ and the power spectrum, $P(k)$, form a Fourier transform pair, representing the clustering signal in real and spectral space, respectively. While $\xi(r)$ provides an intuitive measure of spatial separations, the power spectrum is the standard framework for characterizing the primordial density fluctuations observed in the Cosmic Microwave Background (CMB).x
-
-According to \cite{Peebels:1980}, if one pick a galaxy at random, the probability ($dP$) of finding another galaxy at a distance $r$ within a small volume $dV$ is given by:
-
-$$dP = \bar{n}^2 [1 + \xi(r)] dV_1 dV_2$$
-
-Where $\bar{n}$ is the mean number density of galaxies in the survey and $\xi(r)$ is the correlation function.
-
-The value of $\xi(r)$ tells us how the galaxies "feel" each other at different scales \cite{Peebels:1980}: 
-\begin{enumerate}
-	\item $\xi(r) > 0$ (Clustering): You are more likely to find a pair of galaxies at that distance than you would by pure chance. On small scales, gravity pulls galaxies together, making this value high.
-	
-	\item$\xi(r) = 0$ (Randomness): The distribution is perfectly random (like static on a TV).
-	
-	\item $\xi(r) < 0$ (Anti-clustering): Galaxies are "repelling" each other or are more spread out than a random distribution.
-\end{enumerate}	
-	
 \subsection{Previous machine learning applications in galaxy clustering}
 
-This section briefly reviews several Machine Learning (ML) applications in cosmology, with particular emphasis on clustering techniques, but first we will introduce some historical research in globally galaxy custering.
+This section briefly reviews several Machine Learning (ML) applications in cosmology, with particular emphasis on clustering techniques. But first we will introduce some historical research in globally galaxy custering.
 
 In 18th centuty Charles Messier and William Herschel noted a concentration of nebulae (we know today that are large galaxies) in Virgo and Coma constellations \cite{ostriker:2014}.
 
@@ -535,7 +566,7 @@ In 1937 Friz Zwicky published the article \textit{On the Masses of Nebulae and o
 
 The first systematic, statistically complete catalog compiled by George Abell in 1958 became the foundation for modern cluster studies, allowing for a rigorous, statistical analysis of galaxy clustering across large volumes.
 
-Severeal works in the literature use supervised methods, for example, Thomas et al. \cite{Thomas:2025} generate predictive regression models based on the MACSIS simulation to predict cluster features from specific observables. On the other hand, Sadikov et al. \cite{Sadikov:2025} present an analysis of the X-ray properties of the galaxy cluster population in the $z=0$ snapshot of the IllustrisTNG simulations, utilizing machine learning to perform clustering and regression tasks.
+Several works in the literature use supervised methods. For example, Thomas et al. \cite{Thomas:2025} generate predictive regression models based on the MACSIS simulation to predict cluster features from specific observables. On the other hand, Sadikov et al. \cite{Sadikov:2025} present an analysis of the X-ray properties of the galaxy cluster population in the $z=0$ snapshot of the IllustrisTNG simulations, utilizing machine learning to perform clustering and regression tasks.
 
 In contrast, other studies applying Machine Learning (ML) to the galactic Universe directly address the intrinsic properties of galaxies rather than focus on the clustering problem. For example, Dvorkin et al. \cite{Dvorkin:2022} note that "it has been shown that unknown relations between galaxy properties and parameters describing the composition of the Universe can be easily identified by employing machine learning techniques on top of state-of-the-art hydrodynamic simulations" \cite{Villaescusa-Navarro:2022}.
 
