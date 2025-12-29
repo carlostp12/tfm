@@ -33,19 +33,25 @@ Given my personal background and strong interest in astrophysics and cosmology, 
 
 There are two list of goals we considered to address separatedly:
 
-\subsection {Main goals}
+\subsection {Main goals}\label{goals}
 \begin{itemize}
-	\item Apply density-based algorithms to galaxy datasets adquired from 2dFGRS and the Sloan Digital Sky Survey SDSS, in order to obtain a validated model that can effectively approximate the observed structure of groups and clusters.
-	\item Determine which of the applied algorithms perform best and investigate the reasons for their effectiveness..
-	\item Detect potential outliers and patterns.
-	\item Use validation methods to obtain a hyper-parameter tunning in  order to optimize galaxy group/cluster detection.
+	\item Aplication of Density-Based Frameworks: To adapt and apply DBSCAN, OPTICS, HDBSCAN and Density Peak Clustering (DPC) to large-scale spectroscopic datasets, specifically the 2dFGRS and SDSS catalogs.
+
+	\item Comparative Performance Evaluation: To quantitatively determine which algorithm demonstrates the highest fidelity in recovering galaxy groups. This involves investigating the mathematical of physical drivers behind their effectiveness.
+	
+	\item Detect potential failure causes in clustering detection.
+	
+	\item Hyper-parameter tunning: create a framework that allow to optimize galaxy group/cluster detection.
 \end{itemize}
 
 
 \subsection {Secondary goals}
 \begin{itemize}
-	\item Generate a visualization map of the data used in this study.
+	\item Statistical Density Analysis via 2PCF: We employ the Two-Point Correlation Function (2PCF) as a global statistical benchmark to quantify the degree of galaxy clustering. By measuring the excess probability of galaxy pairs against a synthetic Poisson baseline, we can characterize the underlying density field and validate the physical significance of the groups identified by our clustering algorithms.
+	
 	\item Detect methods to improve this study in future works in following areas: Data Enhancement, Algorithmic Refinement\footnote{For exemple: modify the distance in order to mitigate the already known Redshift-Space distortions along the line of sight\cite{Hai-Xia-Ma:2025}.}.
+	
+	\item Generate a visualization map of the data used in this study.
 \end{itemize}
 
 % sustentability from now it will be leave out
