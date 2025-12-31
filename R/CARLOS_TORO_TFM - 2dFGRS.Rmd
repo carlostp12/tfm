@@ -237,6 +237,16 @@ print(sprintf("Number of groups with more than %s members: %s",
               true_groups))
 ```
 
+Do not work:
+
+```{r}
+tt<-sqldf(c("
+       UPDATE mm
+      set group_id=0
+       WHERE group_id NOT IN (select distinct(group_id) from mm5)
+       ", "select * from main.mm"))
+```
+
 We take a look at the groups with more than min_members:
 
 ```{r}
@@ -599,7 +609,7 @@ plot_purity_completeness(
 )
 ```
 
-## Elbow method 
+## Elbow method
 
 We have selected that minPts = min_members, which is a reasonable value for interpreting a group / clustering.
 
