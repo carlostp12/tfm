@@ -2,3 +2,6 @@ data/
 latex/*.aux
 latex/*.out
 latex/*.log
+trash/
+deliver/
+doc/

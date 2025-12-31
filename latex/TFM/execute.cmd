@@ -11,3 +11,5 @@ del .\*.log
 del .\*.lot
 del .\*.out
 del .\*.toc
+del .\*.glo
+del .\*.glsdefs
