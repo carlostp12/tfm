@@ -13,12 +13,17 @@ This component is dedicated to the evaluation of all density-based algorithms un
 
  * Sloan Digital Sky Survey Data Release 7 (SDSS-DR7).
 
-You can access the R markdown by click on this <a href="R/CARLOS_TORO_TFM---2dFGRS.html">link</a>
+# Access the R markdown export as HTML
+You can access the R markdown proccess of 2dFGRS redshitft space sample by click on this <a href="https://www.guidetothesky.com/uoc/data/html/CARLOS_TORO_TFM---2dFGRS.html">link</a>.
+You can access the R markdown proccess of SDSS-DR7 redshitft space sample by click on this <a href="https://www.guidetothesky.com/uoc/data/html/CARLOS_TORO_TFM---SDSS.html">link</a>.
+You can access the R markdown proccess of SDSS-DR7 Re-Real space sample by click on this <a href="https://www.guidetothesky.com/uoc/data/html/CARLOS_TORO_TFM---SDSS-REAL.html">link</a>.
+
+# Access the Python notebook as HTML
+You can access the HTML export of Python notebook of the processed 2PCF estimators on the 2dFGRS sample by use this link <a href="https://www.guidetothesky.com/uoc/data/html/notebook-2df.html">link</a>.
 
   # How execute
-  Once project is downloaded, you have to set an environment variable:
-  $PROJECT_TFM.
-  This variable must to point to the tfm downloaded folder.
+  If you are interested in execut project is downloaded, you have to set the environment variable: $PROJECT_TFM.
+  This variable must to point-out to the tfm downloaded folder.
   1. Execute a Python notebook: There are several python notebook, the ones:
      * $PROJECT_TFM/python/notebook/notebook-2df.ipynb : contains the execution for the 2PCF application and estimators application.
      * $PROJECT_TFM/python/notebook/ImportXXXX.ipynb are dedicated to transform the raw dataset to final dataset, are not neccesary to execute given that all final dataset are already created and imported. But it should be possible to execute them.
