@@ -429,7 +429,7 @@ print_global_stats(x_stats, eps_sequence_test)
 
 Lets get a plots for completeness and purity:
 
-We have the optimal point at \$\\epsilon= 0.0003, \$ where recovery =98.7% and completeness= 92% purity=83%:
+We have the optimal point at $\epsilon= 0.0003$, where recovery =98.7% and completeness= 92% purity=83%:
 
 ```{r}
 seleced_eps<- 0.0003
@@ -717,11 +717,7 @@ kNNdistplot(x = points_scaled, k = min_members)
 abline(h = seleced_eps, lty = 3) 
 ```
 
-How reader can see, the "elbow method" does not apply here pretty well, this is because we are not trying to optimize the out-put clusters given by the algorithm, instead we are trying to fit some density methods in order to detect groups of galaxies in the catalog obtained by the halo-based group finder developed by in [.
-
-In addition are data belonging to actual clusters with more than min_members members, this reduced the space to 774 galaxies out of more than 5000.
-
-We can infer that optimal value is content within the interval (0.0023, 0.0033).
+How reader can see, the "elbow method" does not apply here, the reason for this is that elbow method try to optimize variances in clusters. Rather, we are trying to detect virialized galaxy groups, but algorithms are not intrinsically designed to account for the specific density profiles of dark matter halos.
 
 ## Detected/Undetected original groups
 
@@ -815,5 +811,5 @@ Finally we compare the original with the best clustering obtained in this study:
 +---------------------------------------------+-------------------------------------+
 | Actual groups distribution in Re-Real Space | Best cluster detection with DBSCAN. |
 +=============================================+=====================================+
-| ![](images/paste-BC9FEB7D.png)              | ![](images/paste-BF39E32D.png)      |
+| ![](images/paste-BC9FEB7D.png)              | ![](images/paste-E07D408A.png)      |
 +---------------------------------------------+-------------------------------------+

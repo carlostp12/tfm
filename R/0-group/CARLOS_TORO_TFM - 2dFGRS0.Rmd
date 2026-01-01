@@ -192,6 +192,7 @@ dim(mm)
 Select groups with more than min_members members queries:
 
 ```{r}
+original_mm <- mm
 h<-sqldf("select 
             count(GAL_ID) as members, 
             GROUP_ID 
@@ -245,6 +246,7 @@ tt<-sqldf(c("
       set group_id=0
        WHERE group_id NOT IN (select distinct(group_id) from mm5)
        ", "select * from main.mm"))
+mm <- tt
 ```
 
 We take a look at the groups with more than min_members:
@@ -269,7 +271,7 @@ plot3d(mm$x, mm$y, mm$z, col = 'black',
        size = 1, xlab = "X", ylab = "Y", zlab = "Z")
 ```
 
-![](images/paste-8A824687.png)
+![](images/paste-ECC57F22.png)
 
 ```{r}
 aa <- sqldf("select 
@@ -290,6 +292,8 @@ plot3d(aa$x, aa$y, aa$z, col = aa$group_id+1,
        size = 2, xlab = "X", ylab = "Y", zlab = "Z")
 ```
 
+![](images/paste-F9C96D6A.png)
+
 And the groups with more than min_members:
 
 ```{r}
@@ -297,7 +301,7 @@ plot3d(mm5$x, mm5$y, mm5$z, col = mm5$GROUP_ID,
        size = 2, xlab = "X", ylab = "Y", zlab = "Z")
 ```
 
-![](images/paste-1FB9DA76.png)
+# ![](images/paste-25488099.png)
 
 # Raw data processing
 
@@ -333,7 +337,7 @@ Take a plot of the clustering obtained:
 plot3D_cluster(optics, mm)
 ```
 
-![](images/paste-3D6047CC.png)
+![](images/paste-C034D6DB.png)
 
 As shown, this method do not work in clustering detection.
 
@@ -369,7 +373,7 @@ in the other hand the output-clusters from DBSCAN:
 plot3D_cluster(blo_scan, points)
 ```
 
-![](images/paste-FD16F768.png)
+![](images/paste-2D992166.png)
 
 ```{r}
 all <- execute_stats(mm, blo_scan)
@@ -385,7 +389,7 @@ We can now test over different values in order to obtain optimal eps_cl hyper-pa
 
 ```{r}
 #It is easy to transform onto a function which admits a sequence and a res set.
-eps_sequence_test <- seq(0.0004, 0.001, 0.0002)
+eps_sequence_test <- seq(0.0002, 0.001, 0.0002)
 x_stats <- extract_stats_dbscan(eps_sequence_test, res)
 ```
 
@@ -457,7 +461,7 @@ length(unique( cl$cluster))
 plot3D_cluster(cl, mm)
 ```
 
-![](images/paste-23E75DA8.png)
+![](images/paste-4A75E8D5.png)
 
 HDBSCAN do not work pretty well because it detects cluster in sparser areas which gives as a result cluster detection on noise regions.
 
@@ -470,6 +474,7 @@ Alex Rodriguez and Alessandro Laio (2014).
 By making this way it appears some clusters:
 
 ```{r}
+points<- original_mm[,c('x', 'y', 'z')]
 galaxyDens <- densityClust(points)
 galaxyClusters <- findClusters(galaxyDens, rho=0.997, delta=0.00086)
 plot(galaxyClusters)
@@ -477,11 +482,11 @@ plot(galaxyClusters)
 # do not use this takes a lot!!:
 #plotMDS(galaxyClusters)
 
-mm$cluster_id <- galaxyClusters$cluster
+original_mm$cluster_id <- galaxyClusters$cluster
 ```
 
 ```{r}
-all <- execute_stats(mm, galaxyClusters)
+all <- execute_stats(original_mm, galaxyClusters)
 print_stats(all)
 
 ```
@@ -492,7 +497,7 @@ May be DPC is not good in finding cluster but it can be useful in finding the ce
 
 ```{r}
 galaxyClusters <- findClusters(galaxyDens, rho=0.9985, delta=0.00084)
-peaks <- mm[galaxyClusters$peaks,]
+peaks <- original_mm[galaxyClusters$peaks,]
 print(sprintf("DPC detected %s out of %s clusters", length(unique(peaks$GROUP_ID)), true_groups))
 ```
 
@@ -511,7 +516,7 @@ matrix_data=matrix(ncol=length(rhos), nrow = length(deltas))
 for (rho in rhos){
 	for (delta in deltas){
         galaxyClusters <- findClusters(galaxyDens, rho=rho, delta=delta)
-        peaks <- mm[galaxyClusters$peaks,]
+        peaks <- original_mm[galaxyClusters$peaks,]
         l <- length(unique(peaks$GROUP_ID))
         #print(min(l/true_groups, true_groups/l))
         matrix_data[i, j] <- min(l/true_groups, true_groups/l)
@@ -526,18 +531,18 @@ for (rho in rhos){
 custom_heatmap(matrix_data, deltas, rhos, xTitle = "rho", yTitle = "delta", numColors = 11)
 ```
 
-In which case, we can see that \$\\delta=0.00083\$\$ and $\rho=0.9985$ produce the best results with a 97% of group-centers detection.
+In which case, we can see that $\delta=0.00083$ and $\rho=0.9985$ produce the best results with a 97% of group-centers detection.
 
 ## Output-clusters visualization
 
 ```{r}
 galaxyClusters <- findClusters(galaxyDens, rho=0.9985, delta=0.00083)
-peaks <- mm[galaxyClusters$peaks,]
+peaks <- original_mm[galaxyClusters$peaks,]
 plot3d(peaks$x, peaks$y, peaks$z, col = peaks$GROUP_ID+1, 
          size = 3, xlab = "X", ylab = "Y", zlab = "Z")
 ```
 
-![](images/paste-C7B2D9FF.png)
+![](images/paste-D768780B.png)
 
 And decision graph remains finally:
 
@@ -547,20 +552,20 @@ abline(h =0.00084, lty = 5)
 abline(v=0.9985, col="blue")
 ```
 
-Note that DPC is good in obtaining groups centers but not in separate the groups over the global datase as we can see
+Note that DPC is good in obtaining groups centers but not in separate the groups over the global database as we can see
 
 ```{r}
-plot3d(mm$x, mm$y, mm$z, col = mm$cluster_id+1, 
-       size = 3, xlab = "X", ylab = "Y", zlab = "Z")
+plot3d(original_mm$x, original_mm$y, original_mm$z, col = original_mm$cluster_id+1,        size = 3, xlab = "X", ylab = "Y", zlab = "Z")
 ```
 
-![](images/paste-4080C1EB.png)
+![](images/paste-E4C2ADAB.png)
 
 # Normalized data processing
 
 We will perform a scale of data:
 
 ```{r}
+points<- mm[,c('x', 'y', 'z')]
 points_scaled <- scale(points)
 ress <- optics(points_scaled, minPts = min_members)
 #optimal value obtained
@@ -620,7 +625,7 @@ kNNdistplot(x = points_scaled, k = min_members)
 abline(h =seleced_eps, lty = 3) 
 ```
 
-How reader can see, the "elbow method" does not apply here, the reason for this is that elbow method try to optimize variances in clusters.  Rather, we are trying to detect virialized galaxy groups, but algorithms are not intrinsically designed to account for the specific density profiles of dark matter halos.
+How reader can see, the "elbow method" does not apply here, the reason for this is that elbow method try to optimize variances in clusters. Rather, we are trying to detect virialized galaxy groups, but algorithms are not intrinsically designed to account for the specific density profiles of dark matter halos.
 
 ## Detected/Undetected original groups
 
@@ -647,7 +652,7 @@ plot3d(detected$x, detected$y, detected$z,
        xlab = "X", ylab = "Y", zlab = "Z")
 ```
 
-![](images/paste-8F549CDC.png)
+![](images/paste-9D9A2E4C.png)
 
 Plot undetected groups
 
@@ -657,7 +662,7 @@ plot3d(undetected$x, undetected$y, undetected$z,
        xlab = "X", ylab = "Y", zlab = "Z")
 ```
 
-![](images/paste-2C743843.png)
+# ![](images/paste-8F673159.png)
 
 # s-Distances (SLos application)
 
@@ -706,7 +711,7 @@ Test several hyper-parameters:
 
 ```{r}
 #optimal value found at 0.00015
-eps_sequence_test <- seq(0.000095, 0.00020, 0.00005)
+ eps_sequence_test <- seq(0.000075, 0.000120, 0.000005)
 sx_stats <- extract_stats_dbscan(eps_sequence_test, sres)
 
 ```
@@ -718,7 +723,7 @@ print_global_stats(sx_stats, eps_sequence_test)
 We get to the best value:
 
 ```{r}
-seleced_eps <- 0.000108
+seleced_eps <- 0.0001
 plot_purity_completeness(
   eps_sequence_test, 
   sx_stats$purity_list, 
@@ -777,7 +782,7 @@ print(sprintf('Undetected groups: %s', length(unique(undetected$GROUP_ID))))
 print(sprintf('Detected groups: %s', length(unique(detected$GROUP_ID))))
 ```
 
-Plot for detected groups:
+Plot detected groups:
 
 ```{r}
 plot3d(detected$x, detected$y, detected$z, 
@@ -785,7 +790,7 @@ plot3d(detected$x, detected$y, detected$z,
        xlab = "X", ylab = "Y", zlab = "Z")
 ```
 
-![](images/paste-2176DF96.png)
+![](images/paste-6FED78A2.png)
 
 Plot for not detected groups:
 
@@ -795,7 +800,7 @@ plot3d(undetected$x, undetected$y, undetected$z,
        xlab = "X", ylab = "Y", zlab = "Z")
 ```
 
-![](images/paste-CE9D1A2D.png)
+![](images/paste-C442E54D.png)
 
 # Summary and conclusions
 
@@ -820,25 +825,25 @@ The bests results obtained with each method we summarize in next table:
 +-------------------------------+----------------+-----------------------------+----------------------------------------------------------------------------------------------------+
 | DPC                           | Non-scaled     | 97% group-center detection. | Good in group center detection, but not in clustering the whole dataset.                           |
 |                               |                |                             |                                                                                                    |
-|                               |                |                             | $\delta=0.00084$ and $\rho=0.9985$                                                                 |
+|                               |                |                             | $\delta=0.00083$ and $\rho=0.9985$                                                                 |
 +-------------------------------+----------------+-----------------------------+----------------------------------------------------------------------------------------------------+
-| **sOPTICS**                   | **Non-scaled** | **P: 0.84**                 | **Good on group detection with**                                                                   |
+| **sOPTICS**                   | **Non-scaled** | **P: 0.92**                 | **Good on group detection with**                                                                   |
 |                               |                |                             |                                                                                                    |
-|                               |                | **C: 0.84**                 | **eps=0.000108**                                                                                   |
+|                               |                | **C: 0.69**                 | **eps=0.0001**                                                                                     |
 |                               |                |                             |                                                                                                    |
-|                               |                | **R: 0.86**                 |                                                                                                    |
+|                               |                | **R: 0.81**                 |                                                                                                    |
 |                               |                |                             |                                                                                                    |
-|                               |                | **U: 12**                   |                                                                                                    |
+|                               |                | **U: 14**                   |                                                                                                    |
 +-------------------------------+----------------+-----------------------------+----------------------------------------------------------------------------------------------------+
 | OPTICS                        | Scaled         | \-                          | Good in cluster reachability plot                                                                  |
 +-------------------------------+----------------+-----------------------------+----------------------------------------------------------------------------------------------------+
-| DBSCAN                        | Scaled         | P: 0.72                     | Good in cluster detection with                                                                     |
+| DBSCAN                        | Scaled         | P: 0.82                     | Good in cluster detection with                                                                     |
 |                               |                |                             |                                                                                                    |
-|                               |                | C: 0.81                     | eps = 0.04 but low recovery. Which indicates the groups are not globally recovered.                |
+|                               |                | C: 0.50                     | eps = 0.04 but low recovery. Which indicates the groups are not globally recovered.                |
 |                               |                |                             |                                                                                                    |
-|                               |                | R: 0.41                     |                                                                                                    |
+|                               |                | R: 0.37                     |                                                                                                    |
 |                               |                |                             |                                                                                                    |
-|                               |                | U: 22                       |                                                                                                    |
+|                               |                | U: 33                       |                                                                                                    |
 +-------------------------------+----------------+-----------------------------+----------------------------------------------------------------------------------------------------+
 
 # Executive summary
@@ -847,16 +852,16 @@ In conclusion. We took for this study a sample from the 2dFGRS catalog and selec
 
 We can stand out the following points:
 
--   The method sOPTICS with DBSCAN reached the highest values in completeness, purity and recovery and in group detection.
+-   The method sOPTICS with DBSCAN reached the highest values in completeness, purity and recovery and in group detection (77%).
 
 -   The DPC algorithm worked pretty well in group-center detection (reached a 97%), but did not worked in separate the groups in the whole dataset.
 
 -   A normalization or scaled of data data slightly improve results, this is because all data are in fact in approx. in same scale, given that all coordinates: x, y, z and dist are all of them expressed under same units and in same range of values.
 
-Finally we compare the original with the best clustering obtained in this study:
+Best detected groups with sOPTICS:
 
-+--------------------------------+--------------------------------------+
-| Actual groups distribution     | Best cluster detection with sOPTICS. |
-+================================+======================================+
-| ![](images/paste-500A6000.png) | ![](images/paste-2176DF96.png)       |
-+--------------------------------+--------------------------------------+
+![](images/paste-D8BDF3E5.png)
+
+While original Groups:
+
+![](images/paste-25488099.png)

@@ -592,11 +592,7 @@ kNNdistplot(x = points_scaled, k = min_members)
 abline(h = seleced_eps, lty = 3) 
 ```
 
-How reader can see, the "elbow theory" does not apply here, the reason for this is that we are not trying to optimize the clusters given by the algorithm, instead we are trying to detect groups of galaxies classified by the .
-
-In addition are data belonging to actual clusters with more than min_members members, this reduced the space to 774 galaxies out of more than 5000.
-
-We can infer that optimal value is content within the interval (0.0023, 0.0033).
+How reader can see, the "elbow method" does not apply here, the reason for this is that elbow method try to optimize variances in clusters.  Rather, we are trying to detect virialized galaxy groups, but algorithms are not intrinsically designed to account for the specific density profiles of dark matter halos.
 
 ## Detected/Undetected original groups
 
@@ -774,43 +770,43 @@ plot3d(undetected$x, undetected$y, undetected$z,
 
 The bests results obtained with each method:
 
-+-------------------------------+-------------+-----------------------------+--------------------------------------------------------------------------+
-| Method                        | Data Sample | Outcomes                    | Conclusion                                                               |
-+===============================+=============+=============================+==========================================================================+
-| OPTICS                        | Non-scaled  | \-                          | Good in cluster reachability plot                                        |
-+-------------------------------+-------------+-----------------------------+--------------------------------------------------------------------------+
-| OPTICS Xi hierarchical method | Non-scaled  | Not applicable.             | Not valuable result were found.                                          |
-+-------------------------------+-------------+-----------------------------+--------------------------------------------------------------------------+
-| DBSCAN                        | Non-scaled  | P: 0.68                     | Good in cluster detection                                                |
-|                               |             |                             |                                                                          |
-|                               |             | C: 0.68                     |                                                                          |
-|                               |             |                             |                                                                          |
-|                               |             | R: 0.25                     |                                                                          |
-+-------------------------------+-------------+-----------------------------+--------------------------------------------------------------------------+
-| HDBSCAN                       | Non-scaled  | \-                          | Not good in cluster detection.                                           |
-+-------------------------------+-------------+-----------------------------+--------------------------------------------------------------------------+
-| DPC                           | Non-scaled  | 99% group-center detection. | Good in group center detection, but not in clustering the whole dataset. |
-|                               |             |                             |                                                                          |
-|                               |             |                             | $\delta=0.0008$ and $\rho=0.9986$                                        |
-+-------------------------------+-------------+-----------------------------+--------------------------------------------------------------------------+
-| **sOPTICS**                   | **Scaled**  | **P: 0.72**                 | **0.0001**                                                               |
-|                               |             |                             |                                                                          |
-|                               |             | **C: 0.82**                 |                                                                          |
-|                               |             |                             |                                                                          |
-|                               |             | **R: 0.69**                 |                                                                          |
-|                               |             |                             |                                                                          |
-|                               |             | **U: 16**                   |                                                                          |
-+-------------------------------+-------------+-----------------------------+--------------------------------------------------------------------------+
-| OPTICS                        | Scaled      | \-                          | Good in cluster reachability plot                                        |
-+-------------------------------+-------------+-----------------------------+--------------------------------------------------------------------------+
-| DBSCAN                        | Scaled      | P: 0.69                     | Good in cluster detection with                                           |
-|                               |             |                             |                                                                          |
-|                               |             | C: 0.69                     | eps = 0.035                                                              |
-|                               |             |                             |                                                                          |
-|                               |             | R: 0.57                     |                                                                          |
-|                               |             |                             |                                                                          |
-|                               |             | U: 33                       |                                                                          |
-+-------------------------------+-------------+-----------------------------+--------------------------------------------------------------------------+
++-------------------------------+-------------+-----------------------------+----------------------------------------------------------------------------------------------------+
+| Method                        | Data Sample | Outcomes                    | Conclusion                                                                                         |
++===============================+=============+=============================+====================================================================================================+
+| OPTICS                        | Non-scaled  | \-                          | Good in cluster reachability plot                                                                  |
++-------------------------------+-------------+-----------------------------+----------------------------------------------------------------------------------------------------+
+| OPTICS Xi hierarchical method | Non-scaled  | Not applicable.             | Not valuable result were found.                                                                    |
++-------------------------------+-------------+-----------------------------+----------------------------------------------------------------------------------------------------+
+| DBSCAN                        | Non-scaled  | P: 0.68                     | Good in cluster detection but low recovery. Which indicates the groups are not globally recovered. |
+|                               |             |                             |                                                                                                    |
+|                               |             | C: 0.68                     |                                                                                                    |
+|                               |             |                             |                                                                                                    |
+|                               |             | R: 0.25                     |                                                                                                    |
++-------------------------------+-------------+-----------------------------+----------------------------------------------------------------------------------------------------+
+| HDBSCAN                       | Non-scaled  | \-                          | Not good in cluster detection.                                                                     |
++-------------------------------+-------------+-----------------------------+----------------------------------------------------------------------------------------------------+
+| DPC                           | Non-scaled  | 99% group-center detection. | Good in group center detection, but not in clustering the whole dataset.                           |
+|                               |             |                             |                                                                                                    |
+|                               |             |                             | $\delta=0.0008$ and $\rho=0.9986$                                                                  |
++-------------------------------+-------------+-----------------------------+----------------------------------------------------------------------------------------------------+
+| **sOPTICS**                   | **Scaled**  | **P: 0.72**                 | **0.0001**                                                                                         |
+|                               |             |                             |                                                                                                    |
+|                               |             | **C: 0.82**                 |                                                                                                    |
+|                               |             |                             |                                                                                                    |
+|                               |             | **R: 0.69**                 |                                                                                                    |
+|                               |             |                             |                                                                                                    |
+|                               |             | **U: 16**                   |                                                                                                    |
++-------------------------------+-------------+-----------------------------+----------------------------------------------------------------------------------------------------+
+| OPTICS                        | Scaled      | \-                          | Good in cluster reachability plot                                                                  |
++-------------------------------+-------------+-----------------------------+----------------------------------------------------------------------------------------------------+
+| DBSCAN                        | Scaled      | P: 0.69                     | Good in cluster detection with                                                                     |
+|                               |             |                             |                                                                                                    |
+|                               |             | C: 0.69                     | eps = 0.035 but low recovery. Which indicates the groups are not globally recovered.               |
+|                               |             |                             |                                                                                                    |
+|                               |             | R: 0.57                     |                                                                                                    |
+|                               |             |                             |                                                                                                    |
+|                               |             | U: 33                       |                                                                                                    |
++-------------------------------+-------------+-----------------------------+----------------------------------------------------------------------------------------------------+
 
 # Executive summary
 
@@ -818,7 +814,7 @@ In conclusion. In this study we take a sample from the SDSS catalog and selected
 
 We can stand out the following points:
 
--   The method sOPTICS with DBSCAN reached the highest values in completeness, purity and recovery and in group detection.
+-   The method sOPTICS with DBSCAN reached the highest values in completeness, purity and recovery and in group detection (73%).
 
 -   The DPC algorithm worked almost perfectly in group-center detection (reached a 99%), but did not worked in separate the groups in the whole dataset.
 
@@ -826,8 +822,6 @@ We can stand out the following points:
 
 Finally we compare the original with the best clustering obtained in this study:
 
-+--------------------------------+--------------------------------------+
 | Actual groups distribution     | Best cluster detection with sOPTICS. |
-+================================+======================================+
+|--------------------------------|--------------------------------------|
 | ![](images/paste-C0421FDF.png) | ![](images/paste-9187A18F.png)       |
-+--------------------------------+--------------------------------------+
