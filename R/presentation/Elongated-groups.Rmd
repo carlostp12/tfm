@@ -1,0 +1,148 @@
+---
+title: "TFM-Density algorithms applied to SDSS"
+author: "Carlos Toro Peñas"
+date: '2025-12-15'
+output:
+  html_document:
+    highlight: default
+    number_sections: yes
+    theme: cosmo
+    toc: yes
+    toc_depth: 2
+    includes:
+      in_header: 75.584-PEC-header.html
+  word_document: default
+  pdf_document:
+    toc: yes
+    number_sections: true
+    df_print: kable
+    highlight: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+if (!require('jsonlite')) install.packages('jsonlite')
+library(jsonlite)
+if (!require('dbscan')) install.packages('dbscan')
+library(dbscan)
+if (!require('readr')) install.packages('readr')
+library(readr)
+if (!require('rjson')) install.packages('rjson')
+library(rjson)
+
+if (!require('dplyr')) install.packages('dplyr')
+library(dplyr)
+
+if (!require('akima')) install.packages('akima')
+library(akima)
+
+if (!require('astrolibR')) install.packages("astrolibR")
+library(astrolibR)
+
+if (!require('scatterplot3d')) install.packages("scatterplot3d")
+library(scatterplot3d)
+
+if (!require('sqldf')) install.packages("sqldf")
+library(sqldf)
+
+if (!require('tidyr')) install.packages("tidyr")
+library(tidyr)
+
+```
+
+# The clustering problem on galaxy dataset
+
+Rather than pursuing a traditional unsupervised clustering optimization---such as variance maximization via the **Elbow Method**---this work evaluates the efficacy of **density-based clustering algorithms** in replicating a physically motivated **halo-based group finder**.
+
+We aim to identify the optimal hyperparameter configurations that allow these algorithms to recover the underlying **dark matter halo membership** of galaxies, effectively using the halo-based catalog as a benchmark for physical validity.
+
+# Loading data files
+
+## Galaxy catalog for SDSS
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+######################
+#     Galaxy SDSS loading # 
+######################
+folder <- Sys.getenv('PROJECT_TFM')
+includes_folder  <- sprintf('%s\\R\\includes\\', folder)
+folder <- sprintf('%s\\data\\sdss\\', folder)
+real_v <- FALSE
+if (real_v){
+  file <- 'SDSS7-valid-real.csv'
+}else{
+  file <- 'SDSS7-valid.csv'
+}
+setwd(folder)
+dt <- read.csv(file)
+```
+
+# Description
+
+This markdown is only aimed to plot the clusters/groups on SDSS-DR7 catalog in both Redshift and Real spaces.
+
+# Redshift space clusters
+
+Take a sample bounded by minPts = 5 and RA and DEC:
+
+$$RA \in [10, 180] h,\, DEC \in [10, 65] º,\, \,and\,\, z \lt max\_redshift$$
+
+Then we take the initial values and take a look at the remaining distribution:
+
+```{r}
+SLOS <- 0.4 #Here the slos is fixed beforehand
+min_members <- 5
+
+ra_lim_inf <- 10
+ra_lim_sup <- 180
+
+dec_lim_inf <- 15
+dec_lim_sup <-  65
+
+max_redshift <- 0.08
+min_redshift <- 0.025
+
+# Take a sample using boundaries
+mm <- dt[ dt$ra<= ra_lim_sup & dt$ra>=ra_lim_inf & 
+            dt$dec>= dec_lim_inf & dt$dec<=dec_lim_sup &
+            dt$redshift< max_redshift & dt$redshift> min_redshift,]
+
+```
+
+Select groups with more than min_members members queries:
+
+```{r}
+h<-sqldf("select 
+            count(GAL_ID) as members, 
+            GROUP_ID 
+          from 
+            mm 
+          group by 
+            GROUP_ID 
+          order by  
+            members desc")
+mm5<-sqldf(sprintf("
+    SELECT 
+        mm.GAL_ID,
+        mm.x, 
+        mm.y, 
+        mm.z, 
+        mm.GROUP_ID, 
+        mm.redshift, 
+        mm.dist
+      FROM 
+        mm as mm, h 
+      where 
+          mm.GROUP_ID=h.GROUP_ID and 
+          h.members >= %s"
+      , min_members))
+
+```
+
+```{r}
+plot3d(mm5$x, mm5$y, mm5$z, col = mm5$GROUP_ID, size = 2, xlab = "X", ylab = "Y", zlab = "Z")
+```
