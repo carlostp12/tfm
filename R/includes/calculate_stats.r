@@ -25,7 +25,7 @@ calculate_output <- function(mm){
   number_complete_groups <- nrow(all[all$completn>=0.5,])
   number_pure_complete_groups <- nrow(all[all$purity >= 0.666 & all$completn >= 0.5,])
   fp <- number_pure_groups/predicted_groups
-  fr <- number_pure_complete_groups / true_groups
+  fr <- number_pure_complete_groups / predicted_groups
   s <- undetected_groups(all)
   fc <- number_complete_groups / predicted_groups
   c(mean(all$purity), 
