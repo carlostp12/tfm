@@ -14,12 +14,12 @@ This component is dedicated to the evaluation of all density-based algorithms un
  * Sloan Digital Sky Survey Data Release 7 (SDSS-DR7).
 
 # Access the R markdown export as HTML
- * You can access the R markdown proccess of 2dFGRS redshitft space sample by click on this <a href="https://www.guidetothesky.com/uoc/data/html/CARLOS_TORO_TFM---2dFGRS.html">link</a>.
- * You can access the R markdown proccess of SDSS-DR7 redshitft space sample by click on this <a href="https://www.guidetothesky.com/uoc/data/html/CARLOS_TORO_TFM---SDSS.html">link</a>.
- * You can access the R markdown proccess of SDSS-DR7 Re-Real space sample by click on this <a href="https://www.guidetothesky.com/uoc/data/html/CARLOS_TORO_TFM---SDSS-REAL.html">link</a>.
+ * You can access the R markdown proccess of 2dFGRS redshitft space sample by click on this <a href="https://www.guidetothesky.com/uoc/data/html/2dFGRS.html">link</a>.
+ * You can access the R markdown proccess of SDSS-DR7 redshitft space sample by click on this <a href="https://www.guidetothesky.com/uoc/data/html/SDSS.html">link</a>.
+ * You can access the R markdown proccess of SDSS-DR7 Re-Real space sample by click on this <a href="https://www.guidetothesky.com/uoc/data/html/SDSS-REAL.html">link</a>.
 
 # Access the Python notebook as HTML
-You can access the HTML export of Python notebook of the processed 2PCF estimators on the 2dFGRS sample by use this link <a href="https://www.guidetothesky.com/uoc/data/html/notebook-2df.html">link</a>.
+You can access the HTML export of Python notebook of the processed 2PCF estimators on the 2dFGRS sample by use this link <a href="https://www.guidetothesky.com/uoc/data/html/notebook-2pcf.html">link</a>.
 
  # How execute
   If you are interested in execute this project you have to download all and set the environment variable: $PROJECT_TFM pointing to the tfm downloaded folder.
