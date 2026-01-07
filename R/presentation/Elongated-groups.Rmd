@@ -106,6 +106,14 @@ dec_lim_sup <-  65
 max_redshift <- 0.08
 min_redshift <- 0.025
 
+min_members <- 5
+max_redshift <- 0.1
+min_redshift <- 0.0
+ra_lim_inf <-  150
+ra_lim_sup <- 180
+dec_lim_inf <- 20
+dec_lim_sup <-  25
+
 # Take a sample using boundaries
 mm <- dt[ dt$ra<= ra_lim_sup & dt$ra>=ra_lim_inf & 
             dt$dec>= dec_lim_inf & dt$dec<=dec_lim_sup &
