@@ -620,7 +620,7 @@ kNNdistplot(x = points_scaled, k = min_members)
 abline(h =seleced_eps, lty = 3) 
 ```
 
-How reader can see, the "elbow method" does not apply here, the reason for this is that elbow method try to optimize variances in clusters.  Rather, we are trying to detect virialized galaxy groups, but algorithms are not intrinsically designed to account for the specific density profiles of dark matter halos.
+How reader can see, the "elbow method" does not apply here, the reason for this is that elbow method try to optimize variances in clusters. Rather, we are trying to detect virialized galaxy groups, but algorithms are not intrinsically designed to account for the specific density profiles of dark matter halos.
 
 ## Detected/Undetected original groups
 
@@ -855,8 +855,6 @@ We can stand out the following points:
 
 Finally we compare the original with the best clustering obtained in this study:
 
-+--------------------------------+--------------------------------------+
 | Actual groups distribution     | Best cluster detection with sOPTICS. |
-+================================+======================================+
+|--------------------------------|--------------------------------------|
 | ![](images/paste-500A6000.png) | ![](images/paste-2176DF96.png)       |
-+--------------------------------+--------------------------------------+

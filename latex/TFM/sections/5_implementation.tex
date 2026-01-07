@@ -30,7 +30,7 @@ Due to the varying structures of the survey catalogs, the data acquisition and p
 \subsection{2dF Galaxy Redshift Survey (2dFGRS)} \label{data:2d}
 
 \begin{enumerate}
-	\item \textit{2dfGRS.dat}: Which comprises 245,591 individual galaxy entries. To ensure high-fidelity measurements and minimize redshift uncertainty, a quality constraint of $Q \geq 3$ was applied, excluding objects with poorly determined spectral features or low signal-to-noise ratios
+	\item \textit{2dfGRS.dat}: Which comprises 245,591 individual galaxy entries. To ensure high-fidelity measurements and minimize redshift uncertainty, a quality constraint of $Q \geq 3$ was applied, excluding objects with poorly determined spectral features or low signal-to-noise ratios.
 	
 	\item \textit{group\_members}: a supplementary group-membership file consisting of 104,913 galaxies.
 \end{enumerate}	
@@ -38,7 +38,7 @@ Due to the varying structures of the survey catalogs, the data acquisition and p
 
 \subsection{Sloan Digital Sky Survey (SDSS)}
 
-Among the diverse datasets provided by the SDSS archive, the imodelC\_1 file was identified as the most suitable for this analysis. It contains the required astrometric and photometric parameters to accurately cross-match with our random catalogs, allowing for a robust calculation of the large-scale structure signal.
+Among the diverse datasets provided by the SDSS archive, the imodelC\_1 file was identified as the most suitable for this analysis.
 
 \begin{enumerate}
 	\item \textit{SDSS7}: Galaxy catalog of the survey.
@@ -59,7 +59,7 @@ Our pipeline performs a multi-source integration of the raw data files, executin
  x & X cartesian coordinate & decimal    \\ \hline
  y & Y cartesian coordinate & decimal    \\ \hline
  z & Z cartesian coordinate & decimal    \\ \hline
- redshift & cell8 & decimal \\ \hline
+ redshift & Redshift value & decimal \\ \hline
  dist & Raw distance value & decimal  \\ \hline
  GROUP\_ID & id-group galaxy belongs to & numerical \\ \hline
 \end{tabular}
@@ -67,9 +67,9 @@ Our pipeline performs a multi-source integration of the raw data files, executin
 \label{table:data}
 \end{table}
 
-\subsection{Real Space Galaxy Catalogue}
+\subsection{Real-Space Galaxy Catalogue}
 
-Finally, the SDSS "Real Space Galaxy Catalogue" was incorporated into the analysis. This dataset provides galaxy coordinates that have been specifically reconstructed to account for Redshift-Space Distortions (RSD), following the principles detailed in Section \ref{section:real} and Section \ref{section:slos}. By utilizing this catalog, we are able to benchmark our density-based clustering results against a distribution that more accurately reflects the physical, three-dimensional positions of galaxies in the local Universe.
+Finally, the SDSS "Real-Space Galaxy Catalogue" was incorporated into the analysis. This dataset provides galaxy coordinates that have been specifically reconstructed to account for Redshift-Space Distortions (RSD), following the principles detailed in Section \ref{section:real} and Section \ref{section:slos}. By utilizing this catalog, we are able to benchmark our density-based clustering results against a distribution that more accurately reflects the physical, three-dimensional positions of galaxies in the local Universe.
 
 	\begin{figure}[h]
 	\centering
@@ -106,7 +106,7 @@ It is important to emphasize that this study departs from traditional unsupervis
 
 The performance of each algorithm is evaluated based on its Recovery Rate of known halo members. Selection criteria prioritize models that maximize the completeness and purity of identified groups relative to the 2dFGRS/SDSS group catalogs.
 
-Guided by the validation protocols established in \cite{Hai-Xia-Ma:2025} we employ the following metrics to assess the topological and member-wise similarity between the density-based models ($C$) and the halo-based ground truth ($H$):
+Guided by the validation protocols established in \cite{Hai-Xia-Ma:2025}, we employ the following metrics to assess the topological and member-wise similarity between the density-based models ($C$) and the halo-based ground truth ($H$):
 
 Definitions of following sets:
 \begin{itemize}
@@ -141,12 +141,12 @@ Formally, purity ($\mathcal{P}$) is synonymous with Precision, representing the 
 Following the categorical framework of \cite{Hai-Xia-Ma:2025} we define the thresholds:
 
 \begin{itemize}
-	\item Purity Threshold ($\mathcal{P} \geq 2/3$): An output-cluster is defined as \textit{Pure} if at least 66.7% of its constituent galaxies originate from the same parent dark matter halo. 
+	\item Purity Threshold ($\mathcal{P} \geq 2/3$): An output-cluster is defined as \textit{Pure} if at least 66.7\% of its constituent galaxies originate from the same parent dark matter halo. 
 	
-	\item Completeness Threshold ($\mathcal{C} \geq 1/2$): An output-cluster is defined as \textit{Complete} if it successfully captures at least 50% of the galaxies belonging to the true physical halo (or original true-group). This ensures that the algorithm has recovered the core structure of the virialized group.
+	\item Completeness Threshold ($\mathcal{C} \geq 1/2$): An output-cluster is defined as \textit{Complete} if it successfully captures at least 50\% of the galaxies belonging to the true physical halo (or original true-group). This ensures that the algorithm has recovered the core structure of the virialized group.
 \end{itemize}
 
-With these concepts we evaluate the ratios, respectively \textit{Purity-rate}, \textit{Completeness-rate} and \textit{Completeness-Pure-Rate} as:
+With these concepts we evaluate the ratios, respectively \textit{Purity-rate} , $F_{p}$, \textit{Completeness-rate} $F_{c}$ as:
   
 \begin{equation} \label{eq:purity_rate}
 	F_{p} = \frac{N_{pure}}{N_{clusters}}
@@ -167,5 +167,6 @@ The following, recovery-rate $F_r$ only defined for complete and pure output-clu
 %	Fr = \frac{total\_in\_group}{number\_non\_isolated\_galaxies}
 %\end{equation}.
 
+To conclude this section, the absolute number of detected groups $N_{det}$against the number of successfully matched halos ($N_{match}$) is evaluated. It is critical to clarify that $N_{det}$ and $N_{match}$ are aggregate total term; a single physical Halo-Group may be partitioned into several discrete output clusters by the algorithm. Consequently, the undetected groups $\mathcal{U}$ factor must be introduced to account for this fragmentation
 
-All sources used for this study and code can be downloaded from \href{https://github.com/carlostp12/tfm}{this link in Github}.	
+All datasets utilized in this study and the accompanying source code are available for download at the following repository: \href{https://github.com/carlostp12/tfm}{this link in Github}.

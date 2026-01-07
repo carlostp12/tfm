@@ -14,35 +14,42 @@ Galaxy groups and clusters \ref{fig:cluster} are the largest gravitationally str
 
 \begin{enumerate}
 
-	\item \textit{Galaxy Groups}: These are the most common and lowest-mass virialized systems, typically containing 3 to 50 member galaxies \cite{Hai-Xia-Ma:2025} and spanning a total mass range of $\sim 10^{13} - 10^{14} M_{\odot}$. Our own Local Group is a well-known example.
+	\item \textit{Galaxy Groups}: These are the most common and lowest-mass virialized systems, typically containing 3 to 50 member galaxies \cite{Hai-Xia-Ma:2025} and spanning a total mass range of $\sim 10^{13} - 10^{14} M_{\odot}$. The M81 Group in figure \ref{fig:group} is a well-known example.
 
-	\item \textit{Galaxy Clusters}: These represent the high-mass tail of the halo distribution, typically containing hundreds to thousands of galaxies, with total masses ranging from $\sim 10^{14} - 10^{15} M_{\odot}$. They often host a dominant, massive Brightest Cluster Galaxy (BCG) at their center and are strong emitters of X-rays and which properties dictate cluster formation and evolution \cite{Hai-Xia-Ma:2025}. A paradigmatic example is the Virgo cluster with an estimate mass of $\sim 1.2×1015 M_{\odot}$ and having M87 as most massive and dynamically dominant central galaxy.
+	\item \textit{Galaxy Clusters}: These represent the high-mass tail of the halo distribution, typically containing hundreds to thousands of galaxies, with total masses ranging from $\sim 10^{14} - 10^{15} M_{\odot}$. They often host a dominant, massive Brightest Cluster Galaxy (BCG) at their center and are strong emitters of X-rays and which properties dictate cluster formation and evolution \cite{Hai-Xia-Ma:2025}. A paradigmatic example is the Virgo cluster shown in figure \ref{fig:cluster}, with an estimate mass of $\sim 1.2×1015 M_{\odot}$ and having M87 as most massive and dynamically dominant central galaxy.
 	
 \end{enumerate}
 
-%\begin{figure}
-%\centering
-%\begin{minipage}{.5\textwidth}
+\begin{figure}
+\centering
+\begin{minipage}{.5\textwidth}
+  \centering
+  \includegraphics[width=.85\linewidth]{./figs/M82_3.jpg}
+  \caption{Portion of M81 group.} {Source \cite{guide2025}}
+  \label{fig:group}
+\end{minipage}%
+\begin{minipage}{.5\textwidth}
+  \centering
+  \includegraphics[width=.85\linewidth]{./figs/virgo_cluster2.jpg}
+  \caption{Portion of Virgo cluster.} {Source \cite{iac2025}}
+  \label{fig:cluster}
+\end{minipage}
+\end{figure}
+
+
+%\begin{figure}[h]
 %  \centering
-%  \includegraphics[width=.5\linewidth]{./figs/M33_2.jpg}
-%  \caption{M33 the $3^{th}$ galaxy in mass in our local group. Source \cite{eso:2025}}
+%  \includegraphics[width=.5\linewidth]{./figs/M82_3.jpg}
+%  \caption{M82 rgoup}. Source \cite{eso:2025}
 %  \label{fig:group}
-%\end{minipage}%
-%\begin{minipage}{.5\textwidth}
-%  \centering
-%  \includegraphics[width=.5\linewidth]{./figs/virgo_cluster.jpg}
-%  \caption{Portion of Virgo cluster. Source \cite{eso:2025}}
-%  \label{fig:cluster}
-%\end{minipage}
 %\end{figure}
 
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=.75\linewidth]{./figs/virgo_cluster.jpg}
-  \caption{Portion of Virgo cluster}. Source \cite{eso:2025}
-  \label{fig:cluster}
-\end{figure}
+%\begin{figure}[h]
+%  \centering
+%  \includegraphics[width=.5\linewidth]{./figs/virgo_cluster.jpg}
+%  \caption{Portion of Virgo cluster}. Source \cite{eso:2025}
+%  \label{fig:cluster}
+%\end{figure}
 
 Because both groups and clusters exhibit diverse morphologies and spatial shapes, the subsequent analysis —detailed in Section \ref{unsupervised_methods}— employs unsupervised density-based algorithms. These methods are the most suitable approach for the clustering analysis due to their capacity to effectively fit structures with arbitrary geometries.
 
@@ -51,7 +58,7 @@ Because both groups and clusters exhibit diverse morphologies and spatial shapes
 	\begin{figure}[h]
 	\centering
 	\includegraphics[width=0.75\textwidth]{./figs/survey_2dmap_small-old2.jpg}
-	\caption{2dfGRS sky coverage}. Source \cite{Colless:2001}.
+	\caption{2dfGRS sky coverage.} Source \cite{Colless:2001}.
 	\label{fig:2dfGRS}
 	\end{figure}
 	
@@ -72,7 +79,7 @@ We are fortunate that, nowadays, we have access to data from several major astro
 	\begin{figure}[h]
 	\centering
 	\includegraphics[width=0.75\textwidth]{./figs/SSO_2.jpg}
-	\caption{Australian Astronomical Observatory (AAO)}. Source \cite{aao:2000}.
+	\caption{Australian Astronomical Observatory (AAO).} Source \cite{aao:2000}.
 	\label{fig:aao}
 	\end{figure}
 	
@@ -89,7 +96,7 @@ The Sloan Digital Sky Survey (SDSS) \cite{sdss:2000} began collecting data in 20
 	\label{fig:sdss}
 	\end{figure}
 	
-The SDSS has progressed through several phases (SDSS-I, II, III, IV, and the current SDSS-V), with each phase introducing new scientific goals and technological advancements. For this work the modelC petrosian magnitude data realease 7 (DR7) will be used, which contains 639359 galaxy entries. This release offers coverage for approximatyely one quarter of the sky sphere, predominantely in the nothern galactic cap as illustrated in figure \ref{fig:dr7}. Groups constructed are drawn up from \cite{Yang:2007}.
+The SDSS has progressed through several phases (SDSS-I, II, III, IV, and the current SDSS-V), with each phase introducing new scientific goals and technological advancements. For this work, the modelC petrosian magnitude data realease 7 (DR7) will be used, which contains 639359 galaxy entries. This release offers coverage for approximatyely one quarter of the sky sphere, predominantely in the nothern galactic cap as illustrated in figure \ref{fig:dr7}. Groups constructed are drawn up from \cite{Yang:2007}.
 
 	\begin{figure}[h]
 	\centering
@@ -113,7 +120,7 @@ Beyond the substantial logistical and resource constraints associated with const
 
 \subsection{Galaxy cluster/group catalog}
 
-In order to validate and assess the performance of a constructed galaxy clustering model, it is necessary to compare the results from the target galaxy catalog (the data being clustered) against a well-established, pre-existing group/cluster catalog (the ground truth). For this work was employed the catalog result obtained by the halo-based group finder developed by in \cite{Yang:2007}. This method is specifically optimized for grouping galaxies residing in the same dark matter halo and and utilizes an iterative approach based on an adaptive filter modeled after the general properties of dark matter halos (see \cite{Yang:2007}) for full details).
+In order to validate and assess the performance of a constructed galaxy clustering model, it is necessary to compare the results from the target galaxy catalog (the data being clustered) against a well-established, pre-existing group/cluster catalog (the ground truth). For this work was employed the catalog result obtained by the halo-based group finder developed by in \cite{Yang:2007}. This method is specifically optimized for grouping galaxies residing in the same dark matter halo and and utilizes an iterative approach based on an adaptive filter modeled after the general properties of dark matter halos (see \cite{Yang:2007} for full details).
 
 The halo-based group finder was successfully applied to the galaxy catalogs from both the 2dFGRS and the SDSS (Data Release 7). This valuable group catalog is publicly accessible and can be downloaded from \cite{groups:2000}.
 
@@ -140,7 +147,7 @@ The specific form of equation \ref{eq:2} may vary according to the chosen cosmol
  \Omega_{r0} = 0.0001, \,\, \Omega_{m0} = 0.3 , \,\, \Omega_{\Lambda 0} = 0.7.
 \end{equation}.
 
-\subsection{Real space galaxy catalog}\label{section:real}
+\subsection{Real-Space galaxy catalog}\label{section:real}
 
 Redshift surveys suffer distortions that are primarily categorized into two distinct sets:
 
@@ -153,7 +160,7 @@ Both categories of distortions manifest within the correlation function of the g
 
 Several accurate methodologies are available to mitigate the effects of both issues, at least partially. This discussion will focus on the approach described by Shi et al. in \cite{Shi:2016}, where the authors propose a method to correct these distortions as follows:
 
-The observed redshift ($z_{\text{obs}}$) of a galaxy is a combination of the cosmological redshift ($z_{\text{cos}}$) due to the Hubble flow and the Doppler shift caused by the galaxy's peculiar velocity ($v_{\text{pec}}$).4 The total relationship is expressed as:
+The observed redshift ($z_{\text{obs}}$) of a galaxy is a combination of the cosmological redshift ($z_{\text{cos}}$) due to the Hubble flow and the Doppler shift caused by the galaxy's peculiar velocity ($v_{\text{pec}}$). The total relationship is expressed as:
 
 \begin{equation} \label{eq:4}
  z_{obs} = z_{cos} + z_{pec} = z_{cos} + \frac{v_{pec}}{c}(1+z_{cos}).
@@ -165,7 +172,7 @@ And then for $v_{\text{pec}}$:
  v_{pec} = v_{cen} + v_{\sigma}.
 \end{equation}.
 
-Where $v_{\text{cen}}$ is the line-of-sight component of the coherent velocity of the halo center, representing the infall motion that causes the large-scale Kaiser effect. $v_{\sigma}$ is the line-of-sight component of the internal velocity dispersion of the galaxy with respect to its halo center, representing the random motion that causes the small-scale Fingers-of-God (FoG) effect.
+Where $v_{\text{cen}}$ is the line-of-sight component of the coherent velocity of the halo center, representing the infall motion that causes the large-scale Kaiser effect. $v_{\sigma}$ Is the line-of-sight component of the internal velocity dispersion of the galaxy with respect to its halo center, representing the random motion that causes the small-scale Fingers-of-God (FoG) effect.
 
 The resulting effective redshifts corresponding to these two distinct effects are formally defined as follows:
 
@@ -177,18 +184,18 @@ The resulting effective redshifts corresponding to these two distinct effects ar
  z_{FOG} = z_{cos} + \frac{v_{\sigma}}{c}(1+z_{cos}).
 \end{equation}.
 
-Roughly speaking $v_{cen}$ is the manifestation of  $z_{Kaiser}$, whereas z_{FOG} effect is depicted by $v_{\sigma}$. 
+Roughly speaking $v_{cen}$ is the manifestation of  $z_{Kaiser}$, whereas $z_{FOG}$ effect is depicted by $v_{\sigma}$. 
 
-Following the methodology proposed in \cite{Shi:2016}, the authors define several coordinate spaces by utilizing Equations \ref{eq:4}, \ref{eq:5}, and \ref{eq:7} to recalculate the positions (Equation \ref{eq:2}) in each space.
+Because it is impossible to infer a galaxy’s line-of-sight location from its peculiar velocity along that line-of-sight, a correction for the FOG effect is applied in a statistical sense. Following the methodology proposed in \cite{Shi:2016}, the authors define several coordinate spaces by utilizing Equations \ref{eq:4}, \ref{eq:5}, \ref{eq:6}, and \ref{eq:7} to recalculate the positions (Equation \ref{eq:2}) in each space.
 
-Based on these coordinate frameworks, a transformation is applied to the original redshift-space data to obtain a new system known as \textbf{Re-Real space} \cite{Shi:2016}. This space is particularly relevant as it mitigates the impact of both Kaiser and Finger-of-God (FoG) distortions. In this study, the adoption of Re-Real space is fundamental to improving the performance of density-based algorithms, as it restores the physical isotropy of galaxy groups.
+Based on these coordinate frameworks, a transformation is applied to the original redshift-space data to obtain a new system known as \textbf{Real-Space} \cite{Shi:2016}. This space is particularly relevant as it mitigates the impact of both Kaiser and Finger-of-God (FoG) distortions. In this study, the adoption of Real-Space is fundamental to improving the performance of density-based algorithms, as it restores the physical isotropy of galaxy groups.
 
-Employing this approach yields a modified catalog where the new redshift values effectively transform the coordinate space, as illustrated in Figure \ref{fig:real}. By using this Re-Real space dataset will help to thoroughly investigate how this transformation influences the resulting clustering of galaxies.
+Employing this approach yields a modified catalog where the new redshift values effectively transform the coordinate space, as illustrated in Figure \ref{fig:real}. By using this Real-Space dataset will help to thoroughly investigate how this transformation influences the resulting clustering of galaxies.
 
 	\begin{figure}[h]
 	\centering
 	\includegraphics[width=0.85\textwidth]{./figs/real_space.jpg}
-	\caption{The Re-Real space.} In the left-hand side a sample of SDSS in the redshift space. The right-hand side shows SDSS in Re-Real space. Source \cite{Shi:2016}.
+	\caption{The Redshift-Space and the Real-Space.} Source \cite{Shi:2016}.
 	\label{fig:real}
 	\end{figure}
 	
@@ -198,7 +205,7 @@ An alternative approach to investigating the cosmic galaxy density field is thro
 
 Unlike clustering algorithms which performs a discrete classification (deciding which galaxy belongs to which group), 2PCF offers a global statistical analysis of the distribution (measuring how galaxies "crowd" together across the entire manifold). This is done by quantify the probability of finding galaxy pairs at specific separation scales across the cosmic manifold.
 
-The two-point correlation function $\xi(r)$ and the power spectrum, $P(k)$, form a Fourier transform pair, representing the clustering signal in real and spectral space, respectively. While $\xi(r)$ provides an intuitive measure of spatial separations, the power spectrum is the standard framework for characterizing the primordial density fluctuations observed in the Cosmic Microwave Background (CMB).x
+The two-point correlation function $\xi(r)$ and the power spectrum, $P(k)$, form a Fourier transform pair, representing the clustering signal in real and spectral space, respectively. While $\xi(r)$ provides an intuitive measure of spatial separations, the power spectrum is the standard framework for characterizing the primordial density fluctuations observed in the Cosmic Microwave Background (CMB).
 
 According to \cite{Peebels:1980}, if one pick a galaxy at random, the probability ($dP$) of finding another galaxy at a distance $r$ within a small volume $dV$ is given by:
 
@@ -249,7 +256,7 @@ A subset is taken from the original dataset, the so called training data \( Z_i 
 
 The input to any supervised algorithm consists of independent variables (or features), and the output comprises the dependent variables (or target variables). Supervised algorithms leverage the information within the training data to learn the intricate relationships between these input and target variables.
 
-However, a detailed discussion of supervised methods is not the scope of this work. Tnstead, The objective is to identify patterns and structure within the data distribution, which will subsequently inform the spatial distribution of matter within a dimensional space.
+However, a detailed discussion of supervised methods is not the scope of this work. Instead, The objective is to identify patterns and structure within the data distribution, which will subsequently inform the spatial distribution of matter within a dimensional space.
 
 \subsection{Unsupervised methods}\label{unsupervised_methods}
 
@@ -287,7 +294,7 @@ Clustering and segmentation belong to Unsupervised methods, that work based on d
 		\item \textit{eps-neighborhood} of a point $p$ in S is \(NE_{\epsilon}(p) =\{q \in S : dist(p, q) \leq eps \} \). Then any eps-neighborhood of $p$ is said to be dense if 
 		\( |NE_{\epsilon}(p)| \geq minPts \).
 	
-		\item The \textit{core\_distance} of a given point $p$ is the minimum \(\epsilon\) such us \(NE_{\epsilon}(p)\) is dense, in other words:
+		\item The \textit{core-distance} of a given point $p$ is the minimum \(\epsilon\) such us \(NE_{\epsilon}(p)\) is dense, in other words:
 		
 		$$ core-distance(p) = min \{ \epsilon : |NE_{\epsilon}(p)| \geq minPts \} $$
 	
@@ -302,8 +309,8 @@ Clustering and segmentation belong to Unsupervised methods, that work based on d
 	
 	\begin{figure}[h]
 	\centering
-	\includegraphics[width=0.75\textwidth]{./figs/core-distance.jpg}
-	\caption{Core and reachability distances}. Source \cite{Rhys:2020}.
+	\includegraphics[width=0.60\textwidth]{./figs/core-distance.jpg}
+	\caption{Core and Reachability distances}. Source \cite{Rhys:2020}.
 	\label{fig:optics_figure}
 	\end{figure}
 	
@@ -319,11 +326,12 @@ Clustering and segmentation belong to Unsupervised methods, that work based on d
 	\begin{figure}[h]
 	\centering
 	\includegraphics[width=0.8\textwidth]{./figs/reach3.jpg}
-	\caption{An example of data set in \( \mathbb{R}^2\).}
+	\caption{Example of scattered data over the \( \mathbb{R}^2\) Plane.}
 	\label{fig:reach1}
 	\end{figure}
 	
-	For example, figure \ref{fig:reach1} shows a random-generated set of points around four fixed points within [0,1]x[0,1] square. OPTICS is then applied to this, and the resulting reachability plot is shown in figure \ref{fig:reach2}.
+	Figure \ref{fig:reach1} presents a synthetic dataset consisting of random points generated around four fixed centroids within a unit square $[0,1] \times [0,1]$. This setup simulates a simplified version of the density contrasts found in galaxy surveys. Figure \ref{fig:reach2} displays the corresponding Reachability Plot generated by OPTICS. Each 'valley' in the plot represents one of the four clusters; the depth and width of these valleys directly correspond to the cluster's density and size, respectively. This demonstrates how OPTICS can distinguish between dense cores and sparse 'noise' without the need for a fixed global $\epsilon$ parameter.
+	
 	
 	\begin{figure}[h]
 	\centering
@@ -363,7 +371,7 @@ Then a cluster $C$ is a subset of S satisfying:
 	\begin{figure}[h]
 	\centering
 	\includegraphics[width=0.75\textwidth]{./figs/density.jpg}
-	\caption{Density Reachability and Density Ronnectivity}: Left: density reachability. Right: density connectivity. Source \cite{Rhys:2020}.
+	\caption{\textbf{Left}: Density Reachability. \textbf{Right}: Density Connectivity.} Source \cite{Rhys:2020}.
 	\label{fig:density}
 	\end{figure}
 	
@@ -447,7 +455,7 @@ As mentioned, the algorithm takes an unvisited point $p$ and evaluates its eps-n
 
 \subsection{sOPTICS: Modifying the distance}\label{section:slos}
 
-Following the application proposed by \cite{Hai-Xia-Ma:2025} a modification to the distance along de line of sight as illustrated in figure \ref{fig:slos}. This adjustment is specifically designed to mitigate the distorsion referred as \textit{Finger-of-God} $FOG$ in the section \ref{section:real}. The algorithm remains as a standard OPTICS but the distance has been modified by a new one wich work as follows, given two point $u$ and $v$ the usual Euclidean distance is calculated as:
+Following the application proposed by \cite{Hai-Xia-Ma:2025} a modification to the distance along de line of sight as illustrated in figure \ref{fig:slos}. This adjustment is specifically designed to mitigate the distorsion referred as \textit{Finger-of-God} $FOG$ in the section \ref{section:real}. The algorithm remains as a standard OPTICS but the distance has been modified by a new one wich work as follows, given two points $u$ and $v$ the usual Euclidean distance is calculated as:
 
 \begin{equation} \label{eq:10}
  D^2 (u,v)=\sum_{i=1}^{3} (u_i-v_i)^2.
@@ -476,7 +484,7 @@ Figure \ref{fig:slos} illustrates the elongated Euclidean distance’s effect on
 	\begin{figure}[h]
 	\centering
 	\includegraphics[width=0.8\textwidth]{./figs/slos2.jpg}
-	\caption{Deformation along the line-of-sight}: Illustration of how sLos algorithm works elongating the line of sigth. Source \cite{Hai-Xia-Ma:2025}.
+	\caption{Deformation along the line-of-sight.} Source \cite{Hai-Xia-Ma:2025}.
 	\label{fig:slos}
 	\end{figure}
 \subsection{HDBSCAN}
@@ -493,7 +501,7 @@ $$ mreach(p,\,q) = max{core-dist(p), \, core-dist(q), \, dist(p, q)}$$
 	\begin{figure}[h]
 	\centering
 	\includegraphics[width=0.65\textwidth]{./figs/MST.jpg}
-	\caption{Minimium Spanning Tree ($MSP$)}. Source \cite{hdbscan:2000}.
+	\caption{Minimium Spanning Tree ($MSP$).} Source \cite{hdbscan:2000}.
 	\label{fig:mst}
 	\end{figure}
 	
@@ -531,7 +539,7 @@ The Density Peak Clustering (DPC) algorithm operates under the fundamental assum
 	$\delta_i = min_{j:\rho_j>\rho_i}(d_{ij})$. and for the point with highest density $\delta_i = max_{j}(d_{ij})$. Therefore $\delta_i$ is much larger than other typical values for those points where density reachs its local or global maximum.
 \end{enumerate}
 	
-Following the computation of both parameters, a diagram as presented in figure \ref{fig:mst} can be utilized to establish appropriate thresholds for $\rho$ and $\delta$ in order to select the points which represent centers for each clusters$\delta$. This process allows for the identification of points representing the center of each cluster. DPC excels at cluster center detection because these selected points inherently correspond to locations where the local density reaches its maximum.
+Following the computation of both parameters, a diagram as presented in figure \ref{fig:mst} can be utilized to establish appropriate thresholds for $\rho$ and $\delta$ in order to select the points which represent centers for each cluster. This process allows for the identification of points representing the center of each cluster. DPC excels at cluster center detection because these selected points inherently correspond to locations where the local density reaches its maximum.
 
 %\begin{figure}
 %\centering
@@ -549,12 +557,13 @@ Following the computation of both parameters, a diagram as presented in figure \
 %\end{minipage}
 %\end{figure}
 
-Then it is possible to select $\rho = \rho_{0}$ and $\delta = _{0}$ to obtains centers for clusters:
+%Then it is possible to select $\rho = \rho_{0}$ and $\delta = _{0}$ to obtains centers for clusters:
+ How illustrated in figure \ref{fig:mst} points with a high local density (located on the right side of the x-axis). Points that are far from any other point with a higher density (located at the top of the y-axis). Source \cite{DPC:2014}.
  
 	\begin{figure}[h]
 	\centering
 	\includegraphics[width=0.7\textwidth]{./figs/dpc_3.jpg}
-	\caption{Inside decision graph: $\rho = \rho_{0}$ and $\delta = \delta_{0}$ }: Points with a high local density (located on the right side of the x-axis). Points that are far from any other point with a higher density (located at the top of the y-axis). Source \cite{DPC:2014}.
+	\caption{Inside decision graph: $\rho = \rho_{0}$ and $\delta = \delta_{0}$ }
 	\label{fig:mst}
 	\end{figure}
 

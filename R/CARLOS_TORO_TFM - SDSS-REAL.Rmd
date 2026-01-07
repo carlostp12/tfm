@@ -677,19 +677,19 @@ x_stats <- extract_stats_dbscan(eps_sequence_test, ress)
 print_global_stats(x_stats, eps_sequence_test)
 ```
 
-Results look quite better when all variables are scaled to a mean=0, sd=1. The optimal value of eps gives more than 76% for both purity and completeness.
+Results look quite better when all variables are scaled to a mean=0, sd=1.
 
-The same plots before
+The same plots as before:
 
 ```{r}
-seleced_eps <- 0.026
+seleced_eps <- 0.025
 plot_purity_completeness(
   eps_sequence_test, 
   x_stats$purity_list, 
   x_stats$completeness_list, 
   x_stats$recovery,
   c('Purity', 'Completeness', 'Recovery'),
-  "Purity/completeness on raw data",
+  "Purity/completeness on scaled data",
   seleced_eps, 'eps', 'Percentage'
 )
 ```
@@ -756,7 +756,7 @@ plot3d(undetected$x, undetected$y, undetected$z,
        xlab = "X", ylab = "Y", zlab = "Z")
 ```
 
-![](images/paste-924D0FB2.png)
+# ![](images/paste-90910F33.png){width="445"}
 
 # Summary and conclusions
 
@@ -769,11 +769,11 @@ The bests results obtained with each method:
 +-------------------------------+-------------+---------------------------------+--------------------------------------------------------------------------+
 | OPTICS Xi hierarchical method | Non-scaled  | Not applicable                  | Not valuable result were found.                                          |
 +-------------------------------+-------------+---------------------------------+--------------------------------------------------------------------------+
-| DBSCAN                        | Non-scaled  | P: 0.83                         | Optimal point for                                                        |
+| DBSCAN                        | Non-scaled  | P: 0.83 (79%)                   | Optimal point for                                                        |
 |                               |             |                                 |                                                                          |
-|                               |             | C: 0.92                         | eps= 0.0003                                                              |
+|                               |             | C: 0.92 (95%)                   | eps= 0.0003                                                              |
 |                               |             |                                 |                                                                          |
-|                               |             | R: 99                           |                                                                          |
+|                               |             | R: 99 (75%)                     |                                                                          |
 |                               |             |                                 |                                                                          |
 |                               |             | U: 6                            |                                                                          |
 +-------------------------------+-------------+---------------------------------+--------------------------------------------------------------------------+
@@ -785,11 +785,11 @@ The bests results obtained with each method:
 +-------------------------------+-------------+---------------------------------+--------------------------------------------------------------------------+
 | OPTICS                        | Scaled      | \-                              | Good in cluster reachability plot                                        |
 +-------------------------------+-------------+---------------------------------+--------------------------------------------------------------------------+
-| DBSCAN                        | Scaled      | P: 0.88                         | eps=0.026                                                                |
+| DBSCAN                        | Scaled      | P: 0.88 (87%)                   | eps=0.025                                                                |
 |                               |             |                                 |                                                                          |
-|                               |             | C: 0.88                         |                                                                          |
+|                               |             | C: 0.90 (96%)                   |                                                                          |
 |                               |             |                                 |                                                                          |
-|                               |             | R: 0.96                         |                                                                          |
+|                               |             | R: 0.96 (82%)                   |                                                                          |
 |                               |             |                                 |                                                                          |
 |                               |             | U: 7                            |                                                                          |
 +-------------------------------+-------------+---------------------------------+--------------------------------------------------------------------------+
@@ -811,5 +811,5 @@ Finally we compare the original with the best clustering obtained in this study:
 +---------------------------------------------+-------------------------------------+
 | Actual groups distribution in Re-Real Space | Best cluster detection with DBSCAN. |
 +=============================================+=====================================+
-| ![](images/paste-BC9FEB7D.png)              | ![](images/paste-E07D408A.png)      |
+| ![](images/paste-BC9FEB7D.png)              | ![](images/paste-F0263316.png)      |
 +---------------------------------------------+-------------------------------------+

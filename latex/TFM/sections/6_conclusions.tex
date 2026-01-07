@@ -19,19 +19,19 @@ In this section provides a brief synthesis of the research, demonstrating how th
 \scalebox{0.7}{
 % \setlength{\tabcolsep}{100pt} % Default value: 6pt
 \renewcommand{\arraystretch}{1.5} % Default value: 1
-\begin{tabular}{c c c c c}
+\begin{tabular}{c c c c c c}
 \hline
-\textbf{Algorithm} & \textbf{Hyperparameter} & \textbf{Data Sample} & \textbf{Outcomes Sample} & \textbf{Conclusion}  \\
+\textbf{Alg.} & \textbf{Hyperparam.} & \textbf{Data Sample} & \textbf{Outcomes} &  \textbf{$N_{det}(\%) - N_{match}/Total$} & \textbf{Conclusion} \\
 \hline
- DBSCAN & $\begin{matrix} \epsilon = 6 \times  10^{-4} \\ minPts=5 \end{matrix} $ & Non-scaled & $\begin{matrix}P=0.65 \\ C=0.87 \\ R= 0.42 \\ U=21 \end{matrix}$ &  $\begin{matrix} \text{Reasonable cluster detection.} \\ \text{ Low recovery\-rate.} \end{matrix}$  \\ \hline
+ DBSCAN & $\begin{matrix} \epsilon = 6 \times  10^{-4} \\ minPts=5 \end{matrix} $ & Non-scaled & $\begin{matrix}P=0.65  \\ C=0.87 \\ R= 0.42  \\ U=21 \end{matrix}$ & 73(67\%)-55/92 &  $\begin{matrix} \text{Reasonable cluster detection.} \\ \text{ Low recovery-rate.} \end{matrix}$  \\ \hline
  
- HDBSCAN & - & - & - & Not good in cluster detection. \\  \hline
+ HDBSCAN & - & - & - & - & Not good in cluster detection. \\  \hline
  
- DPC & $\begin{matrix} \rho = 8.3 \times  10^{-4} \\ \delta = 0.9985 \end{matrix} $  & Non-scaled & - & Good in cluster center detection \\  \hline
+ DPC & $\begin{matrix} \rho = 8.3 \times  10^{-4} \\ \delta = 0.9985 \end{matrix} $  & Non-scaled & - & - & Good in cluster center detection \\  \hline
  
- sOPTICS &  $\begin{matrix} \epsilon = 11 \times  10^{-5} \\ minPts=5 \end{matrix} $  & Non-scaled & $\begin{matrix} P=0.84 \\C= 0.84 \\ R=0.86 \\ U=12 \end{matrix}$ \\ & Best results \\ \hline
+ $\begin{matrix}sOPTICS\\sDBSCAN\end{matrix}$  &  $\begin{matrix} \epsilon = 11 \times  10^{-5} \\ minPts=5 \end{matrix} $  & Non-scaled & $\begin{matrix} P=0.84  \\C= 0.84 \\ R=0.86  \\ U=12 \end{matrix}$ &  85(78\%) - 83/92& Best results \\ \hline
   
-  DBSCAN & $\begin{matrix} \epsilon = 6 \times  10^{-4} \\ minPts=5 \end{matrix} $ & Scaled & $\begin{matrix}P=0.72 \\ C=0.81 \\ R= 0.41 \\ U=22 \end{matrix}$ &  $\begin{matrix} \text{Acceptable cluster detection.} \\ \text{ Low recovery\-rate.} \end{matrix}$  \\ \hline
+  DBSCAN & $\begin{matrix} \epsilon = 6 \times  10^{-4} \\ minPts=5 \end{matrix} $ & Scaled & $\begin{matrix}P=0.72  \\ C=0.81  \\ R= 0.41  \\ U=22 \end{matrix}$ & 65(60\%) - 47/92&  $\begin{matrix} \text{Acceptable cluster detection.} \\ \text{ Low recovery-rate.} \end{matrix}$  \\ \hline
  
  OPTICS & - & - & - & Good in reachability plot. \\  \hline
 \end{tabular}}
@@ -61,21 +61,21 @@ The results of the analysis are summarized in Table \ref{tablesdss}. Comparable 
 \scalebox{0.7}{
 % \setlength{\tabcolsep}{100pt} % Default value: 6pt
 \renewcommand{\arraystretch}{1.5} % Default value: 1
-\begin{tabular}{c c c c c}
+\begin{tabular}{c c c c c c}
 \hline
-\textbf{Algorithm} & \textbf{Hyperparameter} & \textbf{Data Sample} & \textbf{Outcomes Sample} & \textbf{Conclusion}  \\
+\textbf{Alg.} & \textbf{Hyperparam.} & \textbf{Data Sample} & \textbf{Outcomes} &  \textbf{$N_{det}(\%) - N_{match}$}/Total & \textbf{Conclusion} \\
 \hline
- DBSCAN & $\begin{matrix} \epsilon = 3.7 \times  10^{-4} \\ minPts=5 \end{matrix} $ & Non-scaled & $\begin{matrix}P=0.68 \\ C=0.68 \\ R= 0.25 \\ U=30 \end{matrix}$ & $\begin{matrix} \text{Reasonable cluster detection.} \\ \text{ Low recovery\-rate.} \end{matrix}$ \\ \hline
+ DBSCAN & $\begin{matrix} \epsilon = 3.7 \times  10^{-4} \\ minPts=5 \end{matrix} $ & Non-scaled & $\begin{matrix}\mathcal{P}=0.68 \\ \mathcal{C}=0.68 \\ \mathcal{R}= 0.25 \\ \mathcal{U}=30 \end{matrix}$ & 78(75\%) - 38/95 & $\begin{matrix} \text{Reasonable cluster detection.} \\ \text{ Low recovery-rate.} \end{matrix}$ \\ \hline
  
- HDBSCAN & - & - & - & Not suitable in cluster detection. \\  \hline
+ HDBSCAN & - & - & - & - & Not suitable in cluster detection. \\  \hline
  
- DPC & $\begin{matrix} \rho = 8.0 \times  10^{-4} \\ \delta = 0.9985 \end{matrix} $  & Non-scaled & - & Good in cluster center detection \\  \hline
+ DPC & $\begin{matrix} \rho = 8.0 \times  10^{-4} \\ \delta = 0.9985 \end{matrix} $  & Non-scaled & - & - & Good in cluster center detection \\  \hline
  
- sOPTICS &  $\begin{matrix} \epsilon = 11.0 \times 10^{-5} \\ minPts=5 \end{matrix} $  & Non-scaled & $\begin{matrix} P=0.82 \\C= 0.72 \\ R=0.69 \\ U=12 \end{matrix}$ & Best results \\ \hline
+ $\begin{matrix}sOPTICS\\sDBSCAN\end{matrix}$ &  $\begin{matrix} \epsilon = 11.0 \times 10^{-5} \\ minPts=5 \end{matrix} $  & Non-scaled & $\begin{matrix} \mathcal{P}=0.82 \\ \mathcal{C}= 0.72 \\ \mathcal{R}=0.69 \\ \mathcal{U}=12 \end{matrix}$ & 86(81\%) - 74/95 & Best results \\ \hline
   
- DBSCAN & $\begin{matrix} \epsilon = 6 \times  10^{-4} \\ minPts=5 \end{matrix} $ & Scaled & $\begin{matrix}P=0.69 \\ C=0.69 \\ R= 0.57 \\ U=16 \end{matrix}$ &  $\begin{matrix} \text{Good in cluster detection.} \\ \text{ Low recovery\-rate.} \end{matrix}$  \\ \hline
+ DBSCAN & $\begin{matrix} \epsilon = 6 \times  10^{-4} \\ minPts=5 \end{matrix} $ & Scaled & $\begin{matrix}\mathcal{P}=0.69 \\ \mathcal{C}=0.69 \\ \mathcal{R}= 0.57 \\ \mathcal{U}=16 \end{matrix}$  & 82(78\%) - 49/95 &  $\begin{matrix} \text{Good in cluster detection.} \\ \text{ Still low recovery\-rate.} \end{matrix}$  \\ \hline
  
- OPTICS & - & - & - & Good in reachability plot. \\  \hline
+ OPTICS & - & - & - & - & Good in reachability plot. \\  \hline
 \end{tabular}}
 \caption{Results on SDSS sample.}
 \label{tablesdss}
@@ -93,25 +93,25 @@ Following the correction of the distortions detailed in Section \ref{section:rea
 \scalebox{0.7}{
 % \setlength{\tabcolsep}{100pt} % Default value: 6pt
 \renewcommand{\arraystretch}{1.5} % Default value: 1
-\begin{tabular}{c c c c c}
+\begin{tabular}{c c c c c c}
 \hline
-\textbf{Algorithm} & \textbf{Hyperparameter} & \textbf{Data Sample} & \textbf{Outcomes Sample} & \textbf{Conclusion}  \\
+\textbf{Alg.} & \textbf{Hyperparam.} & \textbf{Data Sample} & \textbf{Outcomes} &  \textbf{$N_{det}(\%) - N_{match}$}/Total & \textbf{Conclusion}  \\
 \hline
- DBSCAN & $\begin{matrix} \epsilon = 3 \times  10^{-4} \\ minPts=5 \end{matrix} $ & Non-scaled & $\begin{matrix}P=0.83 \\ C=0.92 \\ R= 0.99 \\ U=6 \end{matrix}$ &  $\begin{matrix} \text{Worked in cluster detection} \\ \text{ and recovery-rate.} \end{matrix}$  \\ \hline
+ DBSCAN & $\begin{matrix} \epsilon = 3 \times  10^{-4} \\ minPts=5 \end{matrix} $ & Non-scaled & $\begin{matrix}\mathcal{P}=0.83 \\ \mathcal{C}=0.92 \\ \mathcal{R}= 0.99 \\ \mathcal{U}=6 \end{matrix}$ & 93(88.3\%) - 93/95 &  $\begin{matrix} \text{Worked in cluster detection} \\ \text{ and recovery-rate.} \end{matrix}$  \\ \hline
  
- HDBSCAN & - & - & - & Not good in cluster detection. \\  \hline
+ HDBSCAN & - & - & - & - & Not good in cluster detection. \\  \hline
  
- DPC & $\begin{matrix} \rho = 8.5 \times 10^{-4} \\ \delta = 0.9986 \end{matrix} $  & Non-scaled & - & 100\% in cluster center detection \\  \hline
+ DPC & $\begin{matrix} \rho = 8.5 \times 10^{-4} \\ \delta = 0.9986 \end{matrix} $  & Non-scaled & - & - & 100\% in cluster center detection \\  \hline
    
-  DBSCAN & $\begin{matrix} \epsilon = 2.6 \times 10^{-2} \\ minPts=5 \end{matrix} $ & Scaled & $\begin{matrix}P=0.88 \\ C=0.88 \\ R= 0.96 \\ U=7 \end{matrix}$ & Good in cluster detection  \\ \hline
+  DBSCAN & $\begin{matrix} \epsilon = 2.6 \times 10^{-2} \\ minPts=5 \end{matrix} $ & Scaled & $\begin{matrix} \mathcal{P}=0.88 \\ \mathcal{C}=0.88 \\ \mathcal{R}= 0.96 \\ \mathcal{U}=7 \end{matrix}$ & 91 (86\%) 91/95 & Good in cluster detection  \\ \hline
  
  OPTICS & - & Scaled & - & Good in reachability plot. \\  \hline
-\end{tabular}}
+\end{tabular}	}
 \caption{Results on SDSS Real Space Galaxy Catalogue sample.}
 \label{tablereal}
 \end{table}
 
-It is important to note that the application of sLOS (scaled Line-of-Sight) algorithms is unnecessary within this framework. Since the Re-Real space reconstruction already accounts for and mitigates line-of-sight distortions.
+It is important to note that the application of sLOS (scaled Line-of-Sight) algorithms is unnecessary within this framework. Since the Real-Space reconstruction already accounts for and mitigates line-of-sight distortions. A view for best cluster detection on Real space is shown in Figure \ref{fig:clustering-real}.
 	\begin{figure}[h]
 	\centering
 	\includegraphics[width=1\textwidth]{./figs/clustering.jpg}
@@ -133,7 +133,7 @@ This preprocessing step yielded a measurable increase in cluster detection sensi
 
 \section{Results on two-point correlation function (2pcf) on 2dFGRS sample}\label{2pcf2}
 
-A python notebook based on the dataset shown in section \ref{data:2d} is created. A representative sample from the 2dFGRS catalog was extracted to analyze its spatial distribution. By contrasting the empirical 2dFGRS data with a synthetic Poisson distribution, this approach may convey information about the geometry of the matter across the Universe. Figures \ref{fig:estimators2} and \ref{fig:estimators2} show the results of several estimators.
+Inspired by the analytical frameworks presented in the UOC Master of Data Science (Python Matter), a python notebook was developed to process the dataset described in section \ref{data:2d}. A representative sample from the 2dFGRS catalog was extracted to analyze its spatial distribution. By contrasting the empirical 2dFGRS data with a synthetic Poisson distribution, this approach may convey information about the geometry of the matter across the Universe. Figures \ref{fig:estimators2} and \ref{fig:estimators2} show the results of several estimators.
 
 	\begin{figure}[h]
 	\centering
@@ -186,7 +186,7 @@ Despite the inherent difficulties and drawbacks encountered during the implement
 \begin{enumerate}	
 	\item \textbf{Next-Generation Surveys}: While this study utilized the 2dFGRS and SDSS (DR7) catalogs, the computational efficiency of the Density Peak Clustering (DPC) and HDBSCAN frameworks makes them ideal candidates for larger, higher-redshift datasets. Applying these algorithms to the Dark Energy Spectroscopic Instrument (DESI) or the Euclid mission data will allow for a more precise mapping of the cosmic web across cosmic time.
 	
-	\item \textbf{Machine Learning (ML) Neural Networks (NN)}: Future iterations could move beyond traditional clustering by with Neural Networks(NNs). The Graph ones (GNNs) can be used by treating galaxies as nodes in a graph and their gravitational bonds as edges, we can potentially automate the "Re-Real" space correction process.
+	\item \textbf{Machine Learning (ML) Neural Networks (NN)}: Future iterations could move beyond traditional clustering by with Neural Networks(NNs). The Graph ones (GNNs) can be used by treating galaxies as nodes in a graph and their gravitational bonds as edges, we can potentially automate the "Real-Space" correction process.
 	
 	\item \textbf{Larger Cosmic Structures Research}: A significant potential extension of this methodology involves the detection and characterization of galaxy clusters and superclusters. While the current study focused on individual galaxy groups, applying density-based algorithms to higher-order structures offers several distinct advantages:
 		\begin{enumerate}
