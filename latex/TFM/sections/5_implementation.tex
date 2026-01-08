@@ -146,7 +146,13 @@ Following the categorical framework of \cite{Hai-Xia-Ma:2025} we define the thre
 	\item Completeness Threshold ($\mathcal{C} \geq 1/2$): An output-cluster is defined as \textit{Complete} if it successfully captures at least 50\% of the galaxies belonging to the true physical halo (or original true-group). This ensures that the algorithm has recovered the core structure of the virialized group.
 \end{itemize}
 
-With these concepts we evaluate the ratios, respectively \textit{Purity-rate} , $F_{p}$, \textit{Completeness-rate} $F_{c}$ as:
+Recovery $\mathcal{R}$, it has also been defined as a global measure of precision. If $H_{i_1}, ..., H_{i_k}$, are the complete and pure groups and $H_{total}$ is the sum of elements of all original-groups:
+
+\begin{equation} \label{eq:purity_rate}
+	\mathcal{R} = \frac{1}{H_{total}} \sum_{j=1}^{k}|H_{i_{j}}|
+\end{equation}.
+
+With these concepts we evaluate the ratios, respectively \textit{Purity-rate}, $F_{p}$, \textit{Completeness-rate} $F_{c}$, and \textit{Recovery-rate} $F_{r}$ as:
   
 \begin{equation} \label{eq:purity_rate}
 	F_{p} = \frac{N_{pure}}{N_{clusters}}
@@ -156,8 +162,6 @@ With these concepts we evaluate the ratios, respectively \textit{Purity-rate} , 
 	F_{c} = \frac{N_{complete}}{N_{clusters}}
 \end{equation}.
 
-The following, recovery-rate $F_r$ only defined for complete and pure output-clusters, otherwise is zero:
-% $$R_M = \frac{N_{pure \cap complete}}{N_{total\_clusters}}$$
 \begin{equation} \label{eq:completeness_pure_rate}
 	F_{r} = \frac{N_{complete\,and\,pure}}{N_{original\_groups}}
 \end{equation}.
@@ -167,6 +171,33 @@ The following, recovery-rate $F_r$ only defined for complete and pure output-clu
 %	Fr = \frac{total\_in\_group}{number\_non\_isolated\_galaxies}
 %\end{equation}.
 
-To conclude this section, the absolute number of detected groups $N_{det}$against the number of successfully matched halos ($N_{match}$) is evaluated. It is critical to clarify that $N_{det}$ and $N_{match}$ are aggregate total term; a single physical Halo-Group may be partitioned into several discrete output clusters by the algorithm. Consequently, the undetected groups $\mathcal{U}$ factor must be introduced to account for this fragmentation
+To conclude this section, the absolute number of detected groups $N_{det}$ against the number of successfully matched halos ($N_{match}$) is evaluated. It is critical to clarify that $N_{det}$ and $N_{match}$ are aggregate total terms; a single physical Halo-Group may be partitioned into several discrete output clusters by the algorithm. Consequently, the undetected groups $\mathcal{U}$ factor must be introduced to account for this fragmentation.
 
-All datasets utilized in this study and the accompanying source code are available for download at the following repository: \href{https://github.com/carlostp12/tfm}{this link in Github}.
+\section{The Two-point Correlation Function Implementation} \label{sect:2pcf}
+
+Complementing the algorithmic clustering analysis, a statistical study of the Two-Point Correlation Function (2PCF), denoted as $\xi(r)$, was conducted. 
+
+Utilizing a custom Python framework, a representative sample from the 2dFGRS catalog was benchmarked against a synthetic Poisson distribution (random catalog) generated to match the survey's spatial constraints. To ensure the robustness of the results, four distinct estimators were evaluated by computing the normalized pair counts—Data-Data ($DD$), Random-Random ($RR$), and Data-Random ($DR$).
+
+To compute the correlation function, the separation distance range $[0, 571.6]$ $h^{-1}\text{Mpc}$ was discretized into equally sized bins with a resolution of $\Delta r = 1$ $h^{-1}\text{Mp}$. For each discrete interval, the pair counts $DD$, $RR$, and $DR$ were calculated. The resulting frequency distribution of these pairs across the distance bins is illustrated in Figure \ref{fig:pairs}, which serves as the primary input for the four statistical estimators. To sum up:
+
+\begin{itemize}
+    \item \textbf{DD(r)}: The normalized number of galaxy pairs from the observed catalog (2dFGRS/SDSS) separated by a distance$\Delta r = 1$.
+    \item \textbf{RR(r)}: The normalized number of pairs from the synthetic Poisson catalog separated by a distance $\Delta r = 1$. This represents the "null hypothesis" of a non-clustered universe.
+    \item \textbf{DR(r)}: The normalized number of cross-pairs between the observed and synthetic catalogs, used to account for the complex geometry and edges of the survey volume.
+\end{itemize}
+
+
+	\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.75\textwidth]{./figs/bins-dis2.jpg}
+	\caption{Pairs distribution in bins.}
+	\label{fig:pairs}
+	\end{figure}
+
+Following the definitions established in Section \ref{2pcf1}, the four statistical estimators were  applied to each separation bin. By computing the correlation signal across the full range of $r$, we obtained a comparative profile of the spatial clustering as measured by the estimator formulations.
+
+One important point is the use of scipy.spatial.KDTree package, which allow to improve the time response and calculations by providing an index in a set of k-dimensional space. This indexing strategy was pivotal for the 2PCF pair-counting, reducing the computational complexity from quadratic to logarithmic scales. This ensured that our hyperparameter grid search remained performant even when processing 3D comoving coordinates across $571.6 h^{-1} Mp$ scales.
+
+
+To conclude this section, all datasets utilized in this study and the accompanying source code are available for download at the following repository: \href{https://github.com/carlostp12/tfm}{this link in Github}.

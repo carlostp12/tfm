@@ -137,13 +137,11 @@ Inspired by the analytical frameworks presented in the UOC Master of Data Scienc
 
 	\begin{figure}[h]
 	\centering
-	\includegraphics[width=0.8\textwidth]{./figs/estimators1.jpg}
-	\caption{Natural and Hamilton estimators} on 2dFGRS sample.
+	\includegraphics[width=0.8\textwidth]{./figs/estimators3.jpg}
+	\caption{Natural and Hamilton estimators on 2dFGRS sample}.
 	\label{fig:estimators1}
 	\end{figure}
 	
-One important point is the use of scipy.spatial.KDTree package, which allow to improve the time response and calculations by providing an index in a set of k-dimensional space. This indexing strategy was pivotal for the 2PCF pair-counting, reducing the computational complexity from quadratic to logarithmic scales. This ensured that our hyperparameter grid search remained performant even when processing 3D comoving coordinates across $400 h^{-1} Mp$ scales.
-
 The estimators presented in \ref{2pcf1} were successfully applied to this sample and the obtained results show a peak of density over the $100h^{-1} Mp$ (see figures \label{fig:estimators1} and \label{fig:estimators2}). Such peaks can be explained by the Baryonic Acoustic Oscillations (BAO), providing a definitive evidence that this methodology recovers the fundamental 'fingerprint' of the early Universe still visible in the galaxy distribution and consistent with  predictions of the $\lambda-CDM$ model.
 
 While a comprehensive discussion of Baryon Acoustic Oscillations (BAO) lies beyond the scope of this analysis, they provide further empirical evidence for the existence of dark matter. By establishing the initial density fluctuations in the early Universe, dark matter acted as a gravitational scaffold, driving the formation of the virialized halos where the galaxy clusters identified in this study reside.
@@ -153,7 +151,7 @@ Finally, these results show galaxies are not sparsed at random positions across 
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.8\textwidth]{./figs/estimators2.jpg}
-\caption{ David \& Peebels and Landy \& Szalay estimators} for 2dFGRS sample.
+\caption{David \& Peebels and Landy \& Szalay estimators for 2dFGRS sample}.
 \label{fig:estimators2}
 \end{figure}
 
