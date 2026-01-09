@@ -31,28 +31,28 @@ Given my personal background and strong interest in astrophysics and cosmology, 
 
 \section{Goals}
 
-There are two list of goals we considered to address separatedly:
+There are two list of goals we considered to address separatedly.
 
 \subsection {Main goals}\label{goals}
-\begin{itemize}
-	\item[ Algorithmic Modeling of Large-Scale Structure]: To evaluate the efficacy of density-based clustering algorithms—specifically DBSCAN, OPTICS, HDBSCAN, and Density Peak Clustering (DPC)—in accurately modeling the complex cosmic web observed within the 2dFGRS and SDSS spectroscopic catalogs.
+\begin{description}
+	\item[ Algorithmic Modeling of Large-Scale Structure:] To evaluate the efficacy of density-based clustering algorithms—specifically DBSCAN, OPTICS, HDBSCAN, and Density Peak Clustering (DPC)—in accurately modeling the complex cosmic web observed within the 2dFGRS and SDSS spectroscopic catalogs.
 	
-	\item[ Comparative Performance Evaluation]: To quantitatively determine which algorithm demonstrates the highest fidelity in recovering galaxy groups. This involves investigating the mathematical of physical drivers behind their effectiveness.
+	\item[ Comparative Performance Evaluation:] To quantitatively determine which algorithm demonstrates the highest fidelity in recovering galaxy groups. This involves investigating the mathematical of physical drivers behind their effectiveness.
 	
-	\item[ Diagnostics and Mitigation of Detection Failures]: To identify systematic failure modes in automated cluster detection—such as those arising from Redshift-Space Distortions (RSD) or survey selection functions—and to implement mitigation strategies, including Re-Real space reconstruction.
+	\item[ Diagnostics and Mitigation of Detection Failures:] To identify systematic failure modes in automated cluster detection—such as those arising from Redshift-Space Distortions (RSD) or survey selection functions—and to implement mitigation strategies, including Re-Real space reconstruction.
 	
-	\item[ Optimization Framework for Hyper-parameter Tuning]: To develop a robust framework for optimizing galaxy group detection by automating the selection of critical parameters (e.g., $\epsilon$ via the Elbow Method or $MinPts$), ensuring the pipeline is scalable to different survey depths.
+	\item[ Optimization Framework for Hyper-parameter Tuning:] To develop a robust framework for optimizing galaxy group detection by automating the selection of critical parameters (e.g., $\epsilon$ via the Elbow Method or $MinPts$), ensuring the pipeline is scalable to different survey depths.
 	
-	\item[ Statistical Validation via 2PCF]: To employ the Two-Point Correlation Function (2PCF) as a global statistical benchmark. By quantifying the excess probability of galaxy clustering against a synthetic Poisson baseline, this objective aims to validate the detected structures and extract cosmological information, such as the Baryon Acoustic Oscillation (BAO) scale.
-\end{itemize}
+	\item[ Statistical Validation via 2PCF:] To employ the Two-Point Correlation Function (2PCF) as a global statistical benchmark. By quantifying the excess probability of galaxy clustering against a synthetic Poisson baseline, this objective aims to validate the detected structures and extract cosmological information, such as the Baryon Acoustic Oscillation (BAO) scale.
+\end{description}
 
 
 \subsection {Secondary goals}
-\begin{itemize}
+\begin{description}
 	
 	\item[Extensibility to Large-Scale Structures]: To identify and characterize emerging research avenues where this clustering pipeline can be applied. Specifically, this involves scaling the algorithm to detect and map the most massive bound structures in the Universe, such as galaxy clusters and superclusters, thereby extending the analysis from local group dynamics to the architecture of the large-scale cosmic web.
 	
-\end{itemize}
+\end{description}
 
 % sustentability from now it will be leave out
 % \input{2_sustentability.tex}
@@ -62,16 +62,18 @@ There are two list of goals we considered to address separatedly:
 Cosmological findings fundamentally change our understanding of humanity's place in the Universe. Discoveries related to dark matter, dark energy, or the vastness of the cosmos can have profound philosophical implications.
 
 \begin{description}
-    \item[Sustainability]: The most direct social responsibility implication lies in the immense power required to process and store astronomical data. This work while purely theoretical, relies on an infrastructure that carries a heavy sustainability burden. That is why focus on computational efficiency directly translates into lower energy consumption, this is the most tangible sustainability implication in this project.
+    \item[Sustainability:] The most direct social responsibility implication lies in the immense power required to process and store astronomical data. This work while purely theoretical, relies on an infrastructure that carries a heavy sustainability burden. That is why focus on computational efficiency directly translates into lower energy consumption, this is the most tangible sustainability implication in this project.
 	
-    \item[Ethical behaviour and social responsibility]: The major impact on this matter concerns the use of resources. This project mitigates resource impact by using only shared, openly licensed libraries and datasets whose usage terms are fully respected by the authors. Of course, all references to the utilized datasets and other previous works are properly cited, given that this project relies fundamentally upon them.
+    \item[Ethical behaviour and social responsibility:] The major impact on this matter concerns the use of resources. This project mitigates resource impact by using only shared, openly licensed libraries and datasets whose usage terms are fully respected by the authors. Of course, all references to the utilized datasets and other previous works are properly cited, given that this project relies fundamentally upon them.
 	
 	Communicating the outcomes clearly and accurately is also a commitment from the authors of this work.
 	
-    \item[Diversity, gender and human rights]: Astronomy and cosmology, like many sciences, have historically struggled with issues of diversity and inclusion gender and human rights matters\footnote{An example in gender matter can be seen in the eighth chapter of the documentary television series Cosmos: A Spacetime Odyssey, titled "Sisters of the Sun," hosted by Neil deGrasse Tyson.}, 
-	
-	The authors are committed to respecting these questions throughout this work. More generally, the further advancement in science benefits society by better equipping it to address issues on these matters.	
+    \item[Diversity, gender and human rights:] Astronomy and cosmology, like many sciences, have historically struggled with issues of diversity and inclusion gender and human rights matters\footnote{An example in gender matter can be seen in the eighth chapter of the documentary television series Cosmos: A Spacetime Odyssey, titled "Sisters of the Sun," hosted by Neil deGrasse Tyson.}, 
 \end{description}
+	
+
+The authors are committed to respecting these questions throughout this work. More generally, the further advancement in science benefits society by better equipping it to address issues on these matters.
+
 
 To conclude this section, this work uses powerful analytical methods derived from ML techniques, all tools could be adapted for surveillance, military intelligence, or other uses that might infringe on human rights or privacy. Scientists must be mindful of how their methods and code are shared.
 
