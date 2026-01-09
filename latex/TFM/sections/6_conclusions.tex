@@ -27,7 +27,7 @@ In this section provides a brief synthesis of the research, demonstrating how th
  
  HDBSCAN & - & - & - & - & Not good in cluster detection. \\  \hline
  
- DPC & $\begin{matrix} \rho = 8.3 \times  10^{-4} \\ \delta = 0.9985 \end{matrix} $  & Non-scaled & - & - & Good in cluster center detection \\  \hline
+ DPC & $\begin{matrix} \rho = 8.3 \times  10^{-4} \\ \delta = 0.9985 \end{matrix} $  & Non-scaled & - & - & Cluster-center detection did not match. \\  \hline
  
  $\begin{matrix}sOPTICS\\sDBSCAN\end{matrix}$  &  $\begin{matrix} \epsilon = 11 \times  10^{-5} \\ minPts=5 \end{matrix} $  & Non-scaled & $\begin{matrix} P=0.84  \\C= 0.84 \\ R=0.86  \\ U=12 \end{matrix}$ &  85(78\%) - 83/92& Best results \\ \hline
   
@@ -69,7 +69,7 @@ The results of the analysis are summarized in Table \ref{tablesdss}. Comparable 
  
  HDBSCAN & - & - & - & - & Not suitable in cluster detection. \\  \hline
  
- DPC & $\begin{matrix} \rho = 8.0 \times  10^{-4} \\ \delta = 0.9985 \end{matrix} $  & Non-scaled & - & - & Good in cluster center detection \\  \hline
+ DPC & $\begin{matrix} \rho = 8.0 \times  10^{-4} \\ \delta = 0.9985 \end{matrix} $  & Non-scaled & - & - & Cluster-center detection did not match. \\  \hline
  
  $\begin{matrix}sOPTICS\\sDBSCAN\end{matrix}$ &  $\begin{matrix} \epsilon = 11.0 \times 10^{-5} \\ minPts=5 \end{matrix} $  & Non-scaled & $\begin{matrix} \mathcal{P}=0.82 \\ \mathcal{C}= 0.72 \\ \mathcal{R}=0.69 \\ \mathcal{U}=12 \end{matrix}$ & 86(81\%) - 74/95 & Best results \\ \hline
   
@@ -101,7 +101,7 @@ Following the correction of the distortions detailed in Section \ref{section:rea
  
  HDBSCAN & - & - & - & - & Not good in cluster detection. \\  \hline
  
- DPC & $\begin{matrix} \rho = 8.5 \times 10^{-4} \\ \delta = 0.9986 \end{matrix} $  & Non-scaled & - & - & 100\% in cluster center detection \\  \hline
+ DPC & $\begin{matrix} \rho = 8.5 \times 10^{-4} \\ \delta = 0.9986 \end{matrix} $  & Non-scaled & - & - & Cluster-center detection did not match. \\  \hline
    
   DBSCAN & $\begin{matrix} \epsilon = 2.6 \times 10^{-2} \\ minPts=5 \end{matrix} $ & Scaled & $\begin{matrix} \mathcal{P}=0.88 \\ \mathcal{C}=0.88 \\ \mathcal{R}= 0.96 \\ \mathcal{U}=7 \end{matrix}$ & 91 (86\%) 91/95 & Good in cluster detection  \\ \hline
  

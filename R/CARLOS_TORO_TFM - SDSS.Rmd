@@ -514,7 +514,7 @@ for (rho in rhos){
 custom_heatmap(matrix_data, deltas, rhos, xTitle = "rho", yTitle = "delta", numColors = 11)
 ```
 
-As we can see, in $\delta=0.00080$ and $\rho=0.9985$ produce the best results with a 99% of group-center detection.
+As we can see, in $\delta=0.00080$ and $\rho=0.9985$ produce the best results with a 99% of group-center detection, however we can not conclude that all centers represent any original cluster, so the center detection did not work.
 
 ## Output-clusters visualization
 
@@ -785,7 +785,7 @@ The bests results obtained with each method:
 +-------------------------------+-------------+-----------------------------+----------------------------------------------------------------------------------------------------+
 | HDBSCAN                       | Non-scaled  | \-                          | Not good in cluster detection.                                                                     |
 +-------------------------------+-------------+-----------------------------+----------------------------------------------------------------------------------------------------+
-| DPC                           | Non-scaled  | 99% group-center detection. | Good in group center detection, but not in clustering the whole dataset.                           |
+| DPC                           | Non-scaled  | 99% group-center detection. | Good in group center detection, but detected centers do not match original groups.                 |
 |                               |             |                             |                                                                                                    |
 |                               |             |                             | $\delta=0.0008$ and $\rho=0.9986$                                                                  |
 +-------------------------------+-------------+-----------------------------+----------------------------------------------------------------------------------------------------+
@@ -816,12 +816,14 @@ We can stand out the following points:
 
 -   The method sOPTICS with DBSCAN reached the highest values in completeness, purity and recovery and in group detection (73%).
 
--   The DPC algorithm worked almost perfectly in group-center detection (reached a 99%), but did not worked in separate the groups in the whole dataset.
+-   The DPC algorithm worked almost perfectly in group-center detection (reached a 99%), but detected centers do not match original groups.
 
 -   A normalization or scaled of data data slightly improve results, this is because all data are in fact in approx. in same scale, given that all coordinates: x, y, z and dist are all of them expressed under same units and in same range of values.
 
 Finally we compare the original with the best clustering obtained in this study:
 
++--------------------------------+--------------------------------------+
 | Actual groups distribution     | Best cluster detection with sOPTICS. |
-|--------------------------------|--------------------------------------|
++================================+======================================+
 | ![](images/paste-C0421FDF.png) | ![](images/paste-9187A18F.png)       |
++--------------------------------+--------------------------------------+

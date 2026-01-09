@@ -177,7 +177,23 @@ To conclude this section, the absolute number of detected groups $N_{det}$ again
 
 Complementing the algorithmic clustering analysis, a statistical study of the Two-Point Correlation Function (2PCF), denoted as $\xi(r)$, was conducted. 
 
-Utilizing a custom Python framework, a representative sample from the 2dFGRS catalog was benchmarked against a synthetic Poisson distribution (random catalog) generated to match the survey's spatial constraints. To ensure the robustness of the results, four distinct estimators were evaluated by computing the normalized pair counts—Data-Data ($DD$), Random-Random ($RR$), and Data-Random ($DR$).
+\begin{figure}
+\centering
+\begin{minipage}{.5\textwidth}
+  \centering
+  \includegraphics[width=.85\linewidth]{./figs/poisson-sample.jpg}
+  \caption{Synthetic sample.} 
+  \label{fig:synthetic}
+\end{minipage}%
+\begin{minipage}{.5\textwidth}
+  \centering
+  \includegraphics[width=.85\linewidth]{./figs/real-sample.jpg}
+  \caption{Actual 2dFGRS sample.}
+  \label{fig:actual}
+\end{minipage}
+\end{figure}
+
+Utilizing a custom Python framework, a representative sample from the 2dFGRS catalog (Figure \ref{fig:actual}) was benchmarked against a synthetic Poisson distribution (Figure \ref{fig:synthetic}). The observational volume was defined by a specific spatial window: Redshift ($z$) within the range $[0, 0.28]$, Right Ascension ($RA$) between $0^h$ and $30^h$ and declination ($\delta$) between $-27^\circ$ and $-30^\circ$. To ensure the robustness of the spatial analysis, the random catalog was generated to strictly mirror these geometric constraints. The clustering signal was then quantified using four distinct estimators based on the normalized pair counts: Data-Data ($DD$), Random-Random ($RR$), and Data-Random ($DR$).
 
 To compute the correlation function, the separation distance range $[0, 571.6]$ $h^{-1}\text{Mpc}$ was discretized into equally sized bins with a resolution of $\Delta r = 1$ $h^{-1}\text{Mp}$. For each discrete interval, the pair counts $DD$, $RR$, and $DR$ were calculated. The resulting frequency distribution of these pairs across the distance bins is illustrated in Figure \ref{fig:pairs}, which serves as the primary input for the four statistical estimators. To sum up:
 
