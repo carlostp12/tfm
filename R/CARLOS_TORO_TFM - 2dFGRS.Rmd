@@ -528,6 +528,37 @@ custom_heatmap(matrix_data, deltas, rhos, xTitle = "rho", yTitle = "delta", numC
 
 In which case, we can see that \$\\delta=0.00083\$\$ and $\rho=0.9985$ produce the best results with a 97% of group-centers detection, however we can not conclude that all centers represent any original cluster, so the center detection did not work.
 
+In fact if we check the real groups with less than min_members:
+
+```{r}
+rhos <- seq(0.9980, 0.999, 0.0001)
+deltas <- seq(0.0008, 0.0009, 0.00001)
+
+ll <-  length(deltas)
+j<-1
+i<-ll
+
+matrix_data=matrix(ncol=length(rhos), nrow = length(deltas)) 
+for (rho in rhos){
+	for (delta in deltas){
+        galaxyClusters <- findClusters(galaxyDens, rho=rho, delta=delta)
+        peaks <- mm5[galaxyClusters$peaks,]
+        l <- length(unique(peaks$GROUP_ID))
+        #print(min(l/true_groups, true_groups/l))
+        matrix_data[i, j] <- min(l/true_groups, true_groups/l)
+        #matrix_data[j, i] <- min(l/true_groups, true_groups/l)
+        i <- i-1
+    }
+    j <- j+1
+    i<-ll
+}
+
+
+custom_heatmap(matrix_data, deltas, rhos, xTitle = "rho", yTitle = "delta", numColors = 11)
+```
+
+As we can see, the optimal hyper-parameter value set only get a 13% of original halos.
+
 ## Output-clusters visualization
 
 ```{r}
@@ -855,8 +886,6 @@ We can stand out the following points:
 
 Finally we compare the original with the best clustering obtained in this study:
 
-+--------------------------------+--------------------------------------+
 | Actual groups distribution     | Best cluster detection with sOPTICS. |
-+================================+======================================+
+|--------------------------------|--------------------------------------|
 | ![](images/paste-500A6000.png) | ![](images/paste-2176DF96.png)       |
-+--------------------------------+--------------------------------------+

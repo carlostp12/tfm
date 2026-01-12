@@ -616,13 +616,16 @@ j<-1
 i<-ll
 
 matrix_data=matrix(ncol=length(rhos), nrow = length(deltas)) 
+real_matrix_data=matrix(ncol=length(rhos), nrow = length(deltas)) 
 for (rho in rhos){
     for (delta in deltas){
         galaxyClusters <- findClusters(galaxyDens, rho=rho, delta=delta)
         peaks <- mm[galaxyClusters$peaks,]
         l <- length(unique(peaks$GROUP_ID))
-        #print(min(l/true_groups, true_groups/l))
+        l2 <- length(unique(mm5[galaxyClusters$peaks, 'GROUP_ID']))
+#        print(sprintf("FOR %s,  %s detected %s groups for clusters %s ", delta, rho, l2, l))
         matrix_data[i, j] <- min(l/true_groups, true_groups/l)
+        real_matrix_data[i, j] <- min(l2/true_groups, true_groups/l2)
         i <- i-1
     }
     j <- j+1
@@ -631,6 +634,7 @@ for (rho in rhos){
 
 
 custom_heatmap(matrix_data, deltas, rhos, xTitle = "rho", yTitle = "delta", numColors = 11)
+
 ```
 
 we can see , all groups-center are detected with DPC for values $\delta=0.9986$ and $\rho=0.00085$. We can obtain them as follows
@@ -651,7 +655,13 @@ plot3d(peaks$x, peaks$y, peaks$z, col = peaks$GROUP_ID+1, size = 3, xlab = "X", 
 
 ![](images/paste-F4ADE5CA.png){width="429"}
 
-As we can see, in $\delta=0.00085$ and $\rho=0.9986$ produce the best results with a 99% of group-center detection, however we can not conclude that all centers represent any original cluster, so the center detection did not work.
+But for these peaks only a 21% of original halo-group are depicted, as shwon at:
+
+```{r}
+custom_heatmap(real_matrix_data, deltas, rhos, xTitle = "rho", yTitle = "delta", numColors = 11)
+```
+
+As we can see, in $\delta=0.00085$ and $\rho=0.9986$ produce the best results with a 99% of group-center detection, however we can not conclude that all centers represent different original halo-groups, so the center detection did not work.
 
 # Normalized data processing
 
